@@ -1,0 +1,33 @@
+<nav class="navbar">
+  <!-- Logo and Text on the Left -->
+  <div class="navbar-left">
+  
+    <span class="logo-text">🦁 JAMBO SAFARI</span>
+  </div>
+
+  <!-- Menu Links on the Right -->
+  <div class="navbar-right">
+    <a href="#home" class="nav-link">Home</a>
+    <a href="#about" class="nav-link">About</a>
+    <a href="#services" class="nav-link">Services</a>
+    <a href="#contact" class="nav-link">Contact</a>
+    
+    <!-- Book Now Button -->
+    <button class="book-now-btn" (click)="openModal()">Book Now</button>
+  </div>
+</nav>
+
+<!-- Modal for Booking -->
+<div class="modal" [class.show]="isModalOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>Book Now</h2>
+    <form>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required />
+      <label for="date">Preferred Date:</label>
+      <input type="date" id="date" name="date" required />
+      <button type="submit">Submit</button>
+    </form>
+    <button class="close-modal" (click)="closeModal()">Close</button>
+  </div>
+</div>
