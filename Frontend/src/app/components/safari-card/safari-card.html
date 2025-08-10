@@ -1,0 +1,37 @@
+<div class="safari-cards-container">
+  <!-- Component Title -->
+  <h2 class="safari-title">🛏️ Safari Packages</h2>
+
+  <!-- Safari Packages Cards -->
+  <div class="cards">
+    <div *ngFor="let package of safariPackages" class="card">
+      <!-- Card Header -->
+      <div class="card-header">
+        <strong>{{ package.title }}</strong>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <!-- Image inside the card body -->
+        <div class="card-image">
+          <img [src]="package.image" alt="{{ package.title }} Image" class="card-img" />
+        </div>
+
+        <!-- Card Content -->
+        <p><strong>Includes:</strong> {{ package.includes }}</p>
+        <ul>
+          <li *ngFor="let detail of package.details">{{ detail }}</li>
+        </ul>
+
+        <!-- Button Wrapper (added space between buttons) -->
+        <div class="button-wrapper">
+          <!-- View Details Button -->
+          <button class="view-details-btn" (click)="viewDetails(package.title)">View Details</button>
+
+          <!-- Book Now Button -->
+          <button class="book-now-btn" (click)="bookNow(package.title)">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -75,7 +75,7 @@
 .carousel-item .btn-discover {
   padding: 10px 30px;  /* Reduced padding */
   font-size: 1.4rem;  /* Reduced font size */
-  background-color: #FFB940;  /* Golden Yellow */
+  background-color: #2C6E49;  /* Jungle Green (swapped from Golden Yellow) */
   color: white;
   border: none;
   border-radius: 5px;
@@ -84,14 +84,14 @@
 }
 
 .carousel-item .btn-discover:hover {
-  background-color: #FFD76D; /* Darker shade of Golden Yellow */
+  background-color: #6A7F41; /* Olive Green on hover */
 }
 
 /* Book Now Button */
 .carousel-item .btn-book-now {
   padding: 10px 30px;  /* Reduced padding */
   font-size: 1.4rem;  /* Reduced font size */
-  background-color: #2C6E49; /* Jungle Green */
+  background-color: #FFB940; /* Golden Yellow (swapped from Jungle Green) */
   color: white;
   border: none;
   border-radius: 5px;
@@ -101,7 +101,7 @@
 }
 
 .carousel-item .btn-book-now:hover {
-  background-color: #6A7F41; /* Olive Green on hover */
+  background-color: #FFD76D; /* Darker shade of Golden Yellow */
 }
 
 /* Carousel Navigation Buttons */
