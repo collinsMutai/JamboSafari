@@ -18,6 +18,8 @@
 .navbar-left {
   display: flex;
   align-items: center;
+  flex: 1; /* Allow it to take as much space as needed */
+  justify-content: flex-start; /* Ensure the logo is on the left side */
 }
 
 .logo-text {
@@ -61,17 +63,59 @@
 /* Mobile Responsive Styling for Navbar */
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: column;
-    padding: 20px;
+    flex-direction: row; /* Make the navbar content horizontal */
+    padding: 10px 20px;
   }
 
-  .navbar-left, .navbar-right {
-    width: 100%;
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: flex-start;
+    margin-right: 10px; /* Reduce the right margin space */
+  }
+
+  .navbar-hamburger {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
     justify-content: center;
+    align-items: center;
+    margin-left: auto; /* Push the hamburger icon to the right side */
+  }
+
+  .hamburger-icon {
+    width: 25px;
+    height: 3px;
+    background-color: #fff;
+    margin: 4px 0;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .navbar-right {
+    display: none; /* Hide menu by default on mobile */
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 100%; /* This ensures the menu starts right below the navbar */
+    left: 0;
+    right: 0;
+    background-color: #2C6E49; /* Same as navbar background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Optional shadow */
+    padding-top: 20px;
+    padding-bottom: 20px; /* Added bottom padding */
+    transition: transform 0.3s ease-in-out;
+    transform: translateY(-100%); /* Start with menu off-screen */
+  }
+
+  .navbar-right.show {
+    display: flex;
+    transform: translateY(0); /* Slide the menu down directly below the navbar */
   }
 
   .nav-link {
     margin: 10px 0;
+    font-size: 18px;
   }
 
   .book-now-btn {

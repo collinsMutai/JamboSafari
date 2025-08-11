@@ -1,0 +1,210 @@
+/* General Footer Styling */
+.footer {
+  color: #000; /* Black text color */
+  padding: 80px 100px 40px 100px;
+  position: relative;
+  width: 100%;
+  clear: both; /* Ensure footer clears other elements */
+}
+
+.footer-title {
+  text-align: center;
+  font-size: 36px;
+  color: #2c6e49; /* Jungle Green */
+  margin-bottom: 40px; /* Space between title and cards */
+}
+
+.contact-container {
+  padding: 100px 0; /* Add padding to top and bottom */
+  margin-bottom: 100px;
+}
+
+.credits-container {
+  background-color: #D8C6B3; /* Light beige background for copyright section */
+  color: #4a3c31; /* Dark text color */
+  padding: 10px 0;
+  width: 100%; /* Ensure it spans full width */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer ul li {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.footer ul li svg {
+  margin-right: 10px; /* Add space between the icon and text */
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: #ffb940; /* Set color for SVG icons */
+}
+
+.footer ul li a {
+  color: #000; /* Black text for links */
+  text-decoration: none;
+}
+
+.footer ul li a:hover {
+  text-decoration: underline;
+}
+
+.footer ul li span {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.phone-numbers {
+  margin-top: 5px;
+}
+
+.phone-numbers span {
+  display: block; /* Make each number appear on a new line */
+  margin-bottom: 5px; /* Add space between the numbers */
+}
+
+.contact-form {
+  padding-left: 15px;
+}
+
+.contact-form .form-group {
+  margin-bottom: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.contact-form button {
+  margin-top: 10px;
+  background-color: #FFB940; /* Set button background color */
+  color: #fff; /* Button text color */
+  border: none; /* Optional: Remove border */
+  padding: 10px 20px; /* Add padding for better appearance */
+  border-radius: 4px; /* Optional: Rounded corners */
+}
+
+.contact-form button:hover {
+  background-color: #e09433; /* Slightly darker background on hover */
+}
+
+.text-center {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+/* New Follow Us Section */
+.follow-us {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.follow-us h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.social-icons {
+  list-style: none;
+  display: flex;
+  justify-content: left;
+  gap: 20px;
+}
+
+.social-icons li {
+  display: inline-block;
+}
+
+.social-icons a {
+  display: block;
+  width: 40px;
+  height: 40px;
+}
+
+.social-icons svg {
+  width: 100%;
+  height: 100%;
+  stroke: #ffb940;
+  fill: none;
+}
+
+.social-icons a:hover svg {
+  stroke: #f8a800; /* Hover color */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer {
+    padding: 40px 20px 20px 20px;
+  }
+  .footer-title {
+    font-size: 28px; /* Adjust title font size */
+  }
+
+  .contact-container {
+    margin-bottom: 50px;
+    padding: 0px 0px 40px 0px;
+  }
+
+  .contact-info,
+  .contact-form {
+    padding: 0;
+  }
+
+  .contact-info,
+  .contact-form {
+    width: 100%;
+  }
+
+  .social-icons {
+    flex-wrap: wrap; /* Wrap icons in smaller screens */
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .social-icons a {
+    width: 35px;
+    height: 35px;
+  }
+
+  .follow-us h3, .footer h3 {
+    text-align: center;
+  }
+}
+
+/* Ensures Footer Sticks to the Bottom of the Page */
+body,
+html {
+  min-height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  flex: 1;
+}

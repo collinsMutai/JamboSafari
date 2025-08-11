@@ -1,12 +1,18 @@
 <nav class="navbar">
   <!-- Logo and Text on the Left -->
   <div class="navbar-left">
-  
     <span class="logo-text">🦁 JAMBO SAFARI</span>
   </div>
 
-  <!-- Menu Links on the Right -->
-  <div class="navbar-right">
+  <!-- Hamburger Icon for Mobile -->
+  <div class="navbar-hamburger" (click)="toggleMenu()">
+    <div class="hamburger-icon"></div>
+    <div class="hamburger-icon"></div>
+    <div class="hamburger-icon"></div>
+  </div>
+
+  <!-- Menu Links on the Right (Initially Hidden on Mobile) -->
+  <div class="navbar-right" [class.show]="menuOpen">
     <a href="#home" class="nav-link">Home</a>
     <a href="#about" class="nav-link">About</a>
     <a href="#Destinations" class="nav-link">Destinations</a>

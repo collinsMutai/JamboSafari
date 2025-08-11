@@ -8,7 +8,7 @@
 }
 
 /* Cards Container Styling */
-.safari-cards-container[_ngcontent-ng-c106798514] {
+.safari-cards-container {
   padding: 80px 100px 40px 100px; /* Added same padding as About Us container */
   background-color: #f9f9f9; /* Light background color for the container */
 }
@@ -60,6 +60,7 @@
 /* Card Body - Details Section */
 .card-body {
   padding: 10px;
+  
 }
 
 .card-body p {
@@ -134,7 +135,7 @@
 
 /* Medium Screens (Tablet) */
 @media (max-width: 768px) {
-  .safari-cards-container[_ngcontent-ng-c106798514] {
+  .safari-cards-container {
     padding: 60px 40px 30px 40px; /* Adjusted padding for medium screens */
   }
 
@@ -163,7 +164,7 @@
 
 /* Small Screens (Mobile) */
 @media (max-width: 480px) {
-  .safari-cards-container[_ngcontent-ng-c106798514] {
+  .safari-cards-container {
     padding: 40px 20px 20px 20px; /* Further reduced padding for small screens */
   }
 
@@ -192,7 +193,7 @@
 
 /* Very Small Screens (Extra Small Mobile) */
 @media (max-width: 375px) {
-  .safari-cards-container[_ngcontent-ng-c106798514] {
+  .safari-cards-container {
     padding: 30px 15px 15px 15px; /* Minimal padding for very small screens */
   }
 

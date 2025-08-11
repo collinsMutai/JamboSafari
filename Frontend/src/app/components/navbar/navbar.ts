@@ -10,6 +10,7 @@ import { Component } from '@angular/core';
 })
 export class NavbarComponent {
   isModalOpen = false;
+  menuOpen = false;  // Track if the menu is open
 
   // Function to open the modal
   openModal() {
@@ -19,5 +20,10 @@ export class NavbarComponent {
   // Function to close the modal
   closeModal() {
     this.isModalOpen = false;
+  }
+
+  // Function to toggle the mobile menu visibility
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 }

@@ -1,0 +1,129 @@
+/* General styling for the testimonials section */
+.testimonials {
+  background-color: #f4f4f4; /* Light grey background */
+  padding: 80px 100px 100px 100px;
+  font-family: 'Arial', sans-serif;
+}
+
+.testimonials-title {
+  text-align: center;
+  font-size: 36px;
+  color: #2C6E49; /* Dark green color */
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+/* Styling for the slider */
+.testimonial-slider {
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonial-slide {
+  display: none; /* Hide all slides by default */
+  opacity: 0;
+  transition: opacity 0.5s ease; /* Smooth transition */
+  text-align: center; /* Center align text and author */
+}
+
+.testimonial-slide.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Center the testimonial text */
+.testimonial blockquote {
+  font-style: italic; /* Italicize the testimonial text */
+  font-size: 1.2rem;
+  color: #4A3C31; /* Dark brown color */
+  margin: 0 auto; /* Center horizontally */
+  max-width: 80%; /* Limit width for better readability */
+}
+
+/* Center the footer (author) */
+.testimonial footer {
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #6d4c41; /* Lighter brown for the author's name */
+  font-weight: bold; /* Slightly bold the author's name */
+  text-align: center; /* Center the author */
+}
+
+.testimonial-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding: 60px 0px 10px 0px;
+}
+
+.highlight {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2C6E49; /* Dark brown color */
+  margin-bottom: 20px;
+}
+
+.quote {
+  font-size: 1.25rem;
+  color: #FFB940; /* Yellow for the quote */
+  font-style: italic;
+}
+
+/* Media Queries for Responsiveness */
+
+/* Tablet devices (portrait mode) */
+@media (max-width: 768px) {
+  .testimonials {
+    padding: 60px 50px;
+  }
+
+  .testimonials-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .testimonial blockquote {
+    font-size: 1rem;
+    max-width: 90%; /* Increase width to fit better */
+  }
+
+  .testimonial footer {
+    font-size: 0.9rem;
+  }
+
+  .highlight {
+    font-size: 1.3rem;
+  }
+
+  .quote {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile devices (portrait mode) */
+@media (max-width: 480px) {
+  .testimonials {
+    padding: 40px 20px;
+  }
+
+  .testimonials-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .testimonial blockquote {
+    font-size: 0.9rem;
+    max-width: 95%; /* Even more width for mobile */
+  }
+
+  .testimonial footer {
+    font-size: 0.8rem;
+  }
+
+  .highlight {
+    font-size: 1.2rem;
+  }
+
+  .quote {
+    font-size: 1rem;
+  }
+}

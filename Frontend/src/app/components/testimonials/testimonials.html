@@ -1,0 +1,19 @@
+<section class="testimonials">
+  <h2 class="testimonials-title">💬 What People Are Saying</h2>
+  
+  <!-- Slider container -->
+  <div class="testimonial-slider">
+    <div *ngFor="let testimonial of testimonials; let i = index" 
+         [class.active]="currentIndex === i" class="testimonial-slide">
+      <blockquote>{{ testimonial.text }}</blockquote>
+      <footer>– {{ testimonial.author }}</footer>
+    </div>
+  </div>
+  
+  <!-- Additional section for the footer content -->
+  <div class="testimonial-footer">
+    <p class="highlight">🙌 Mission Meets Majesty</p>
+    <p>Whether you are seeking adventure, rest, spiritual renewal, or a cultural connection, Jambo Safari brings it all together in one unforgettable experience.</p>
+    <p class="quote">✨ “Travel shouldn’t just change the view—it should change you.” ✨</p>
+  </div>
+</section>
