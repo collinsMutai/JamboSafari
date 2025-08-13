@@ -16,9 +16,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   standalone: true,
 })
-export class DestinationAndHighlightsComponent
-  implements OnInit, AfterViewInit
-{
+export class DestinationAndHighlightsComponent implements OnInit, AfterViewInit {
   originalImages = [
     {
       image: 'assets/images/maasai-mara.jpg',
@@ -124,31 +122,25 @@ export class DestinationAndHighlightsComponent
     const maxIndex = this.images.length - this.visibleSlides;
     if (this.currentSlideIndex < maxIndex) {
       this.currentSlideIndex++;
-      this.updateSlider();
     } else {
       // Reset to the first slide when we reach the last slide
       this.currentSlideIndex = 0;
-      this.updateSlider();
     }
+    this.updateSlider();
   }
 
   moveToPrevSlide() {
     if (this.currentSlideIndex > 0) {
       this.currentSlideIndex--;
-      this.updateSlider();
     }
+    this.updateSlider();
   }
 
   updateSlider() {
-    const sliderWrapper =
-      this.el.nativeElement.querySelector('.slider-wrapper');
+    const sliderWrapper = this.el.nativeElement.querySelector('.slider-wrapper');
     if (sliderWrapper) {
       const translateX = -this.currentSlideIndex * this.slideFullWidth;
-      this.renderer.setStyle(
-        sliderWrapper,
-        'transform',
-        `translateX(${translateX}px)`
-      );
+      this.renderer.setStyle(sliderWrapper, 'transform', `translateX(${translateX}px)`);
     }
   }
 
@@ -160,8 +152,7 @@ export class DestinationAndHighlightsComponent
       const width = slide.offsetWidth; // This is the width of one slide
       this.slideFullWidth = width + marginRight;
 
-      const sliderWrapper =
-        this.el.nativeElement.querySelector('.slider-wrapper');
+      const sliderWrapper = this.el.nativeElement.querySelector('.slider-wrapper');
       const totalVisibleWidth = this.visibleSlides * this.slideFullWidth;
       this.renderer.setStyle(sliderWrapper, 'width', `${totalVisibleWidth}px`);
     }

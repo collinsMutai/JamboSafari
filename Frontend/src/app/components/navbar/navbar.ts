@@ -9,8 +9,8 @@ import { Component } from '@angular/core';
   imports: [CommonModule]
 })
 export class NavbarComponent {
-  isModalOpen = false;
-  menuOpen = false;  // Track if the menu is open
+  isModalOpen = false;  // Modal state
+  menuOpen = false;     // Track if the mobile menu is open
 
   // Function to open the modal
   openModal() {

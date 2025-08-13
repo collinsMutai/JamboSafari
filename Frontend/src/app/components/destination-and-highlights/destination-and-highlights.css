@@ -14,26 +14,25 @@
 }
 
 .title-container h2 {
-  font-size: 36px; /* Jungle Green h1 size from original CSS */
-  font-weight: 600; /* Bold font weight */
+  font-size: 36px;
+  font-weight: 600;
   color: #2C6E49; /* Jungle Green */
-  margin-bottom: 15px; /* Margin to match original */
-  animation: fadeInUp 1s ease-out 0.3s forwards; /* Apply animation from .text-column */
+  margin-bottom: 15px;
+  animation: fadeInUp 1s ease-out 0.3s forwards;
 }
 
 /* Button container positioning */
 .button-container {
   display: flex;
   justify-content: flex-end; /* Align buttons to the right */
-  margin-top: 20px; /* Add some spacing below the title */
+  margin-top: 20px;
   z-index: 1;
-  width: 100%; /* Ensure the container spans the full width */
-  padding: 0 20px; /* Add some padding for spacing on the sides */
+  width: 100%;
+  padding: 0 20px;
 }
 
 /* Individual Button Styling */
 button {
-  /* background-color: rgba(0, 0, 0, 0.5); */
   color: #FFB940;
   border: none;
   padding: 10px;
@@ -77,14 +76,14 @@ button svg {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
-  opacity: 1; /* Ensure it's fully visible */
-  transition: transform 0.3s ease; /* Smooth transition for sliding effect */
-  transform: translateY(0); /* Initial position */
-  animation: fadeInUp 1s ease-out forwards; /* Animation to fade in */
+  opacity: 1;
+  transition: transform 0.3s ease;
+  transform: translateY(0);
+  animation: fadeInUp 1s ease-out forwards;
 }
 
 .destination-card:hover {
-  transform: translateY(-10px); /* Slide up effect on hover */
+  transform: translateY(-10px);
 }
 
 .destination-image {
@@ -93,31 +92,33 @@ button svg {
   overflow: hidden;
 }
 
+/* Ensure images cover the container */
 .destination-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Ensure the image covers the area */
+  object-position: center; /* Center the image */
 }
 
 /* Positioning for country (top-left) */
 .image-country {
   position: absolute;
-  top: 10px; /* Adjust top distance */
-  left: 10px; /* Adjust left distance */
+  top: 10px;
+  left: 10px;
   font-size: 16px;
   color: white;
   font-weight: bold;
-  opacity: 1; /* Visible by default */
+  opacity: 1;
 }
 
 /* Positioning for title and description (bottom-left) */
 .image-title {
   position: absolute;
-  bottom: 10px; /* Adjust bottom distance */
-  left: 10px; /* Adjust left distance */
+  bottom: 10px;
+  left: 10px;
   color: white;
   padding: 10px;
-  opacity: 1; /* Visible by default */
+  opacity: 1;
 }
 
 .image-title h3 {
@@ -131,8 +132,6 @@ button svg {
 }
 
 /* Keyframe Animations */
-
-/* Fade-in effect for the card */
 @keyframes fadeInUp {
   0% {
     opacity: 0;
@@ -203,6 +202,14 @@ button svg {
   .title-container h2 {
     font-size: 26px; /* Even smaller font size for mobile */
   }
+
+  /* Ensure images cover the container on mobile */
+  .destination-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 }
 
 /* Very small screens (extra small devices) */
@@ -221,24 +228,32 @@ button svg {
   }
 
   .button-container {
-    margin-top: 10px; /* Ensure some margin if needed */
+    margin-top: 10px;
   }
 
   /* Adjust title for very small screens */
   .title-container h2 {
-    font-size: 22px; /* Smallest font size for very small screens */
+    font-size: 22px;
   }
 
   /* Adjust country label */
   .image-country {
-    font-size: 12px; /* Smaller font size for very small screens */
+    font-size: 12px;
   }
 
   .image-title h3 {
-    font-size: 14px; /* Smaller font size for titles */
+    font-size: 14px;
   }
 
   .image-title p {
-    font-size: 10px; /* Smaller font size for descriptions */
+    font-size: 10px;
+  }
+
+  /* Ensure images cover the container on extra small screens */
+  .destination-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
 }
