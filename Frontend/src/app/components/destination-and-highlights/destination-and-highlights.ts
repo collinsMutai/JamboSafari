@@ -5,7 +5,6 @@ import {
   ChangeDetectorRef,
   Renderer2,
   ElementRef,
-  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -18,19 +17,59 @@ import { CommonModule } from '@angular/common';
 })
 export class DestinationAndHighlightsComponent implements OnInit, OnDestroy {
   originalImages = [
-    { image: 'assets/images/maasai-mara.jpg', alt: 'Maasai Mara', title: 'Maasai Mara', country: 'Kenya', description: 'Big Five sightings and the Great Migration' },
-    { image: 'assets/images/lake-nakuru.jpg', alt: 'Lake Nakuru', title: 'Lake Nakuru', country: 'Kenya', description: 'Pink flamingos and rhinos by the water' },
-    { image: 'assets/images/amboseli.jpg', alt: 'Amboseli', title: 'Amboseli', country: 'Kenya', description: 'Majestic elephants under Mt. Kilimanjaro' },
-    { image: 'assets/images/serengeti.jpg', alt: 'Serengeti', title: 'Serengeti', country: 'Tanzania', description: 'Endless plains and epic wildlife scenes' },
-    { image: 'assets/images/ngorongoro.jpg', alt: 'Ngorongoro Crater', title: 'Ngorongoro Crater', country: 'Tanzania', description: 'A world within a crater' },
-    { image: 'assets/images/zanzibar.jpg', alt: 'Zanzibar', title: 'Zanzibar', country: 'Tanzania', description: 'Spice island paradise & beach retreat' },
+    {
+      image: 'assets/images/maasai4.jpeg',
+      alt: 'Maasai Mara',
+      title: 'Maasai Mara',
+      country: 'Kenya',
+      description: 'Big Five sightings and the Great Migration',
+    },
+    {
+      image: 'assets/images/lakenakuru.jpeg',
+      alt: 'Lake Nakuru',
+      title: 'Lake Nakuru',
+      country: 'Kenya',
+      description: 'Pink flamingos and rhinos by the water',
+    },
+    {
+      image: 'assets/images/elephants1.jpeg',
+      alt: 'Amboseli',
+      title: 'Amboseli',
+      country: 'Kenya',
+      description: 'Majestic elephants under Mt. Kilimanjaro',
+    },
+    {
+      image: 'assets/images/maasaimara3.jpeg',
+      alt: 'Serengeti',
+      title: 'Serengeti',
+      country: 'Tanzania',
+      description: 'Endless plains and epic wildlife scenes',
+    },
+    {
+      image: 'assets/images/greycrownedcrane.jpeg',
+      alt: 'Ngorongoro Crater',
+      title: 'Ngorongoro Crater',
+      country: 'Tanzania',
+      description: 'A world within a crater',
+    },
+    {
+      image: 'assets/images/giraffe2.jpeg',
+      alt: 'Zanzibar',
+      title: 'Zanzibar',
+      country: 'Tanzania',
+      description: 'Spice island paradise & beach retreat',
+    },
   ];
 
   images = [...this.originalImages];
   currentSlideIndex = 0;
   autoSlideInterval: any;
 
-  constructor(private renderer: Renderer2, private el: ElementRef, private cdRef: ChangeDetectorRef) {}
+  constructor(
+    private renderer: Renderer2,
+    private el: ElementRef,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     // Start the auto-slide functionality
@@ -57,7 +96,8 @@ export class DestinationAndHighlightsComponent implements OnInit, OnDestroy {
     if (this.currentSlideIndex < maxIndex) {
       this.currentSlideIndex++;
     } else {
-      this.currentSlideIndex = 0; // Loop back to the first slide
+      // After last slide, reset to the first slide
+      this.currentSlideIndex = 0;
     }
     this.updateSlider();
   }
@@ -72,16 +112,15 @@ export class DestinationAndHighlightsComponent implements OnInit, OnDestroy {
 
   // Update the slider's position based on the current slide index
   updateSlider() {
-    const sliderWrapper = this.el.nativeElement.querySelector('.slider-wrapper');
+    const sliderWrapper =
+      this.el.nativeElement.querySelector('.slider-wrapper');
     if (sliderWrapper) {
       const translateX = -this.currentSlideIndex * 100; // 100% width of the slide
-      this.renderer.setStyle(sliderWrapper, 'transform', `translateX(${translateX}%)`);
+      this.renderer.setStyle(
+        sliderWrapper,
+        'transform',
+        `translateX(${translateX}%)`
+      );
     }
-  }
-
-  // Update the visible slides on window resize (though CSS already handles this)
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
-    this.updateSlider();
   }
 }

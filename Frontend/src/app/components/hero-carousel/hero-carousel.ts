@@ -12,7 +12,7 @@ export class HeroCarousel implements OnInit, OnDestroy {
   // Array of slides to display in the carousel, now includes bookNowText
   slides = [
     {
-      image: 'assets/images/slide1.jpg',
+      image: 'assets/images/faithinspiredtravel.jpeg',
       alt: 'Maasai Mara',
       title: '🦁 JAMBO SAFARI',
       description: 'Experience the Majesty of God’s Creation in the Heart of Africa',
@@ -20,7 +20,7 @@ export class HeroCarousel implements OnInit, OnDestroy {
       bookNowText: 'Book Now' // Added "Book Now" text for the second button
     },
     {
-      image: 'assets/images/hero10.jpg',
+      image: 'assets/images/maasailocalcommunities.jpeg',
       alt: 'Lake Nakuru',
       title: '🦁 JAMBO SAFARI',
       description: 'Experience the Majesty of God’s Creation in the Heart of Africa',
@@ -28,7 +28,7 @@ export class HeroCarousel implements OnInit, OnDestroy {
       bookNowText: 'Book Now' // Added "Book Now" text for the second button
     },
     {
-      image: 'assets/images/slide3.jpg',
+      image: 'assets/images/lions2.jpeg',
       alt: 'Amboseli',
       title: '🦁 JAMBO SAFARI',
       description: 'Experience the Majesty of God’s Creation in the Heart of Africa',

@@ -6,6 +6,7 @@
   overflow: hidden;
 }
 
+/* Carousel Items */
 .carousel-container {
   display: flex;
   transition: transform 1s ease-in-out; /* Slide transition between slides */
@@ -14,6 +15,7 @@
 .carousel-item {
   flex: 0 0 100%;
   position: relative;
+  height: 100vh; /* Fixed height of 100vh for the carousel item */
   opacity: 0; /* Initially hide all items */
   transition: opacity 1s ease-out; /* Fade-in effect for each item */
 }
@@ -25,17 +27,17 @@
 .carousel-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensure image covers the full container without distortion */
-  object-position: center center; /* Make sure the image is centered */
+  object-fit: cover; /* Ensure image fills the fixed height without distortion */
+  object-position: center center; /* Center the image */
   animation: zoomInOut 10s ease-in-out infinite; /* Apply zoom effect */
 }
 
 /* Carousel Caption */
 .carousel-item > div {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Center vertically and horizontally */
+  top: 50%; /* Center the caption vertically */
+  left: 50%; /* Center the caption horizontally */
+  transform: translate(-50%, -50%); /* Adjust the transform for perfect centering */
   text-align: center;
   color: white;
   z-index: 10; /* Ensure caption is on top of the image */
@@ -71,11 +73,11 @@
   margin-right: auto;
 }
 
-/* Discover Button */
+/* Buttons */
 .carousel-item .btn-discover {
-  padding: 10px 30px;  /* Reduced padding */
-  font-size: 1.4rem;  /* Reduced font size */
-  background-color: #2C6E49;  /* Jungle Green (swapped from Golden Yellow) */
+  padding: 10px 30px;
+  font-size: 1.4rem;
+  background-color: #2C6E49; /* Jungle Green */
   color: white;
   border: none;
   border-radius: 5px;
@@ -87,11 +89,10 @@
   background-color: #6A7F41; /* Olive Green on hover */
 }
 
-/* Book Now Button */
 .carousel-item .btn-book-now {
-  padding: 10px 30px;  /* Reduced padding */
-  font-size: 1.4rem;  /* Reduced font size */
-  background-color: #FFB940; /* Golden Yellow (swapped from Jungle Green) */
+  padding: 10px 30px;
+  font-size: 1.4rem;
+  background-color: #FFB940; /* Golden Yellow */
   color: white;
   border: none;
   border-radius: 5px;
@@ -109,7 +110,7 @@ button.prev, button.next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: #fff !important;  /* New color for buttons */
+  background-color: #fff !important;
   color: white;
   font-size: 2rem;
   border: none;
@@ -120,7 +121,7 @@ button.prev, button.next {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.2s ease;  /* Remove background-color change */
+  transition: transform 0.2s ease;
 }
 
 button.prev {
@@ -132,46 +133,48 @@ button.next {
 }
 
 button svg {
-  width: 40px;  /* Increased size of the SVG icon */
-  height: 40px;  /* Increased size of the SVG icon */
+  width: 40px;
+  height: 40px;
 }
 
 button:hover {
-  transform: scale(1.1);  /* Slightly enlarge on hover */
+  transform: scale(1.1);
   color: #FFD76D;
 }
 
 button:focus {
-  outline: none;  /* Remove outline on focus */
+  outline: none;
 }
 
-/* Mobile: 768px and below */
+/* --- Media Queries for Responsiveness --- */
+
+/* Tablet: 768px and below */
 @media (max-width: 768px) {
+  .carousel-item {
+    height: 100vh; /* Keep height as 100vh on tablets as well */
+  }
+
   .carousel-item img {
-    height: 100vh; /* Ensure image fills the entire viewport height */
+    height: 100%; /* Ensure image fills the container height */
   }
 
   .carousel-item > div {
-    max-width: 90%; /* Make caption width more flexible */
-    padding: 20px;
-    bottom: 10%;  /* Move the caption a bit higher, preventing overlap */
+    padding: 15px;
+    bottom: 15%; /* Adjust caption position */
   }
 
   .carousel-item h1 {
-    font-size: 45px; /* Scaled down font size */
+    font-size: 55px; /* Adjust font size for tablet screens */
   }
 
   .carousel-item p {
-    font-size: 1rem; /* Reduced font size */
-    max-width: 90%; /* Ensure text doesn’t stretch too far */
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 1rem; /* Adjust paragraph font size */
   }
 
   .carousel-item .btn-discover, 
   .carousel-item .btn-book-now {
     font-size: 1.2rem;
-    padding: 8px 25px; /* Further reduced button padding */
+    padding: 8px 25px; /* Adjust button padding */
   }
 
   button.prev, button.next {
@@ -180,42 +183,47 @@ button:focus {
   }
 
   button svg {
-    width: 35px;  /* Slightly smaller icon size on medium screens */
+    width: 35px; /* Adjust SVG size */
     height: 35px;
   }
 }
 
 /* Mobile: 480px and below */
 @media (max-width: 480px) {
+  .carousel-item {
+    height: 100vh; /* Ensure height remains 100vh on mobile */
+  }
+
   .carousel-item img {
-    height: 100vh; /* Ensure image fills the entire viewport height */
+    height: 100%; /* Ensure image fills the container height */
   }
 
   .carousel-item > div {
-    max-width: 90%; /* Make caption width more flexible */
+    padding: 10px;
+    bottom: 20%; /* Adjust caption position */
   }
 
   .carousel-item h1 {
-    font-size: 32px; /* Scaled down font size for small screens */
+    font-size: 36px; /* Adjust font size for small screens */
   }
 
   .carousel-item p {
-    font-size: 1rem; /* Further reduced font size */
+    font-size: 0.9rem; /* Adjust paragraph font size */
   }
 
   .carousel-item .btn-discover, 
   .carousel-item .btn-book-now {
-    font-size: 1rem;  /* Smaller font size for buttons */
-    padding: 6px 20px; /* Further reduced button padding */
+    font-size: 1rem;
+    padding: 6px 20px; /* Adjust button padding */
   }
 
   button.prev, button.next {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     padding: 10px;
   }
 
   button svg {
-    width: 30px;  /* Slightly smaller icon size on smaller screens */
+    width: 30px; /* Adjust SVG size for small screens */
     height: 30px;
   }
 }
