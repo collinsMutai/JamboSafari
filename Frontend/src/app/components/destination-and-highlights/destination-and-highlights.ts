@@ -1,10 +1,10 @@
 import {
   Component,
   OnInit,
-  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
   Renderer2,
   ElementRef,
-  ChangeDetectorRef,
   HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   standalone: true,
 })
-export class DestinationAndHighlightsComponent implements OnInit, AfterViewInit {
+export class DestinationAndHighlightsComponent implements OnInit, OnDestroy {
   originalImages = [
     { image: 'assets/images/maasai-mara.jpg', alt: 'Maasai Mara', title: 'Maasai Mara', country: 'Kenya', description: 'Big Five sightings and the Great Migration' },
     { image: 'assets/images/lake-nakuru.jpg', alt: 'Lake Nakuru', title: 'Lake Nakuru', country: 'Kenya', description: 'Pink flamingos and rhinos by the water' },
@@ -26,33 +26,15 @@ export class DestinationAndHighlightsComponent implements OnInit, AfterViewInit 
     { image: 'assets/images/zanzibar.jpg', alt: 'Zanzibar', title: 'Zanzibar', country: 'Tanzania', description: 'Spice island paradise & beach retreat' },
   ];
 
-  images: any[] = [];
+  images = [...this.originalImages];
   currentSlideIndex = 0;
-  slideFullWidth = 0;
-  visibleSlides = 4; // Default to 4 slides visible at a time
   autoSlideInterval: any;
 
-  constructor(
-    private renderer: Renderer2,
-    private el: ElementRef,
-    private cdRef: ChangeDetectorRef
-  ) {}
+  constructor(private renderer: Renderer2, private el: ElementRef, private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.images = [...this.originalImages];
-    this.updateSliderWidth();
-  }
-
-  ngAfterViewInit() {
-    this.cdRef.detectChanges();
-    setTimeout(() => {
-      this.updateSliderWidth();
-      this.updateSlider();
-      // Start auto sliding every 5 seconds
-      this.autoSlideInterval = setInterval(() => {
-        this.moveToNextSlide();
-      }, 5000); // 5000 ms = 5 seconds
-    }, 100);
+    // Start the auto-slide functionality
+    this.startAutoSlide();
   }
 
   ngOnDestroy() {
@@ -62,37 +44,25 @@ export class DestinationAndHighlightsComponent implements OnInit, AfterViewInit 
     }
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
-    this.updateVisibleSlides();
-    setTimeout(() => {
-      this.updateSliderWidth();
-      this.updateSlider();
-    }, 100);
+  // Start the auto slide interval
+  startAutoSlide() {
+    this.autoSlideInterval = setInterval(() => {
+      this.moveToNextSlide();
+    }, 5000); // Slide every 5 seconds
   }
 
-  updateVisibleSlides() {
-    const width = window.innerWidth;
-    if (width <= 767) {
-      this.visibleSlides = 1; // 1 slide on mobile
-    } else if (width <= 1024) {
-      this.visibleSlides = 3; // 3 slides on medium screens
-    } else {
-      this.visibleSlides = 4; // 4 slides on large screens (main behavior)
-    }
-  }
-
+  // Move to the next slide
   moveToNextSlide() {
-    const maxIndex = this.images.length - this.visibleSlides;
+    const maxIndex = this.images.length - 1;
     if (this.currentSlideIndex < maxIndex) {
       this.currentSlideIndex++;
     } else {
-      // Reset to the first slide when we reach the last slide
-      this.currentSlideIndex = 0;
+      this.currentSlideIndex = 0; // Loop back to the first slide
     }
     this.updateSlider();
   }
 
+  // Move to the previous slide
   moveToPrevSlide() {
     if (this.currentSlideIndex > 0) {
       this.currentSlideIndex--;
@@ -100,25 +70,18 @@ export class DestinationAndHighlightsComponent implements OnInit, AfterViewInit 
     this.updateSlider();
   }
 
+  // Update the slider's position based on the current slide index
   updateSlider() {
     const sliderWrapper = this.el.nativeElement.querySelector('.slider-wrapper');
     if (sliderWrapper) {
-      const translateX = -this.currentSlideIndex * this.slideFullWidth;
-      this.renderer.setStyle(sliderWrapper, 'transform', `translateX(${translateX}px)`);
+      const translateX = -this.currentSlideIndex * 100; // 100% width of the slide
+      this.renderer.setStyle(sliderWrapper, 'transform', `translateX(${translateX}%)`);
     }
   }
 
-  updateSliderWidth() {
-    const slide = this.el.nativeElement.querySelector('.destination-slide');
-    if (slide) {
-      const style = getComputedStyle(slide);
-      const marginRight = parseFloat(style.marginRight) || 0;
-      const width = slide.offsetWidth; // This is the width of one slide
-      this.slideFullWidth = width + marginRight;
-
-      const sliderWrapper = this.el.nativeElement.querySelector('.slider-wrapper');
-      const totalVisibleWidth = this.visibleSlides * this.slideFullWidth;
-      this.renderer.setStyle(sliderWrapper, 'width', `${totalVisibleWidth}px`);
-    }
+  // Update the visible slides on window resize (though CSS already handles this)
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.updateSlider();
   }
 }
