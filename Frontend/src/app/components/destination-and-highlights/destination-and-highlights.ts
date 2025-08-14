@@ -18,48 +18,12 @@ import { CommonModule } from '@angular/common';
 })
 export class DestinationAndHighlightsComponent implements OnInit, AfterViewInit {
   originalImages = [
-    {
-      image: 'assets/images/maasai-mara.jpg',
-      alt: 'Maasai Mara',
-      title: 'Maasai Mara',
-      country: 'Kenya',
-      description: 'Big Five sightings and the Great Migration',
-    },
-    {
-      image: 'assets/images/lake-nakuru.jpg',
-      alt: 'Lake Nakuru',
-      title: 'Lake Nakuru',
-      country: 'Kenya',
-      description: 'Pink flamingos and rhinos by the water',
-    },
-    {
-      image: 'assets/images/amboseli.jpg',
-      alt: 'Amboseli',
-      title: 'Amboseli',
-      country: 'Kenya',
-      description: 'Majestic elephants under Mt. Kilimanjaro',
-    },
-    {
-      image: 'assets/images/serengeti.jpg',
-      alt: 'Serengeti',
-      title: 'Serengeti',
-      country: 'Tanzania',
-      description: 'Endless plains and epic wildlife scenes',
-    },
-    {
-      image: 'assets/images/ngorongoro.jpg',
-      alt: 'Ngorongoro Crater',
-      title: 'Ngorongoro Crater',
-      country: 'Tanzania',
-      description: 'A world within a crater',
-    },
-    {
-      image: 'assets/images/zanzibar.jpg',
-      alt: 'Zanzibar',
-      title: 'Zanzibar',
-      country: 'Tanzania',
-      description: 'Spice island paradise & beach retreat',
-    },
+    { image: 'assets/images/maasai-mara.jpg', alt: 'Maasai Mara', title: 'Maasai Mara', country: 'Kenya', description: 'Big Five sightings and the Great Migration' },
+    { image: 'assets/images/lake-nakuru.jpg', alt: 'Lake Nakuru', title: 'Lake Nakuru', country: 'Kenya', description: 'Pink flamingos and rhinos by the water' },
+    { image: 'assets/images/amboseli.jpg', alt: 'Amboseli', title: 'Amboseli', country: 'Kenya', description: 'Majestic elephants under Mt. Kilimanjaro' },
+    { image: 'assets/images/serengeti.jpg', alt: 'Serengeti', title: 'Serengeti', country: 'Tanzania', description: 'Endless plains and epic wildlife scenes' },
+    { image: 'assets/images/ngorongoro.jpg', alt: 'Ngorongoro Crater', title: 'Ngorongoro Crater', country: 'Tanzania', description: 'A world within a crater' },
+    { image: 'assets/images/zanzibar.jpg', alt: 'Zanzibar', title: 'Zanzibar', country: 'Tanzania', description: 'Spice island paradise & beach retreat' },
   ];
 
   images: any[] = [];

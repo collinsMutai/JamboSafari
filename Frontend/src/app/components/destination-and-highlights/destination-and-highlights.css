@@ -175,6 +175,7 @@ button svg {
 }
 
 /* Small screens (mobile devices) */
+/*
 @media (max-width: 768px) {
   .destination-slide {
     flex: 0 0 100%;
@@ -198,12 +199,13 @@ button svg {
     font-size: 12px;
   }
 
-  /* Adjust title for small mobile screens */
+  
   .title-container h2 {
-    font-size: 26px; /* Even smaller font size for mobile */
+    font-size: 26px;
   }
 
   /* Ensure images cover the container on mobile */
+  /*
   .destination-image img {
     width: 100%;
     height: 100%;
@@ -211,6 +213,7 @@ button svg {
     object-position: center;
   }
 }
+*/
 
 /* Very small screens (extra small devices) */
 @media (max-width: 480px) {
