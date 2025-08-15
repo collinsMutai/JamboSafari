@@ -1,0 +1,39 @@
+/* Scroll to Top Button */
+.scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;  /* Size of the square */
+  height: 50px; /* Size of the square */
+  background-color: #FFB940;
+  color: white;
+  border: none;
+  border-radius: 10px; /* Rounded corners (you can adjust this value for more or less rounding) */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+  z-index: 9999; /* Ensure it's on top */
+}
+
+.scroll-to-top svg {
+  width: 24px;  /* Icon size */
+  height: 24px; /* Icon size */
+  stroke: white;
+  transition: stroke 0.3s ease;
+}
+
+/* On hover, change background color and icon stroke */
+.scroll-to-top:hover {
+  background-color: #FFD76D;
+}
+
+.scroll-to-top:hover svg {
+  stroke: #2C6E49;
+}
+
+.scroll-to-top:focus {
+  outline: none; /* Remove focus outline */
+}

@@ -141,7 +141,7 @@
 
 /* About Us Container */
 .about-us-container {
-  padding: 80px 100px 40px 100px; /* Increased top padding to 60px */
+  padding: 80px 100px 80px 100px; /* Increased top padding to 60px */
   opacity: 0;
   animation: fadeInUp 1s ease-out forwards;
 }
@@ -192,7 +192,7 @@
 
 @media (max-width: 480px) {
   .about-us-container {
-    padding: 20px 20px; /* Further reduced padding on left/right for small screens */
+    padding: 40px 20px; /* Further reduced padding on left/right for small screens */
   }
 
   .text-column h1 {

@@ -914,12 +914,12 @@ function isSubscriber(value) {
 function hasLift(source) {
   return isFunction(source === null || source === void 0 ? void 0 : source.lift);
 }
-function operate(init) {
+function operate(init2) {
   return (source) => {
     if (hasLift(source)) {
       return source.lift(function(liftedSource) {
         try {
-          return init(liftedSource, this);
+          return init2(liftedSource, this);
         } catch (err) {
           this.error(err);
         }
@@ -1641,8 +1641,8 @@ function of(...args) {
 // node_modules/rxjs/dist/esm/internal/observable/throwError.js
 function throwError(errorOrErrorFactory, scheduler) {
   const errorFactory = isFunction(errorOrErrorFactory) ? errorOrErrorFactory : () => errorOrErrorFactory;
-  const init = (subscriber) => subscriber.error(errorFactory());
-  return new Observable(scheduler ? (subscriber) => scheduler.schedule(init, 0, subscriber) : init);
+  const init2 = (subscriber) => subscriber.error(errorFactory());
+  return new Observable(scheduler ? (subscriber) => scheduler.schedule(init2, 0, subscriber) : init2);
 }
 
 // node_modules/rxjs/dist/esm/internal/util/isObservable.js
@@ -4876,8 +4876,8 @@ var SIMPLE_CHANGES_STORE = "__ngSimpleChanges__";
 function getSimpleChangesStore(instance) {
   return instance[SIMPLE_CHANGES_STORE] || null;
 }
-function setSimpleChangesStore(instance, store2) {
-  return instance[SIMPLE_CHANGES_STORE] = store2;
+function setSimpleChangesStore(instance, store3) {
+  return instance[SIMPLE_CHANGES_STORE] = store3;
 }
 var profilerCallbacks = [];
 var NOOP_PROFILER_REMOVAL2 = () => {
@@ -5957,8 +5957,8 @@ var QueryList = class {
    * See
    * [Array.reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce)
    */
-  reduce(fn, init) {
-    return this._results.reduce(fn, init);
+  reduce(fn, init2) {
+    return this._results.reduce(fn, init2);
   }
   /**
    * See
@@ -7921,7 +7921,7 @@ function getOrCreateComponentTView(def) {
   }
   return tView;
 }
-function createLView(parentLView, tView, context2, flags, host, tHostNode, environment, renderer, injector, embeddedViewInjector, hydrationInfo) {
+function createLView(parentLView, tView, context2, flags, host, tHostNode, environment2, renderer, injector, embeddedViewInjector, hydrationInfo) {
   const lView = tView.blueprint.slice();
   lView[HOST] = host;
   lView[FLAGS] = flags | 4 | 128 | 8 | 64 | 1024;
@@ -7932,7 +7932,7 @@ function createLView(parentLView, tView, context2, flags, host, tHostNode, envir
   ngDevMode && tView.declTNode && parentLView && assertTNodeForLView(tView.declTNode, parentLView);
   lView[PARENT] = lView[DECLARATION_VIEW] = parentLView;
   lView[CONTEXT] = context2;
-  lView[ENVIRONMENT] = environment || parentLView && parentLView[ENVIRONMENT];
+  lView[ENVIRONMENT] = environment2 || parentLView && parentLView[ENVIRONMENT];
   ngDevMode && assertDefined(lView[ENVIRONMENT], "LViewEnvironment is required");
   lView[RENDERER] = renderer || parentLView && parentLView[RENDERER];
   ngDevMode && assertDefined(lView[RENDERER], "Renderer is required");
@@ -8589,8 +8589,8 @@ function markDirtyIfOnPush(lView, viewIndex) {
   }
 }
 function setNgReflectProperty(lView, tNode, attrName, value) {
-  const environment = lView[ENVIRONMENT];
-  if (!environment.ngReflect) {
+  const environment2 = lView[ENVIRONMENT];
+  if (!environment2.ngReflect) {
     return;
   }
   const element = getNativeByTNode(tNode, lView);
@@ -8609,8 +8609,8 @@ function setNgReflectProperty(lView, tNode, attrName, value) {
   }
 }
 function setNgReflectProperties(lView, tView, tNode, publicName, value) {
-  const environment = lView[ENVIRONMENT];
-  if (!environment.ngReflect || !(tNode.type & (3 | 4))) {
+  const environment2 = lView[ENVIRONMENT];
+  if (!environment2.ngReflect || !(tNode.type & (3 | 4))) {
     return;
   }
   const inputConfig = tNode.inputs?.[publicName];
@@ -9061,8 +9061,8 @@ function runEffectsInView(view) {
 }
 var MAXIMUM_REFRESH_RERUNS$1 = 100;
 function detectChangesInternal(lView, mode = 0) {
-  const environment = lView[ENVIRONMENT];
-  const rendererFactory = environment.rendererFactory;
+  const environment2 = lView[ENVIRONMENT];
+  const rendererFactory = environment2.rendererFactory;
   const checkNoChangesMode = !!ngDevMode && isInCheckNoChangesMode();
   if (!checkNoChangesMode) {
     rendererFactory.begin?.();
@@ -11395,11 +11395,11 @@ var ComponentFactory2 = class extends ComponentFactory$1 {
       ngDevMode && verifyNotAnOrphanComponent(cmpDef);
       const rootTView = createRootTView(rootSelectorOrNode, cmpDef, componentBindings, directives);
       const rootViewInjector = createRootViewInjector(cmpDef, environmentInjector || this.ngModule, injector);
-      const environment = createRootLViewEnvironment(rootViewInjector);
-      const hostRenderer = environment.rendererFactory.createRenderer(null, cmpDef);
+      const environment2 = createRootLViewEnvironment(rootViewInjector);
+      const hostRenderer = environment2.rendererFactory.createRenderer(null, cmpDef);
       const hostElement = rootSelectorOrNode ? locateHostElement(hostRenderer, rootSelectorOrNode, cmpDef.encapsulation, rootViewInjector) : createHostElement(cmpDef, hostRenderer);
       const hasInputBindings = componentBindings?.some(isInputBinding) || directives?.some((d) => typeof d !== "function" && d.bindings.some(isInputBinding));
-      const rootLView = createLView(null, rootTView, null, 512 | getInitialLViewFlagsFromDef(cmpDef), null, null, environment, hostRenderer, rootViewInjector, null, retrieveHydrationInfo(
+      const rootLView = createLView(null, rootTView, null, 512 | getInitialLViewFlagsFromDef(cmpDef), null, null, environment2, hostRenderer, rootViewInjector, null, retrieveHydrationInfo(
         hostElement,
         rootViewInjector,
         true
@@ -11443,7 +11443,7 @@ var ComponentFactory2 = class extends ComponentFactory$1 {
   }
 };
 function createRootTView(rootSelectorOrNode, componentDef, componentBindings, directives) {
-  const tAttributes = rootSelectorOrNode ? ["ng-version", "20.1.4"] : (
+  const tAttributes = rootSelectorOrNode ? ["ng-version", "20.1.7"] : (
     // Extract attributes and classes from the first selector only to match VE behavior.
     extractAttrsAndClassesFromSelector(componentDef.selectors[0])
   );
@@ -12246,7 +12246,7 @@ function resolveComponentResources(resourceResolver) {
     let promise = urlMap.get(url);
     if (!promise) {
       const resp = resourceResolver(url);
-      urlMap.set(url, promise = resp.then(unwrapResponse));
+      urlMap.set(url, promise = resp.then((res) => unwrapResponse(url, res)));
     }
     return promise;
   }
@@ -12305,8 +12305,14 @@ function clearResolutionOfComponentResourcesQueue() {
 function isComponentResourceResolutionQueueEmpty() {
   return componentResourceResolutionQueue.size === 0;
 }
-function unwrapResponse(response) {
-  return typeof response == "string" ? response : response.text();
+function unwrapResponse(url, response) {
+  if (typeof response === "string") {
+    return response;
+  }
+  if (response.status !== void 0 && response.status !== 200) {
+    return Promise.reject(new RuntimeError(918, ngDevMode && `Could not load resource: ${url}. Response status: ${response.status}`));
+  }
+  return response.text();
 }
 function componentDefResolved(type) {
   componentDefPendingResolution.delete(type);
@@ -14997,6 +15003,9 @@ function getNodesAndEdgesFromSignalMap(signalMap) {
         label: consumer.debugName ?? consumer.lView?.[HOST]?.tagName?.toLowerCase?.(),
         kind: consumer.kind,
         epoch: consumer.version,
+        // The `lView[CONTEXT]` is a reference to an instance of the component's class.
+        // We get the constructor so that `inspect(.constructor)` shows the component class.
+        debuggableFn: consumer.lView?.[CONTEXT]?.constructor,
         id
       });
     } else {
@@ -21836,7 +21845,7 @@ var Version = class {
     this.patch = parts.slice(2).join(".");
   }
 };
-var VERSION = new Version("20.1.4");
+var VERSION = new Version("20.1.7");
 function compileNgModuleFactory(injector, options, moduleType) {
   ngDevMode && assertNgModuleType(moduleType);
   const moduleFactory = new NgModuleFactory2(moduleType);
@@ -22291,7 +22300,7 @@ function createOrReusePlatformInjector(providers = []) {
 function runPlatformInitializers(injector) {
   const inits = injector.get(PLATFORM_INITIALIZER, null);
   runInInjectionContext(injector, () => {
-    inits?.forEach((init) => init());
+    inits?.forEach((init2) => init2());
   });
 }
 var ChangeDetectorRef = class {
@@ -26963,7 +26972,7 @@ var XhrFactory = class {
 
 // node_modules/@angular/common/fesm2022/common.mjs
 var PLATFORM_BROWSER_ID = "browser";
-var VERSION2 = new Version("20.1.4");
+var VERSION2 = new Version("20.1.7");
 var ViewportScroller = class _ViewportScroller {
   // De-sugared tree-shakable injection
   // See #23917
@@ -29981,7 +29990,7 @@ var HydrationFeatureKind;
   HydrationFeatureKind2[HydrationFeatureKind2["EventReplay"] = 3] = "EventReplay";
   HydrationFeatureKind2[HydrationFeatureKind2["IncrementalHydration"] = 4] = "IncrementalHydration";
 })(HydrationFeatureKind || (HydrationFeatureKind = {}));
-var VERSION3 = new Version("20.1.4");
+var VERSION3 = new Version("20.1.7");
 
 // node_modules/@angular/router/fesm2022/router2.mjs
 var PRIMARY_OUTLET = "primary";
@@ -33266,7 +33275,7 @@ var RouterConfigLoader = class _RouterConfigLoader {
     if (this.onLoadStartListener) {
       this.onLoadStartListener(route);
     }
-    const loadRunner = wrapIntoObservable(runInInjectionContext(injector, () => route.loadComponent())).pipe(map(maybeUnwrapDefaultExport), tap((component) => {
+    const loadRunner = wrapIntoObservable(runInInjectionContext(injector, () => route.loadComponent())).pipe(map(maybeUnwrapDefaultExport), switchMap(maybeResolveResources), tap((component) => {
       if (this.onLoadEndListener) {
         this.onLoadEndListener(route);
       }
@@ -33317,7 +33326,7 @@ var RouterConfigLoader = class _RouterConfigLoader {
   }], null, null);
 })();
 function loadChildren(route, compiler, parentInjector, onLoadEndListener) {
-  return wrapIntoObservable(runInInjectionContext(parentInjector, () => route.loadChildren())).pipe(map(maybeUnwrapDefaultExport), mergeMap((t) => {
+  return wrapIntoObservable(runInInjectionContext(parentInjector, () => route.loadChildren())).pipe(map(maybeUnwrapDefaultExport), switchMap(maybeResolveResources), mergeMap((t) => {
     if (t instanceof NgModuleFactory$1 || Array.isArray(t)) {
       return of(t);
     } else {
@@ -33353,6 +33362,15 @@ function isWrappedDefaultExport(value) {
 }
 function maybeUnwrapDefaultExport(input2) {
   return isWrappedDefaultExport(input2) ? input2["default"] : input2;
+}
+function maybeResolveResources(value) {
+  if (false) {
+    return resolveComponentResources(fetch).catch((error) => {
+      console.error(error);
+      return Promise.resolve();
+    }).then(() => value);
+  }
+  return of(value);
 }
 var UrlHandlingStrategy = class _UrlHandlingStrategy {
   static \u0275fac = function UrlHandlingStrategy_Factory(__ngFactoryType__) {
@@ -35764,7 +35782,7 @@ function provideRouterInitializer() {
 }
 
 // node_modules/@angular/router/fesm2022/router.mjs
-var VERSION4 = new Version("20.1.4");
+var VERSION4 = new Version("20.1.7");
 
 // src/app/components/destination-and-highlights/destination-and-highlights.ts
 function DestinationAndHighlightsComponent_div_15_Template(rf, ctx) {
@@ -35891,7 +35909,7 @@ var DestinationAndHighlightsComponent = class _DestinationAndHighlightsComponent
   static \u0275fac = function DestinationAndHighlightsComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _DestinationAndHighlightsComponent)(\u0275\u0275directiveInject(Renderer2), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(ChangeDetectorRef));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DestinationAndHighlightsComponent, selectors: [["app-destination-and-highlights"]], decls: 16, vars: 1, consts: [[1, "carousel-container"], [1, "title-container"], [1, "button-container"], [1, "prev", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"], [1, "next", 3, "click"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"], [1, "slider-container"], [1, "slider-wrapper"], ["class", "destination-slide", 4, "ngFor", "ngForOf"], [1, "destination-slide"], [1, "destination-card"], [1, "destination-image"], [3, "src", "alt"], [1, "image-country"], [1, "image-title"]], template: function DestinationAndHighlightsComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DestinationAndHighlightsComponent, selectors: [["app-destination-and-highlights"]], decls: 16, vars: 1, consts: [["id", "destinations", 1, "carousel-container"], [1, "title-container"], [1, "button-container"], [1, "prev", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"], [1, "next", 3, "click"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"], [1, "slider-container"], [1, "slider-wrapper"], ["class", "destination-slide", 4, "ngFor", "ngForOf"], [1, "destination-slide"], [1, "destination-card"], [1, "destination-image"], [3, "src", "alt"], [1, "image-country"], [1, "image-title"]], template: function DestinationAndHighlightsComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "h2");
       \u0275\u0275text(3, "\u{1F418} Destinations & Highlights");
@@ -35922,12 +35940,12 @@ var DestinationAndHighlightsComponent = class _DestinationAndHighlightsComponent
       \u0275\u0275advance(15);
       \u0275\u0275property("ngForOf", ctx.images);
     }
-  }, dependencies: [CommonModule, NgForOf], styles: ["\n\n.carousel-container[_ngcontent-%COMP%] {\n  padding: 40px 100px;\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  overflow: hidden;\n}\n.title-container[_ngcontent-%COMP%] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 36px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 15px;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.3s forwards;\n}\n.button-container[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 20px;\n  z-index: 1;\n  width: 100%;\n  padding: 0 20px;\n}\nbutton[_ngcontent-%COMP%] {\n  color: #FFB940;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  transition: background-color 0.3s ease;\n}\nbutton[_ngcontent-%COMP%]:hover {\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbutton[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n}\n.slider-container[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  width: 100%;\n}\n.slider-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  transition: transform 0.3s ease;\n}\n.destination-slide[_ngcontent-%COMP%] {\n  flex: 0 0 calc(25% - 16px);\n  margin-right: 16px;\n  box-sizing: border-box;\n}\n.destination-card[_ngcontent-%COMP%] {\n  height: 300px;\n  width: 100%;\n  margin: 0 auto;\n  overflow: hidden;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  position: relative;\n  opacity: 1;\n  transition: transform 0.3s ease;\n  transform: translateY(0);\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n.destination-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-10px);\n}\n.destination-image[_ngcontent-%COMP%] {\n  position: relative;\n  height: 100%;\n  overflow: hidden;\n}\n.destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n.image-country[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  font-size: 16px;\n  color: white;\n  font-weight: bold;\n  opacity: 1;\n}\n.image-title[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: 10px;\n  left: 10px;\n  color: white;\n  padding: 10px;\n  opacity: 1;\n}\n.image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 18px;\n  font-weight: 600;\n}\n.image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 14px;\n  margin-top: 5px;\n}\n@keyframes _ngcontent-%COMP%_fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 1024px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 80px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    height: 250px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 30px;\n  }\n}\n@media (max-width: 768px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 60px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 220px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 26px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 20px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 100%;\n    margin-right: 0;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 200px;\n  }\n  .slider-container[_ngcontent-%COMP%] {\n    padding: 0 5px;\n  }\n  .button-container[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 22px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 10px;\n  }\n  .destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n@media (max-width: 375px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 30px 15px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    height: 180px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 8px;\n  }\n  .destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n    object-fit: cover;\n    object-position: center;\n  }\n}\n/*# sourceMappingURL=destination-and-highlights.css.map */"] });
+  }, dependencies: [CommonModule, NgForOf], styles: ["\n\n.carousel-container[_ngcontent-%COMP%] {\n  padding: 40px 100px;\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  overflow: hidden;\n}\n.title-container[_ngcontent-%COMP%] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 36px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 15px;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.3s forwards;\n}\n.button-container[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 20px;\n  z-index: 1;\n  width: 100%;\n  padding: 0 20px;\n}\nbutton[_ngcontent-%COMP%] {\n  color: #FFB940;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  transition: background-color 0.3s ease;\n}\nbutton[_ngcontent-%COMP%]:hover {\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbutton[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n}\n.slider-container[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  width: 100%;\n}\n.slider-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  transition: transform 0.3s ease;\n}\n.destination-slide[_ngcontent-%COMP%] {\n  flex: 0 0 calc(25% - 16px);\n  margin-right: 16px;\n  box-sizing: border-box;\n}\n.destination-card[_ngcontent-%COMP%] {\n  height: 300px;\n  width: 100%;\n  margin: 0 auto;\n  overflow: hidden;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  position: relative;\n  opacity: 1;\n  transition: transform 0.3s ease;\n  transform: translateY(0);\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n.destination-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-10px);\n}\n.destination-image[_ngcontent-%COMP%] {\n  position: relative;\n  height: 100%;\n  overflow: hidden;\n}\n.destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n.image-country[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  font-size: 16px;\n  color: white;\n  font-weight: bold;\n  opacity: 1;\n}\n.image-title[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: 10px;\n  left: 10px;\n  color: white;\n  padding: 10px;\n  opacity: 1;\n}\n.image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 18px;\n  font-weight: 600;\n}\n.image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  font-weight: normal;\n  margin-top: 5px;\n}\n@keyframes _ngcontent-%COMP%_fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 1024px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 100px 40px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    height: 250px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 18px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 16px;\n    font-weight: 400;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 30px;\n  }\n}\n@media (max-width: 768px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 60px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 220px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 26px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 20px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 100%;\n    margin-right: 0;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 200px;\n  }\n  .slider-container[_ngcontent-%COMP%] {\n    padding: 0 5px;\n  }\n  .button-container[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 22px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 19px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n@media (max-width: 375px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 30px 15px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    height: 180px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 19px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 15px;\n  }\n  .destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n    object-fit: cover;\n    object-position: center;\n  }\n}\n/*# sourceMappingURL=destination-and-highlights.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DestinationAndHighlightsComponent, [{
     type: Component,
-    args: [{ selector: "app-destination-and-highlights", imports: [CommonModule], standalone: true, template: '<div class="carousel-container">\r\n  <div class="title-container">\r\n    <h2>\u{1F418} Destinations & Highlights</h2>\r\n  </div>\r\n\r\n  <div class="button-container">\r\n    <!-- Previous Button -->\r\n    <button class="prev" (click)="moveToPrevSlide()">\r\n      <svg\r\n        xmlns="http://www.w3.org/2000/svg"\r\n        width="24"\r\n        height="24"\r\n        viewBox="0 0 24 24"\r\n        fill="currentColor"\r\n      >\r\n        <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n        <path\r\n          d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"\r\n        />\r\n      </svg>\r\n    </button>\r\n\r\n    <!-- Next Button -->\r\n    <button class="next" (click)="moveToNextSlide()">\r\n      <svg\r\n        xmlns="http://www.w3.org/2000/svg"\r\n        width="24"\r\n        height="24"\r\n        viewBox="0 0 24 24"\r\n        fill="currentColor"\r\n      >\r\n        <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n        <path\r\n          d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"\r\n        />\r\n      </svg>\r\n    </button>\r\n  </div>\r\n\r\n  <div class="slider-container">\r\n    <div class="slider-wrapper">\r\n      <div\r\n        *ngFor="let image of images; let i = index"\r\n        class="destination-slide"\r\n      >\r\n        <div class="destination-card">\r\n          <div class="destination-image">\r\n            <img [src]="image.image" [alt]="image.alt" />\r\n            <div class="image-country">{{ image.country }}</div>\r\n            <div class="image-title">\r\n              <h3>{{ image.title }}</h3>\r\n              <p>{{ image.description }}</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/destination-and-highlights/destination-and-highlights.css */\n.carousel-container {\n  padding: 40px 100px;\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  overflow: hidden;\n}\n.title-container {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.title-container h2 {\n  font-size: 36px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 15px;\n  animation: fadeInUp 1s ease-out 0.3s forwards;\n}\n.button-container {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 20px;\n  z-index: 1;\n  width: 100%;\n  padding: 0 20px;\n}\nbutton {\n  color: #FFB940;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  transition: background-color 0.3s ease;\n}\nbutton:hover {\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbutton svg {\n  width: 24px;\n  height: 24px;\n}\n.slider-container {\n  position: relative;\n  overflow: hidden;\n  width: 100%;\n}\n.slider-wrapper {\n  display: flex;\n  transition: transform 0.3s ease;\n}\n.destination-slide {\n  flex: 0 0 calc(25% - 16px);\n  margin-right: 16px;\n  box-sizing: border-box;\n}\n.destination-card {\n  height: 300px;\n  width: 100%;\n  margin: 0 auto;\n  overflow: hidden;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  position: relative;\n  opacity: 1;\n  transition: transform 0.3s ease;\n  transform: translateY(0);\n  animation: fadeInUp 1s ease-out forwards;\n}\n.destination-card:hover {\n  transform: translateY(-10px);\n}\n.destination-image {\n  position: relative;\n  height: 100%;\n  overflow: hidden;\n}\n.destination-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n.image-country {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  font-size: 16px;\n  color: white;\n  font-weight: bold;\n  opacity: 1;\n}\n.image-title {\n  position: absolute;\n  bottom: 10px;\n  left: 10px;\n  color: white;\n  padding: 10px;\n  opacity: 1;\n}\n.image-title h3 {\n  font-size: 18px;\n  font-weight: 600;\n}\n.image-title p {\n  font-size: 14px;\n  margin-top: 5px;\n}\n@keyframes fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 1024px) {\n  .carousel-container {\n    padding: 40px 80px;\n  }\n  .destination-slide {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card {\n    height: 250px;\n  }\n  .image-country {\n    font-size: 14px;\n  }\n  .image-title h3 {\n    font-size: 16px;\n  }\n  .image-title p {\n    font-size: 12px;\n  }\n  .title-container h2 {\n    font-size: 30px;\n  }\n}\n@media (max-width: 768px) {\n  .carousel-container {\n    padding: 40px 60px;\n  }\n  .destination-slide {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card {\n    width: 100%;\n    height: 220px;\n  }\n  .image-country {\n    font-size: 14px;\n  }\n  .image-title h3 {\n    font-size: 16px;\n  }\n  .image-title p {\n    font-size: 12px;\n  }\n  .title-container h2 {\n    font-size: 26px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-container {\n    padding: 40px 20px;\n  }\n  .destination-slide {\n    flex: 0 0 100%;\n    margin-right: 0;\n  }\n  .destination-card {\n    width: 100%;\n    height: 200px;\n  }\n  .slider-container {\n    padding: 0 5px;\n  }\n  .button-container {\n    margin-top: 10px;\n  }\n  .title-container h2 {\n    font-size: 22px;\n  }\n  .image-country {\n    font-size: 12px;\n  }\n  .image-title h3 {\n    font-size: 14px;\n  }\n  .image-title p {\n    font-size: 10px;\n  }\n  .destination-image img {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n@media (max-width: 375px) {\n  .carousel-container {\n    padding: 30px 15px;\n  }\n  .destination-card {\n    height: 180px;\n  }\n  .image-title h3 {\n    font-size: 12px;\n  }\n  .image-title p {\n    font-size: 8px;\n  }\n  .destination-image img {\n    object-fit: cover;\n    object-position: center;\n  }\n}\n/*# sourceMappingURL=destination-and-highlights.css.map */\n"] }]
+    args: [{ selector: "app-destination-and-highlights", imports: [CommonModule], standalone: true, template: '<div class="carousel-container" id="destinations">\r\n  <div class="title-container">\r\n    <h2>\u{1F418} Destinations & Highlights</h2>\r\n  </div>\r\n\r\n  <div class="button-container">\r\n    <!-- Previous Button -->\r\n    <button class="prev" (click)="moveToPrevSlide()">\r\n      <svg\r\n        xmlns="http://www.w3.org/2000/svg"\r\n        width="24"\r\n        height="24"\r\n        viewBox="0 0 24 24"\r\n        fill="currentColor"\r\n      >\r\n        <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n        <path\r\n          d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"\r\n        />\r\n      </svg>\r\n    </button>\r\n\r\n    <!-- Next Button -->\r\n    <button class="next" (click)="moveToNextSlide()">\r\n      <svg\r\n        xmlns="http://www.w3.org/2000/svg"\r\n        width="24"\r\n        height="24"\r\n        viewBox="0 0 24 24"\r\n        fill="currentColor"\r\n      >\r\n        <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n        <path\r\n          d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"\r\n        />\r\n      </svg>\r\n    </button>\r\n  </div>\r\n\r\n  <div class="slider-container">\r\n    <div class="slider-wrapper">\r\n      <div\r\n        *ngFor="let image of images; let i = index"\r\n        class="destination-slide"\r\n      >\r\n        <div class="destination-card">\r\n          <div class="destination-image">\r\n            <img [src]="image.image" [alt]="image.alt" />\r\n            <div class="image-country">{{ image.country }}</div>\r\n            <div class="image-title">\r\n              <h3>{{ image.title }}</h3>\r\n              <p>{{ image.description }}</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/destination-and-highlights/destination-and-highlights.css */\n.carousel-container {\n  padding: 40px 100px;\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  overflow: hidden;\n}\n.title-container {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.title-container h2 {\n  font-size: 36px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 15px;\n  animation: fadeInUp 1s ease-out 0.3s forwards;\n}\n.button-container {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 20px;\n  z-index: 1;\n  width: 100%;\n  padding: 0 20px;\n}\nbutton {\n  color: #FFB940;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  transition: background-color 0.3s ease;\n}\nbutton:hover {\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbutton svg {\n  width: 24px;\n  height: 24px;\n}\n.slider-container {\n  position: relative;\n  overflow: hidden;\n  width: 100%;\n}\n.slider-wrapper {\n  display: flex;\n  transition: transform 0.3s ease;\n}\n.destination-slide {\n  flex: 0 0 calc(25% - 16px);\n  margin-right: 16px;\n  box-sizing: border-box;\n}\n.destination-card {\n  height: 300px;\n  width: 100%;\n  margin: 0 auto;\n  overflow: hidden;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  position: relative;\n  opacity: 1;\n  transition: transform 0.3s ease;\n  transform: translateY(0);\n  animation: fadeInUp 1s ease-out forwards;\n}\n.destination-card:hover {\n  transform: translateY(-10px);\n}\n.destination-image {\n  position: relative;\n  height: 100%;\n  overflow: hidden;\n}\n.destination-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n.image-country {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  font-size: 16px;\n  color: white;\n  font-weight: bold;\n  opacity: 1;\n}\n.image-title {\n  position: absolute;\n  bottom: 10px;\n  left: 10px;\n  color: white;\n  padding: 10px;\n  opacity: 1;\n}\n.image-title h3 {\n  font-size: 18px;\n  font-weight: 600;\n}\n.image-title p {\n  font-size: 16px;\n  font-weight: normal;\n  margin-top: 5px;\n}\n@keyframes fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 1024px) {\n  .carousel-container {\n    padding: 100px 40px;\n  }\n  .destination-slide {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card {\n    height: 250px;\n  }\n  .image-country {\n    font-size: 14px;\n  }\n  .image-title h3 {\n    font-size: 18px;\n  }\n  .image-title p {\n    font-size: 16px;\n    font-weight: 400;\n  }\n  .title-container h2 {\n    font-size: 30px;\n  }\n}\n@media (max-width: 768px) {\n  .carousel-container {\n    padding: 40px 60px;\n  }\n  .destination-slide {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card {\n    width: 100%;\n    height: 220px;\n  }\n  .image-country {\n    font-size: 14px;\n  }\n  .image-title h3 {\n    font-size: 16px;\n  }\n  .image-title p {\n    font-size: 12px;\n  }\n  .title-container h2 {\n    font-size: 26px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-container {\n    padding: 40px 20px;\n  }\n  .destination-slide {\n    flex: 0 0 100%;\n    margin-right: 0;\n  }\n  .destination-card {\n    width: 100%;\n    height: 200px;\n  }\n  .slider-container {\n    padding: 0 5px;\n  }\n  .button-container {\n    margin-top: 10px;\n  }\n  .title-container h2 {\n    font-size: 22px;\n  }\n  .image-country {\n    font-size: 12px;\n  }\n  .image-title h3 {\n    font-size: 19px;\n  }\n  .image-title p {\n    font-size: 16px;\n  }\n  .destination-image img {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n@media (max-width: 375px) {\n  .carousel-container {\n    padding: 30px 15px;\n  }\n  .destination-card {\n    height: 180px;\n  }\n  .image-title h3 {\n    font-size: 19px;\n  }\n  .image-title p {\n    font-size: 15px;\n  }\n  .destination-image img {\n    object-fit: cover;\n    object-position: center;\n  }\n}\n/*# sourceMappingURL=destination-and-highlights.css.map */\n"] }]
   }], () => [{ type: Renderer2 }, { type: ElementRef }, { type: ChangeDetectorRef }], null);
 })();
 (() => {
@@ -36028,7 +36046,7 @@ var HeroCarousel = class _HeroCarousel {
   static \u0275fac = function HeroCarousel_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _HeroCarousel)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HeroCarousel, selectors: [["app-hero-carousel"]], decls: 11, vars: 1, consts: [[1, "custom-carousel"], [1, "carousel-container"], ["class", "carousel-item", 3, "active", 4, "ngFor", "ngForOf"], ["type", "button", "aria-label", "Previous", 1, "carousel-control-prev", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-chevron-left"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"], ["type", "button", "aria-label", "Next", 1, "carousel-control-next", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-chevron-right"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"], [1, "carousel-item"], [1, "d-block", "w-100", 3, "src", "alt"], [1, "carousel-caption", "d-md-block"], ["href", "#", 1, "btn-discover"], ["href", "#", 1, "btn-book-now"]], template: function HeroCarousel_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HeroCarousel, selectors: [["app-hero-carousel"]], decls: 11, vars: 1, consts: [["id", "/", 1, "custom-carousel"], [1, "carousel-container"], ["class", "carousel-item", 3, "active", 4, "ngFor", "ngForOf"], ["type", "button", "aria-label", "Previous", 1, "carousel-control-prev", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-chevron-left"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"], ["type", "button", "aria-label", "Next", 1, "carousel-control-next", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-chevron-right"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"], [1, "carousel-item"], [1, "d-block", "w-100", 3, "src", "alt"], [1, "carousel-caption", "d-md-block"], ["href", "#", 1, "btn-discover"], ["href", "#", 1, "btn-book-now"]], template: function HeroCarousel_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "div", 0)(1, "div", 1);
       \u0275\u0275template(2, HeroCarousel_div_2_Template, 11, 8, "div", 2);
@@ -36060,7 +36078,7 @@ var HeroCarousel = class _HeroCarousel {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HeroCarousel, [{
     type: Component,
-    args: [{ selector: "app-hero-carousel", standalone: true, imports: [CommonModule], template: '<div class="custom-carousel">\r\n  <div class="carousel-container">\r\n    <div\r\n      *ngFor="let slide of slides; let i = index"\r\n      class="carousel-item"\r\n      [class.active]="i === currentSlideIndex"\r\n    >\r\n      <img [src]="slide.image" [alt]="slide.title" class="d-block w-100" />\r\n      <div class="carousel-caption d-md-block">\r\n        <h1>{{ slide.title }}</h1>\r\n        <p>{{ slide.description }}</p>\r\n        <!-- First button -->\r\n        <a href="#" class="btn-discover">{{ slide.buttonText }}</a>\r\n        <!-- Second button (Book Now) -->\r\n        <a href="#" class="btn-book-now">{{ slide.bookNowText }}</a>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Custom Carousel Controls with SVG -->\r\n  <button\r\n    class="carousel-control-prev"\r\n    type="button"\r\n    (click)="moveSlide(-1)"\r\n    aria-label="Previous"\r\n  >\r\n    <svg\r\n      xmlns="http://www.w3.org/2000/svg"\r\n      width="24"\r\n      height="24"\r\n      viewBox="0 0 24 24"\r\n      fill="currentColor"\r\n      class="icon icon-tabler icons-tabler-filled icon-tabler-square-chevron-left"\r\n    >\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n      <path\r\n        d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"\r\n      />\r\n    </svg>\r\n  </button>\r\n\r\n  <button\r\n    class="carousel-control-next"\r\n    type="button"\r\n    (click)="moveSlide(1)"\r\n    aria-label="Next"\r\n  >\r\n    <svg\r\n      xmlns="http://www.w3.org/2000/svg"\r\n      width="24"\r\n      height="24"\r\n      viewBox="0 0 24 24"\r\n      fill="currentColor"\r\n      class="icon icon-tabler icons-tabler-filled icon-tabler-square-chevron-right"\r\n    >\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n      <path\r\n        d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"\r\n      />\r\n    </svg>\r\n  </button>\r\n</div>\r\n', styles: ["/* src/app/components/hero-carousel/hero-carousel.css */\n.custom-carousel {\n  position: relative;\n  width: 100%;\n  height: 100vh;\n  overflow: hidden;\n}\n.carousel-container {\n  display: flex;\n  transition: transform 1s ease-in-out;\n}\n.carousel-item {\n  flex: 0 0 100%;\n  position: relative;\n  height: 100vh;\n  opacity: 0;\n  transition: opacity 1s ease-out;\n}\n.carousel-item.active {\n  opacity: 1;\n}\n.carousel-item img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center center;\n  animation: zoomInOut 10s ease-in-out infinite;\n}\n.carousel-item > div {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  text-align: center;\n  color: white;\n  z-index: 10;\n  width: 100%;\n  max-width: 800px;\n  padding: 20px;\n  border-radius: 10px;\n  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);\n  opacity: 0;\n  animation: fadeInText 1s ease-out 1s forwards;\n}\n@keyframes fadeInText {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.carousel-item h1 {\n  font-size: 80px;\n  margin-bottom: 15px;\n  font-weight: bold;\n}\n.carousel-item p {\n  font-size: 1.1rem;\n  margin-bottom: 20px;\n  max-width: 90%;\n  margin-left: auto;\n  margin-right: auto;\n}\n.carousel-item .btn-discover {\n  padding: 10px 30px;\n  font-size: 1.4rem;\n  background-color: #2C6E49;\n  color: white;\n  border: none;\n  border-radius: 5px;\n  text-decoration: none;\n  transition: background-color 0.3s ease;\n}\n.carousel-item .btn-discover:hover {\n  background-color: #6A7F41;\n}\n.carousel-item .btn-book-now {\n  padding: 10px 30px;\n  font-size: 1.4rem;\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  border-radius: 5px;\n  text-decoration: none;\n  margin-left: 20px;\n  transition: background-color 0.3s ease;\n}\n.carousel-item .btn-book-now:hover {\n  background-color: #FFD76D;\n}\nbutton.prev,\nbutton.next {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  background-color: #fff !important;\n  color: white;\n  font-size: 2rem;\n  border: none;\n  padding: 15px;\n  cursor: pointer;\n  z-index: 10;\n  border-radius: 50%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  transition: transform 0.2s ease;\n}\nbutton.prev {\n  left: 10px;\n}\nbutton.next {\n  right: 10px;\n}\nbutton svg {\n  width: 40px;\n  height: 40px;\n}\nbutton:hover {\n  transform: scale(1.1);\n  color: #FFD76D;\n}\nbutton:focus {\n  outline: none;\n}\n@media (max-width: 768px) {\n  .carousel-item {\n    height: 100vh;\n  }\n  .carousel-item img {\n    height: 100%;\n  }\n  .carousel-item > div {\n    padding: 15px;\n    bottom: 15%;\n  }\n  .carousel-item h1 {\n    font-size: 55px;\n  }\n  .carousel-item p {\n    font-size: 1rem;\n  }\n  .carousel-item .btn-discover,\n  .carousel-item .btn-book-now {\n    font-size: 1.2rem;\n    padding: 8px 25px;\n  }\n  button.prev,\n  button.next {\n    font-size: 1.8rem;\n    padding: 12px;\n  }\n  button svg {\n    width: 35px;\n    height: 35px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-item {\n    height: 100vh;\n  }\n  .carousel-item img {\n    height: 100%;\n  }\n  .carousel-item > div {\n    padding: 10px;\n    bottom: 20%;\n  }\n  .carousel-item h1 {\n    font-size: 36px;\n  }\n  .carousel-item p {\n    font-size: 0.9rem;\n  }\n  .carousel-item .btn-discover,\n  .carousel-item .btn-book-now {\n    font-size: 1rem;\n    padding: 6px 20px;\n  }\n  button.prev,\n  button.next {\n    font-size: 1.6rem;\n    padding: 10px;\n  }\n  button svg {\n    width: 30px;\n    height: 30px;\n  }\n}\n/*# sourceMappingURL=hero-carousel.css.map */\n"] }]
+    args: [{ selector: "app-hero-carousel", standalone: true, imports: [CommonModule], template: '<div class="custom-carousel" id="/">\r\n  <div class="carousel-container">\r\n    <div\r\n      *ngFor="let slide of slides; let i = index"\r\n      class="carousel-item"\r\n      [class.active]="i === currentSlideIndex"\r\n    >\r\n      <img [src]="slide.image" [alt]="slide.title" class="d-block w-100" />\r\n      <div class="carousel-caption d-md-block">\r\n        <h1>{{ slide.title }}</h1>\r\n        <p>{{ slide.description }}</p>\r\n        <!-- First button -->\r\n        <a href="#" class="btn-discover">{{ slide.buttonText }}</a>\r\n        <!-- Second button (Book Now) -->\r\n        <a href="#" class="btn-book-now">{{ slide.bookNowText }}</a>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Custom Carousel Controls with SVG -->\r\n  <button\r\n    class="carousel-control-prev"\r\n    type="button"\r\n    (click)="moveSlide(-1)"\r\n    aria-label="Previous"\r\n  >\r\n    <svg\r\n      xmlns="http://www.w3.org/2000/svg"\r\n      width="24"\r\n      height="24"\r\n      viewBox="0 0 24 24"\r\n      fill="currentColor"\r\n      class="icon icon-tabler icons-tabler-filled icon-tabler-square-chevron-left"\r\n    >\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n      <path\r\n        d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"\r\n      />\r\n    </svg>\r\n  </button>\r\n\r\n  <button\r\n    class="carousel-control-next"\r\n    type="button"\r\n    (click)="moveSlide(1)"\r\n    aria-label="Next"\r\n  >\r\n    <svg\r\n      xmlns="http://www.w3.org/2000/svg"\r\n      width="24"\r\n      height="24"\r\n      viewBox="0 0 24 24"\r\n      fill="currentColor"\r\n      class="icon icon-tabler icons-tabler-filled icon-tabler-square-chevron-right"\r\n    >\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n      <path\r\n        d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"\r\n      />\r\n    </svg>\r\n  </button>\r\n</div>\r\n', styles: ["/* src/app/components/hero-carousel/hero-carousel.css */\n.custom-carousel {\n  position: relative;\n  width: 100%;\n  height: 100vh;\n  overflow: hidden;\n}\n.carousel-container {\n  display: flex;\n  transition: transform 1s ease-in-out;\n}\n.carousel-item {\n  flex: 0 0 100%;\n  position: relative;\n  height: 100vh;\n  opacity: 0;\n  transition: opacity 1s ease-out;\n}\n.carousel-item.active {\n  opacity: 1;\n}\n.carousel-item img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center center;\n  animation: zoomInOut 10s ease-in-out infinite;\n}\n.carousel-item > div {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  text-align: center;\n  color: white;\n  z-index: 10;\n  width: 100%;\n  max-width: 800px;\n  padding: 20px;\n  border-radius: 10px;\n  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);\n  opacity: 0;\n  animation: fadeInText 1s ease-out 1s forwards;\n}\n@keyframes fadeInText {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.carousel-item h1 {\n  font-size: 80px;\n  margin-bottom: 15px;\n  font-weight: bold;\n}\n.carousel-item p {\n  font-size: 1.1rem;\n  margin-bottom: 20px;\n  max-width: 90%;\n  margin-left: auto;\n  margin-right: auto;\n}\n.carousel-item .btn-discover {\n  padding: 10px 30px;\n  font-size: 1.4rem;\n  background-color: #2C6E49;\n  color: white;\n  border: none;\n  border-radius: 5px;\n  text-decoration: none;\n  transition: background-color 0.3s ease;\n}\n.carousel-item .btn-discover:hover {\n  background-color: #6A7F41;\n}\n.carousel-item .btn-book-now {\n  padding: 10px 30px;\n  font-size: 1.4rem;\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  border-radius: 5px;\n  text-decoration: none;\n  margin-left: 20px;\n  transition: background-color 0.3s ease;\n}\n.carousel-item .btn-book-now:hover {\n  background-color: #FFD76D;\n}\nbutton.prev,\nbutton.next {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  background-color: #fff !important;\n  color: white;\n  font-size: 2rem;\n  border: none;\n  padding: 15px;\n  cursor: pointer;\n  z-index: 10;\n  border-radius: 50%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  transition: transform 0.2s ease;\n}\nbutton.prev {\n  left: 10px;\n}\nbutton.next {\n  right: 10px;\n}\nbutton svg {\n  width: 40px;\n  height: 40px;\n}\nbutton:hover {\n  transform: scale(1.1);\n  color: #FFD76D;\n}\nbutton:focus {\n  outline: none;\n}\n@media (max-width: 768px) {\n  .carousel-item {\n    height: 100vh;\n  }\n  .carousel-item img {\n    height: 100%;\n  }\n  .carousel-item > div {\n    padding: 15px;\n    bottom: 15%;\n  }\n  .carousel-item h1 {\n    font-size: 55px;\n  }\n  .carousel-item p {\n    font-size: 1rem;\n  }\n  .carousel-item .btn-discover,\n  .carousel-item .btn-book-now {\n    font-size: 1.2rem;\n    padding: 8px 25px;\n  }\n  button.prev,\n  button.next {\n    font-size: 1.8rem;\n    padding: 12px;\n  }\n  button svg {\n    width: 35px;\n    height: 35px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-item {\n    height: 100vh;\n  }\n  .carousel-item img {\n    height: 100%;\n  }\n  .carousel-item > div {\n    padding: 10px;\n    bottom: 20%;\n  }\n  .carousel-item h1 {\n    font-size: 36px;\n  }\n  .carousel-item p {\n    font-size: 0.9rem;\n  }\n  .carousel-item .btn-discover,\n  .carousel-item .btn-book-now {\n    font-size: 1rem;\n    padding: 6px 20px;\n  }\n  button.prev,\n  button.next {\n    font-size: 1.6rem;\n    padding: 10px;\n  }\n  button svg {\n    width: 30px;\n    height: 30px;\n  }\n}\n/*# sourceMappingURL=hero-carousel.css.map */\n"] }]
   }], null, null);
 })();
 (() => {
@@ -36122,7 +36140,7 @@ var AboutUs = class _AboutUs {
         return ctx.onWindowScroll();
       }, \u0275\u0275resolveWindow);
     }
-  }, decls: 60, vars: 0, consts: [[1, "about-us-container", "fade-section"], [1, "welcome-section", "fade-section"], [1, "text-column"], [1, "image-column"], ["src", "assets/images/gallery2.jpeg", "alt", "Safari", 1, "safari-image"], [1, "why-choose-us", "fade-section"], [1, "cards"], [1, "card"], ["src", "assets/images/faithinspiredtravel.jpeg", "alt", "Faith-Inspired Travel", 1, "card-icon"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z"], ["src", "assets/images/maasailocalcommunities.jpeg", "alt", "Authentic Experiences", 1, "card-icon"], ["src", "assets/images/expertguidedtour.jpeg", "alt", "Expert-Guided Tours", 1, "card-icon"], ["src", "assets/images/maasaimara1.jpeg", "alt", "Comfort & Safety", 1, "card-icon"], ["src", "assets/images/custompackages.jpeg", "alt", "Custom Packages", 1, "card-icon"]], template: function AboutUs_Template(rf, ctx) {
+  }, decls: 60, vars: 0, consts: [["id", "about", 1, "about-us-container", "fade-section"], [1, "welcome-section", "fade-section"], [1, "text-column"], [1, "image-column"], ["src", "assets/images/gallery2.jpeg", "alt", "Safari", 1, "safari-image"], [1, "why-choose-us", "fade-section"], [1, "cards"], [1, "card"], ["src", "assets/images/faithinspiredtravel.jpeg", "alt", "Faith-Inspired Travel", 1, "card-icon"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z"], ["src", "assets/images/maasailocalcommunities.jpeg", "alt", "Authentic Experiences", 1, "card-icon"], ["src", "assets/images/expertguidedtour.jpeg", "alt", "Expert-Guided Tours", 1, "card-icon"], ["src", "assets/images/maasaimara1.jpeg", "alt", "Comfort & Safety", 1, "card-icon"], ["src", "assets/images/custompackages.jpeg", "alt", "Custom Packages", 1, "card-icon"]], template: function AboutUs_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275domElementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h1");
       \u0275\u0275text(4, "\u{1F9ED} Welcome to Jambo Safari!");
@@ -36205,12 +36223,12 @@ var AboutUs = class _AboutUs {
       \u0275\u0275text(59, "Ideal for individuals, families, youth, church groups, medical teams, or Study Abroad groups.");
       \u0275\u0275domElementEnd()()()()();
     }
-  }, styles: ["\n\n.card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  fill: #FFB940;\n}\n.welcome-section[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  height: auto;\n  animation: _ngcontent-%COMP%_slideInUp 1s ease-out;\n}\n.text-column[_ngcontent-%COMP%] {\n  flex: 1;\n  text-align: left;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n.text-column[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 15px;\n}\n.text-column[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 18px;\n  line-height: 1.6;\n  color: #555;\n  max-width: 600px;\n  margin-bottom: 20px;\n}\n.text-column[_ngcontent-%COMP%]   p[_ngcontent-%COMP%]:first-of-type {\n  color: #FFB940;\n  font-weight: 600;\n}\n.image-column[_ngcontent-%COMP%] {\n  flex: 1;\n  max-width: 45%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.3s forwards;\n}\n.safari-image[_ngcontent-%COMP%] {\n  width: 100%;\n  height: auto;\n  object-fit: cover;\n  max-width: 500px;\n  max-height: 400px;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  margin-top: 20px;\n}\n.divider[_ngcontent-%COMP%] {\n  border: 0;\n  border-top: 2px solid #FFB940;\n  margin: 30px 0;\n}\n.why-choose-us[_ngcontent-%COMP%] {\n  background-color: #fff;\n  padding: 80px 20px 20px 20px;\n  border: none;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.5s forwards;\n}\n.why-choose-us[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 28px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  text-align: center;\n}\n.cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n  padding-top: 30px;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.7s forwards;\n}\n.card[_ngcontent-%COMP%] {\n  background-color: #f9f9f9;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  min-height: 300px;\n  overflow: hidden;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n.card[_ngcontent-%COMP%]   .card-icon[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 8px;\n  margin-bottom: 0;\n}\n.card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-size: 18px;\n  color: #2C6E49;\n  margin: 15px 0 10px 0;\n  font-weight: 600;\n}\n.card[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  line-height: 1.6;\n  text-align: center;\n  flex-grow: 1;\n  padding: 0 15px 15px;\n}\n.about-us-container[_ngcontent-%COMP%] {\n  padding: 80px 100px 40px 100px;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n@media (max-width: 768px) {\n  .about-us-container[_ngcontent-%COMP%] {\n    padding: 40px 30px;\n  }\n  .welcome-section[_ngcontent-%COMP%] {\n    flex-direction: column;\n    text-align: center;\n  }\n  .image-column[_ngcontent-%COMP%] {\n    width: 100%;\n    max-width: 100%;\n    margin-top: 20px;\n  }\n  .safari-image[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 250px;\n    object-fit: cover;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .card[_ngcontent-%COMP%] {\n    min-height: 350px;\n  }\n  .card[_ngcontent-%COMP%]   .card-icon[_ngcontent-%COMP%] {\n    height: 180px;\n  }\n  .card[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    padding: 0 10px 10px;\n  }\n  .why-choose-us[_ngcontent-%COMP%] {\n    padding: 60px 15px 15px 15px;\n  }\n}\n@media (max-width: 480px) {\n  .about-us-container[_ngcontent-%COMP%] {\n    padding: 20px 20px;\n  }\n  .text-column[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .text-column[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .safari-image[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 200px;\n    object-fit: cover;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n    padding-top: 0px;\n  }\n  .card[_ngcontent-%COMP%] {\n    min-height: 380px;\n  }\n  .card[_ngcontent-%COMP%]   .card-icon[_ngcontent-%COMP%] {\n    height: 220px;\n    margin-bottom: 10px;\n  }\n  .card[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    padding: 0 10px 15px;\n  }\n  .why-choose-us[_ngcontent-%COMP%] {\n    padding: 40px 0px 10px 0px;\n  }\n}\n@keyframes _ngcontent-%COMP%_slideInUp {\n  0% {\n    transform: translateY(30px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n}\n@keyframes _ngcontent-%COMP%_fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(20px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=about-us.css.map */"] });
+  }, styles: ["\n\n.card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  fill: #FFB940;\n}\n.welcome-section[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  height: auto;\n  animation: _ngcontent-%COMP%_slideInUp 1s ease-out;\n}\n.text-column[_ngcontent-%COMP%] {\n  flex: 1;\n  text-align: left;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n.text-column[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 15px;\n}\n.text-column[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 18px;\n  line-height: 1.6;\n  color: #555;\n  max-width: 600px;\n  margin-bottom: 20px;\n}\n.text-column[_ngcontent-%COMP%]   p[_ngcontent-%COMP%]:first-of-type {\n  color: #FFB940;\n  font-weight: 600;\n}\n.image-column[_ngcontent-%COMP%] {\n  flex: 1;\n  max-width: 45%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.3s forwards;\n}\n.safari-image[_ngcontent-%COMP%] {\n  width: 100%;\n  height: auto;\n  object-fit: cover;\n  max-width: 500px;\n  max-height: 400px;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  margin-top: 20px;\n}\n.divider[_ngcontent-%COMP%] {\n  border: 0;\n  border-top: 2px solid #FFB940;\n  margin: 30px 0;\n}\n.why-choose-us[_ngcontent-%COMP%] {\n  background-color: #fff;\n  padding: 80px 20px 20px 20px;\n  border: none;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.5s forwards;\n}\n.why-choose-us[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 28px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  text-align: center;\n}\n.cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n  padding-top: 30px;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.7s forwards;\n}\n.card[_ngcontent-%COMP%] {\n  background-color: #f9f9f9;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  min-height: 300px;\n  overflow: hidden;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n.card[_ngcontent-%COMP%]   .card-icon[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 8px;\n  margin-bottom: 0;\n}\n.card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-size: 18px;\n  color: #2C6E49;\n  margin: 15px 0 10px 0;\n  font-weight: 600;\n}\n.card[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  line-height: 1.6;\n  text-align: center;\n  flex-grow: 1;\n  padding: 0 15px 15px;\n}\n.about-us-container[_ngcontent-%COMP%] {\n  padding: 80px 100px 80px 100px;\n  opacity: 0;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n@media (max-width: 768px) {\n  .about-us-container[_ngcontent-%COMP%] {\n    padding: 40px 30px;\n  }\n  .welcome-section[_ngcontent-%COMP%] {\n    flex-direction: column;\n    text-align: center;\n  }\n  .image-column[_ngcontent-%COMP%] {\n    width: 100%;\n    max-width: 100%;\n    margin-top: 20px;\n  }\n  .safari-image[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 250px;\n    object-fit: cover;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .card[_ngcontent-%COMP%] {\n    min-height: 350px;\n  }\n  .card[_ngcontent-%COMP%]   .card-icon[_ngcontent-%COMP%] {\n    height: 180px;\n  }\n  .card[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    padding: 0 10px 10px;\n  }\n  .why-choose-us[_ngcontent-%COMP%] {\n    padding: 60px 15px 15px 15px;\n  }\n}\n@media (max-width: 480px) {\n  .about-us-container[_ngcontent-%COMP%] {\n    padding: 40px 20px;\n  }\n  .text-column[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .text-column[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .safari-image[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 200px;\n    object-fit: cover;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n    padding-top: 0px;\n  }\n  .card[_ngcontent-%COMP%] {\n    min-height: 380px;\n  }\n  .card[_ngcontent-%COMP%]   .card-icon[_ngcontent-%COMP%] {\n    height: 220px;\n    margin-bottom: 10px;\n  }\n  .card[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    padding: 0 10px 15px;\n  }\n  .why-choose-us[_ngcontent-%COMP%] {\n    padding: 40px 0px 10px 0px;\n  }\n}\n@keyframes _ngcontent-%COMP%_slideInUp {\n  0% {\n    transform: translateY(30px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n}\n@keyframes _ngcontent-%COMP%_fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(20px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=about-us.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AboutUs, [{
     type: Component,
-    args: [{ selector: "app-about-us", template: '<div class="about-us-container fade-section">\r\n  <!-- Welcome Section with two columns -->\r\n  <div class="welcome-section fade-section">\r\n    <div class="text-column">\r\n      <h1>\u{1F9ED} Welcome to Jambo Safari!</h1>\r\n      <p>Karibu sana!</p>\r\n      <p>\r\n        Jambo Safari invites you on a life-changing journey through Africa\u2019s breathtaking landscapes, wildlife-filled plains, and vibrant cultures.\r\n        More than a trip\u2014it\u2019s an adventure of the soul, where creation meets Creator in every sunrise, lion\u2019s roar, and Maasai smile.\r\n      </p>\r\n    </div>\r\n    \r\n    <!-- Right Column with Image -->\r\n    <div class="image-column">\r\n      <img src="assets/images/gallery2.jpeg" alt="Safari" class="safari-image">\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Why Choose Us Section -->\r\n  <div class="why-choose-us fade-section">\r\n    <h2>\u{1F30D} Why Choose Jambo Safari?</h2>\r\n    \r\n  <div class="cards">\r\n  <div class="card">\r\n    <img src="assets/images/faithinspiredtravel.jpeg" alt="Faith-Inspired Travel" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Faith-Inspired Travel</strong>\r\n    <p>Creation reveals the glory of God (Romans 1:20).</p>\r\n  </div>\r\n  <div class="card">\r\n    <img src="assets/images/maasailocalcommunities.jpeg" alt="Authentic Experiences" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Authentic Experiences</strong>\r\n    <p>Local communities, traditional food, music, and crafts.</p>\r\n  </div>\r\n  <div class="card">\r\n    <img src="assets/images/expertguidedtour.jpeg" alt="Expert-Guided Tours" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Expert-Guided Tours</strong>\r\n    <p>Trained local guides fluent in English and Swahili.</p>\r\n  </div>\r\n  <div class="card">\r\n    <img src="assets/images/maasaimara1.jpeg" alt="Comfort & Safety" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Comfort & Safety</strong>\r\n    <p>Eco-lodges, reliable transport, and seamless logistics.</p>\r\n  </div>\r\n  <div class="card">\r\n    <img src="assets/images/custompackages.jpeg" alt="Custom Packages" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Custom Packages</strong>\r\n    <p>Ideal for individuals, families, youth, church groups, medical teams, or Study Abroad groups.</p>\r\n  </div>\r\n</div>\r\n\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/about-us/about-us.css */\n.card strong svg {\n  fill: #FFB940;\n}\n.welcome-section {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  height: auto;\n  animation: slideInUp 1s ease-out;\n}\n.text-column {\n  flex: 1;\n  text-align: left;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out forwards;\n}\n.text-column h1 {\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 15px;\n}\n.text-column p {\n  font-size: 18px;\n  line-height: 1.6;\n  color: #555;\n  max-width: 600px;\n  margin-bottom: 20px;\n}\n.text-column p:first-of-type {\n  color: #FFB940;\n  font-weight: 600;\n}\n.image-column {\n  flex: 1;\n  max-width: 45%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out 0.3s forwards;\n}\n.safari-image {\n  width: 100%;\n  height: auto;\n  object-fit: cover;\n  max-width: 500px;\n  max-height: 400px;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  margin-top: 20px;\n}\n.divider {\n  border: 0;\n  border-top: 2px solid #FFB940;\n  margin: 30px 0;\n}\n.why-choose-us {\n  background-color: #fff;\n  padding: 80px 20px 20px 20px;\n  border: none;\n  animation: fadeInUp 1s ease-out 0.5s forwards;\n}\n.why-choose-us h2 {\n  font-size: 28px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  text-align: center;\n}\n.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n  padding-top: 30px;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out 0.7s forwards;\n}\n.card {\n  background-color: #f9f9f9;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  min-height: 300px;\n  overflow: hidden;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out forwards;\n}\n.card .card-icon {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 8px;\n  margin-bottom: 0;\n}\n.card strong {\n  font-size: 18px;\n  color: #2C6E49;\n  margin: 15px 0 10px 0;\n  font-weight: 600;\n}\n.card p {\n  font-size: 16px;\n  color: #555;\n  line-height: 1.6;\n  text-align: center;\n  flex-grow: 1;\n  padding: 0 15px 15px;\n}\n.about-us-container {\n  padding: 80px 100px 40px 100px;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out forwards;\n}\n@media (max-width: 768px) {\n  .about-us-container {\n    padding: 40px 30px;\n  }\n  .welcome-section {\n    flex-direction: column;\n    text-align: center;\n  }\n  .image-column {\n    width: 100%;\n    max-width: 100%;\n    margin-top: 20px;\n  }\n  .safari-image {\n    width: 100%;\n    height: 250px;\n    object-fit: cover;\n  }\n  .cards {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .card {\n    min-height: 350px;\n  }\n  .card .card-icon {\n    height: 180px;\n  }\n  .card p {\n    padding: 0 10px 10px;\n  }\n  .why-choose-us {\n    padding: 60px 15px 15px 15px;\n  }\n}\n@media (max-width: 480px) {\n  .about-us-container {\n    padding: 20px 20px;\n  }\n  .text-column h1 {\n    font-size: 28px;\n  }\n  .text-column p {\n    font-size: 16px;\n  }\n  .safari-image {\n    width: 100%;\n    height: 200px;\n    object-fit: cover;\n  }\n  .cards {\n    grid-template-columns: 1fr;\n    padding-top: 0px;\n  }\n  .card {\n    min-height: 380px;\n  }\n  .card .card-icon {\n    height: 220px;\n    margin-bottom: 10px;\n  }\n  .card p {\n    padding: 0 10px 15px;\n  }\n  .why-choose-us {\n    padding: 40px 0px 10px 0px;\n  }\n}\n@keyframes slideInUp {\n  0% {\n    transform: translateY(30px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n}\n@keyframes fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(20px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=about-us.css.map */\n"] }]
+    args: [{ selector: "app-about-us", template: '<div class="about-us-container fade-section" id="about">\r\n  <!-- Welcome Section with two columns -->\r\n  <div class="welcome-section fade-section">\r\n    <div class="text-column">\r\n      <h1>\u{1F9ED} Welcome to Jambo Safari!</h1>\r\n      <p>Karibu sana!</p>\r\n      <p>\r\n        Jambo Safari invites you on a life-changing journey through Africa\u2019s breathtaking landscapes, wildlife-filled plains, and vibrant cultures.\r\n        More than a trip\u2014it\u2019s an adventure of the soul, where creation meets Creator in every sunrise, lion\u2019s roar, and Maasai smile.\r\n      </p>\r\n    </div>\r\n    \r\n    <!-- Right Column with Image -->\r\n    <div class="image-column">\r\n      <img src="assets/images/gallery2.jpeg" alt="Safari" class="safari-image">\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Why Choose Us Section -->\r\n  <div class="why-choose-us fade-section">\r\n    <h2>\u{1F30D} Why Choose Jambo Safari?</h2>\r\n    \r\n  <div class="cards">\r\n  <div class="card">\r\n    <img src="assets/images/faithinspiredtravel.jpeg" alt="Faith-Inspired Travel" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Faith-Inspired Travel</strong>\r\n    <p>Creation reveals the glory of God (Romans 1:20).</p>\r\n  </div>\r\n  <div class="card">\r\n    <img src="assets/images/maasailocalcommunities.jpeg" alt="Authentic Experiences" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Authentic Experiences</strong>\r\n    <p>Local communities, traditional food, music, and crafts.</p>\r\n  </div>\r\n  <div class="card">\r\n    <img src="assets/images/expertguidedtour.jpeg" alt="Expert-Guided Tours" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Expert-Guided Tours</strong>\r\n    <p>Trained local guides fluent in English and Swahili.</p>\r\n  </div>\r\n  <div class="card">\r\n    <img src="assets/images/maasaimara1.jpeg" alt="Comfort & Safety" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Comfort & Safety</strong>\r\n    <p>Eco-lodges, reliable transport, and seamless logistics.</p>\r\n  </div>\r\n  <div class="card">\r\n    <img src="assets/images/custompackages.jpeg" alt="Custom Packages" class="card-icon">\r\n    <strong><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-square-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.333 2c1.96 0 3.56 1.537 3.662 3.472l.005 .195v12.666c0 1.96 -1.537 3.56 -3.472 3.662l-.195 .005h-12.666a3.667 3.667 0 0 1 -3.662 -3.472l-.005 -.195v-12.666c0 -1.96 1.537 -3.56 3.472 -3.662l.195 -.005h12.666zm-2.626 7.293a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg> Custom Packages</strong>\r\n    <p>Ideal for individuals, families, youth, church groups, medical teams, or Study Abroad groups.</p>\r\n  </div>\r\n</div>\r\n\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/about-us/about-us.css */\n.card strong svg {\n  fill: #FFB940;\n}\n.welcome-section {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  height: auto;\n  animation: slideInUp 1s ease-out;\n}\n.text-column {\n  flex: 1;\n  text-align: left;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out forwards;\n}\n.text-column h1 {\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 15px;\n}\n.text-column p {\n  font-size: 18px;\n  line-height: 1.6;\n  color: #555;\n  max-width: 600px;\n  margin-bottom: 20px;\n}\n.text-column p:first-of-type {\n  color: #FFB940;\n  font-weight: 600;\n}\n.image-column {\n  flex: 1;\n  max-width: 45%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out 0.3s forwards;\n}\n.safari-image {\n  width: 100%;\n  height: auto;\n  object-fit: cover;\n  max-width: 500px;\n  max-height: 400px;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  margin-top: 20px;\n}\n.divider {\n  border: 0;\n  border-top: 2px solid #FFB940;\n  margin: 30px 0;\n}\n.why-choose-us {\n  background-color: #fff;\n  padding: 80px 20px 20px 20px;\n  border: none;\n  animation: fadeInUp 1s ease-out 0.5s forwards;\n}\n.why-choose-us h2 {\n  font-size: 28px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  text-align: center;\n}\n.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n  padding-top: 30px;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out 0.7s forwards;\n}\n.card {\n  background-color: #f9f9f9;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: flex-start;\n  min-height: 300px;\n  overflow: hidden;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out forwards;\n}\n.card .card-icon {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 8px;\n  margin-bottom: 0;\n}\n.card strong {\n  font-size: 18px;\n  color: #2C6E49;\n  margin: 15px 0 10px 0;\n  font-weight: 600;\n}\n.card p {\n  font-size: 16px;\n  color: #555;\n  line-height: 1.6;\n  text-align: center;\n  flex-grow: 1;\n  padding: 0 15px 15px;\n}\n.about-us-container {\n  padding: 80px 100px 80px 100px;\n  opacity: 0;\n  animation: fadeInUp 1s ease-out forwards;\n}\n@media (max-width: 768px) {\n  .about-us-container {\n    padding: 40px 30px;\n  }\n  .welcome-section {\n    flex-direction: column;\n    text-align: center;\n  }\n  .image-column {\n    width: 100%;\n    max-width: 100%;\n    margin-top: 20px;\n  }\n  .safari-image {\n    width: 100%;\n    height: 250px;\n    object-fit: cover;\n  }\n  .cards {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .card {\n    min-height: 350px;\n  }\n  .card .card-icon {\n    height: 180px;\n  }\n  .card p {\n    padding: 0 10px 10px;\n  }\n  .why-choose-us {\n    padding: 60px 15px 15px 15px;\n  }\n}\n@media (max-width: 480px) {\n  .about-us-container {\n    padding: 40px 20px;\n  }\n  .text-column h1 {\n    font-size: 28px;\n  }\n  .text-column p {\n    font-size: 16px;\n  }\n  .safari-image {\n    width: 100%;\n    height: 200px;\n    object-fit: cover;\n  }\n  .cards {\n    grid-template-columns: 1fr;\n    padding-top: 0px;\n  }\n  .card {\n    min-height: 380px;\n  }\n  .card .card-icon {\n    height: 220px;\n    margin-bottom: 10px;\n  }\n  .card p {\n    padding: 0 10px 15px;\n  }\n  .why-choose-us {\n    padding: 40px 0px 10px 0px;\n  }\n}\n@keyframes slideInUp {\n  0% {\n    transform: translateY(30px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n}\n@keyframes fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(20px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=about-us.css.map */\n"] }]
   }], () => [], { onWindowScroll: [{
     type: HostListener,
     args: ["window:scroll", []]
@@ -36218,457 +36236,6 @@ var AboutUs = class _AboutUs {
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AboutUs, { className: "AboutUs", filePath: "src/app/components/about-us/about-us.ts", lineNumber: 8 });
-})();
-
-// src/app/components/safari-card/safari-card.ts
-function SafariCard_div_4_li_12_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(1, "svg", 14);
-    \u0275\u0275element(2, "path", 15)(3, "path", 16)(4, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(5);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const detail_r2 = ctx.$implicit;
-    \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate1(" ", detail_r2, " ");
-  }
-}
-function SafariCard_div_4_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 5)(1, "div", 6)(2, "strong");
-    \u0275\u0275text(3);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(4, "div", 7)(5, "div", 8);
-    \u0275\u0275element(6, "img", 9);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p")(8, "strong");
-    \u0275\u0275text(9, "Includes:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(10);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "ul");
-    \u0275\u0275template(12, SafariCard_div_4_li_12_Template, 6, 1, "li", 10);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(13, "div", 11)(14, "button", 12);
-    \u0275\u0275listener("click", function SafariCard_div_4_Template_button_click_14_listener() {
-      const package_r3 = \u0275\u0275restoreView(_r1).$implicit;
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.openModal(package_r3.title));
-    });
-    \u0275\u0275text(15, " View Details ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(16, "button", 13);
-    \u0275\u0275listener("click", function SafariCard_div_4_Template_button_click_16_listener() {
-      const package_r3 = \u0275\u0275restoreView(_r1).$implicit;
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.bookNow(package_r3.title));
-    });
-    \u0275\u0275text(17, " Book Now ");
-    \u0275\u0275elementEnd()()()();
-  }
-  if (rf & 2) {
-    const package_r3 = ctx.$implicit;
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(package_r3.title);
-    \u0275\u0275advance(3);
-    \u0275\u0275property("alt", \u0275\u0275interpolate1("", package_r3.title, " Image"))("src", package_r3.image, \u0275\u0275sanitizeUrl);
-    \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate1(" ", package_r3.includes);
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", package_r3.details);
-  }
-}
-function SafariCard_div_5_li_12_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "li", 24)(1, "ul")(2, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(3, "svg", 14);
-    \u0275\u0275element(4, "path", 15)(5, "path", 16)(6, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(7, " Private 4x4 Land Cruiser with pop-up roof ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(8, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(9, "svg", 14);
-    \u0275\u0275element(10, "path", 15)(11, "path", 16)(12, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(13, " All park entry fees and professional English-speaking guides ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(14, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(15, "svg", 14);
-    \u0275\u0275element(16, "path", 15)(17, "path", 16)(18, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(19, " Full-board accommodation (lodges or tents) ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(20, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(21, "svg", 14);
-    \u0275\u0275element(22, "path", 15)(23, "path", 16)(24, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(25, " Airport pickup and drop-off ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(26, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(27, "svg", 14);
-    \u0275\u0275element(28, "path", 15)(29, "path", 16)(30, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(31, " Daily bottled water and meals ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(32, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(33, "svg", 14);
-    \u0275\u0275element(34, "path", 15)(35, "path", 16)(36, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(37, " Cultural and spiritual activities ");
-    \u0275\u0275elementEnd()()();
-  }
-  if (rf & 2) {
-    const package_r6 = ctx.$implicit;
-    const ctx_r3 = \u0275\u0275nextContext(2);
-    \u0275\u0275property("hidden", package_r6.title !== ctx_r3.selectedPackageDetails);
-  }
-}
-function SafariCard_div_5_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r5 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 18);
-    \u0275\u0275listener("click", function SafariCard_div_5_Template_div_click_0_listener() {
-      \u0275\u0275restoreView(_r5);
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.closeModal());
-    });
-    \u0275\u0275elementStart(1, "div", 19);
-    \u0275\u0275listener("click", function SafariCard_div_5_Template_div_click_1_listener($event) {
-      \u0275\u0275restoreView(_r5);
-      return \u0275\u0275resetView($event.stopPropagation());
-    });
-    \u0275\u0275elementStart(2, "div", 20)(3, "h3");
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "button", 21);
-    \u0275\u0275listener("click", function SafariCard_div_5_Template_button_click_5_listener() {
-      \u0275\u0275restoreView(_r5);
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.closeModal());
-    });
-    \u0275\u0275text(6, "\u2716");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 22)(8, "p")(9, "strong");
-    \u0275\u0275text(10, "\u2705 What\u2019s Included?");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(11, "ul");
-    \u0275\u0275template(12, SafariCard_div_5_li_12_Template, 38, 1, "li", 23);
-    \u0275\u0275elementEnd()()()();
-  }
-  if (rf & 2) {
-    const ctx_r3 = \u0275\u0275nextContext();
-    \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate1("", ctx_r3.selectedPackageDetails, " - Safari Package Details");
-    \u0275\u0275advance(8);
-    \u0275\u0275property("ngForOf", ctx_r3.safariPackages);
-  }
-}
-var SafariCard = class _SafariCard {
-  safariPackages = [
-    {
-      title: "\u{1F5D3}\uFE0F 3-Day Beginners Safari",
-      includes: "Maasai Mara, Lake Nakuru, or Lake Naivasha",
-      details: [
-        "Daily game drives",
-        "Lodges & meals",
-        "Transfers & guides"
-      ],
-      image: "assets/images/cheetah1.jpeg",
-      showDetails: false
-    },
-    {
-      title: "\u{1F5D3}\uFE0F 7-Day Classic Safari",
-      includes: "Maasai Mara, Lake Nakuru, Cultural Visit",
-      details: [
-        "Daily game drives",
-        "Lodges & meals",
-        "Transfers & guides"
-      ],
-      image: "assets/images/giraffe1.jpeg",
-      showDetails: false
-    },
-    {
-      title: "\u{1F5D3}\uFE0F 10-Day Deluxe Safari + Mission",
-      includes: "Combine safari with service\u2014visit schools, churches, or clinics.",
-      details: [
-        "Perfect for youth or mission teams",
-        "Includes devotionals and worship sessions"
-      ],
-      image: "assets/images/lions1.jpeg",
-      showDetails: false
-    },
-    {
-      title: "\u{1F5D3}\uFE0F 14-Day Grand Safari",
-      includes: "Kenya & Tanzania combo: Mara, Serengeti, Ngorongoro",
-      details: [
-        "Optional 3-day Zanzibar retreat"
-      ],
-      image: "assets/images/wilderbeast1.jpeg",
-      showDetails: false
-    }
-  ];
-  // Track which package's details are visible
-  selectedPackageDetails = null;
-  // Open the modal with details
-  openModal(packageTitle) {
-    this.selectedPackageDetails = packageTitle;
-  }
-  // Close the modal
-  closeModal() {
-    this.selectedPackageDetails = null;
-  }
-  bookNow(packageTitle) {
-    console.log(`Booking for ${packageTitle} initiated.`);
-  }
-  static \u0275fac = function SafariCard_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _SafariCard)();
-  };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SafariCard, selectors: [["app-safari-card"]], decls: 6, vars: 2, consts: [[1, "safari-cards-container"], [1, "safari-title"], [1, "cards"], ["class", "card", 4, "ngFor", "ngForOf"], ["class", "modal-overlay", 3, "click", 4, "ngIf"], [1, "card"], [1, "card-header"], [1, "card-body"], [1, "card-image"], [1, "card-img", 3, "src", "alt"], [4, "ngFor", "ngForOf"], [1, "button-wrapper"], [1, "view-details-btn", 3, "click"], [1, "book-now-btn", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "16", "height", "16", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M7 12l5 5l10 -10"], ["d", "M2 12l5 5m5 -5l5 -5"], [1, "modal-overlay", 3, "click"], [1, "modal-content", 3, "click"], [1, "modal-header"], [1, "close-btn", 3, "click"], [1, "modal-body"], [3, "hidden", 4, "ngFor", "ngForOf"], [3, "hidden"]], template: function SafariCard_Template(rf, ctx) {
-    if (rf & 1) {
-      \u0275\u0275elementStart(0, "div", 0)(1, "h2", 1);
-      \u0275\u0275text(2, "\u{1F6CF}\uFE0F Safari Packages");
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(3, "div", 2);
-      \u0275\u0275template(4, SafariCard_div_4_Template, 18, 6, "div", 3);
-      \u0275\u0275elementEnd()();
-      \u0275\u0275template(5, SafariCard_div_5_Template, 13, 2, "div", 4);
-    }
-    if (rf & 2) {
-      \u0275\u0275advance(4);
-      \u0275\u0275property("ngForOf", ctx.safariPackages);
-      \u0275\u0275advance();
-      \u0275\u0275property("ngIf", ctx.selectedPackageDetails);
-    }
-  }, dependencies: [CommonModule, NgForOf, NgIf], styles: ["\n\n.safari-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container[_ngcontent-%COMP%] {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card[_ngcontent-%COMP%] {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image[_ngcontent-%COMP%] {\n  margin-bottom: 20px;\n}\n.card-img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body[_ngcontent-%COMP%] {\n  padding: 10px;\n}\n.card-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay[_ngcontent-%COMP%] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n}\n.modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn[_ngcontent-%COMP%] {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n@media (max-width: 768px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */"] });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SafariCard, [{
-    type: Component,
-    args: [{ selector: "app-safari-card", standalone: true, imports: [CommonModule], template: `<div class="safari-cards-container">\r
-  <!-- Component Title -->\r
-  <h2 class="safari-title">\u{1F6CF}\uFE0F Safari Packages</h2>\r
-\r
-  <!-- Safari Packages Cards -->\r
-  <div class="cards">\r
-    <div *ngFor="let package of safariPackages" class="card">\r
-      <!-- Card Header -->\r
-      <div class="card-header">\r
-        <strong>{{ package.title }}</strong>\r
-      </div>\r
-\r
-      <!-- Card Body -->\r
-      <div class="card-body">\r
-        <!-- Image inside the card body -->\r
-        <div class="card-image">\r
-          <img\r
-            [src]="package.image"\r
-            alt="{{ package.title }} Image"\r
-            class="card-img"\r
-          />\r
-        </div>\r
-\r
-        <!-- Card Content -->\r
-        <p><strong>Includes:</strong> {{ package.includes }}</p>\r
-        <ul>\r
-          <li *ngFor="let detail of package.details">\r
-            <svg\r
-              xmlns="http://www.w3.org/2000/svg"\r
-              width="16"\r
-              height="16"\r
-              viewBox="0 0 24 24"\r
-              fill="none"\r
-              stroke="currentColor"\r
-              stroke-width="2"\r
-              stroke-linecap="round"\r
-              stroke-linejoin="round"\r
-              class="icon-check"\r
-            >\r
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-              <path d="M7 12l5 5l10 -10" />\r
-              <path d="M2 12l5 5m5 -5l5 -5" />\r
-            </svg>\r
-            {{ detail }}\r
-          </li>\r
-        </ul>\r
-\r
-        <!-- Button Wrapper (added space between buttons) -->\r
-        <div class="button-wrapper">\r
-          <!-- View Details Button -->\r
-          <button class="view-details-btn" (click)="openModal(package.title)">\r
-            View Details\r
-          </button>\r
-\r
-          <!-- Book Now Button -->\r
-          <button class="book-now-btn" (click)="bookNow(package.title)">\r
-            Book Now\r
-          </button>\r
-        </div>\r
-      </div>\r
-    </div>\r
-  </div>\r
-</div>\r
-\r
-<!-- Modal for Package Details -->\r
-<div\r
-  *ngIf="selectedPackageDetails"\r
-  class="modal-overlay"\r
-  (click)="closeModal()"\r
->\r
-  <div class="modal-content" (click)="$event.stopPropagation()">\r
-    <div class="modal-header">\r
-      <h3>{{ selectedPackageDetails }} - Safari Package Details</h3>\r
-      <button class="close-btn" (click)="closeModal()">\u2716</button>\r
-    </div>\r
-    <div class="modal-body">\r
-      <p><strong>\u2705 What\u2019s Included?</strong></p>\r
-      <ul>\r
-        <li\r
-          *ngFor="let package of safariPackages"\r
-          [hidden]="package.title !== selectedPackageDetails"\r
-        >\r
-          <!-- 'Includes' section is now placed at the top -->\r
-          <ul>\r
-            <li>\r
-              <svg\r
-                xmlns="http://www.w3.org/2000/svg"\r
-                width="16"\r
-                height="16"\r
-                viewBox="0 0 24 24"\r
-                fill="none"\r
-                stroke="currentColor"\r
-                stroke-width="2"\r
-                stroke-linecap="round"\r
-                stroke-linejoin="round"\r
-                class="icon-check"\r
-              >\r
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-                <path d="M7 12l5 5l10 -10" />\r
-                <path d="M2 12l5 5m5 -5l5 -5" />\r
-              </svg>\r
-              Private 4x4 Land Cruiser with pop-up roof\r
-            </li>\r
-            <li>\r
-              <svg\r
-                xmlns="http://www.w3.org/2000/svg"\r
-                width="16"\r
-                height="16"\r
-                viewBox="0 0 24 24"\r
-                fill="none"\r
-                stroke="currentColor"\r
-                stroke-width="2"\r
-                stroke-linecap="round"\r
-                stroke-linejoin="round"\r
-                class="icon-check"\r
-              >\r
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-                <path d="M7 12l5 5l10 -10" />\r
-                <path d="M2 12l5 5m5 -5l5 -5" />\r
-              </svg>\r
-              All park entry fees and professional English-speaking guides\r
-            </li>\r
-            <li>\r
-              <svg\r
-                xmlns="http://www.w3.org/2000/svg"\r
-                width="16"\r
-                height="16"\r
-                viewBox="0 0 24 24"\r
-                fill="none"\r
-                stroke="currentColor"\r
-                stroke-width="2"\r
-                stroke-linecap="round"\r
-                stroke-linejoin="round"\r
-                class="icon-check"\r
-              >\r
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-                <path d="M7 12l5 5l10 -10" />\r
-                <path d="M2 12l5 5m5 -5l5 -5" />\r
-              </svg>\r
-              Full-board accommodation (lodges or tents)\r
-            </li>\r
-            <li>\r
-              <svg\r
-                xmlns="http://www.w3.org/2000/svg"\r
-                width="16"\r
-                height="16"\r
-                viewBox="0 0 24 24"\r
-                fill="none"\r
-                stroke="currentColor"\r
-                stroke-width="2"\r
-                stroke-linecap="round"\r
-                stroke-linejoin="round"\r
-                class="icon-check"\r
-              >\r
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-                <path d="M7 12l5 5l10 -10" />\r
-                <path d="M2 12l5 5m5 -5l5 -5" />\r
-              </svg>\r
-              Airport pickup and drop-off\r
-            </li>\r
-            <li>\r
-              <svg\r
-                xmlns="http://www.w3.org/2000/svg"\r
-                width="16"\r
-                height="16"\r
-                viewBox="0 0 24 24"\r
-                fill="none"\r
-                stroke="currentColor"\r
-                stroke-width="2"\r
-                stroke-linecap="round"\r
-                stroke-linejoin="round"\r
-                class="icon-check"\r
-              >\r
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-                <path d="M7 12l5 5l10 -10" />\r
-                <path d="M2 12l5 5m5 -5l5 -5" />\r
-              </svg>\r
-              Daily bottled water and meals\r
-            </li>\r
-            <li>\r
-              <svg\r
-                xmlns="http://www.w3.org/2000/svg"\r
-                width="16"\r
-                height="16"\r
-                viewBox="0 0 24 24"\r
-                fill="none"\r
-                stroke="currentColor"\r
-                stroke-width="2"\r
-                stroke-linecap="round"\r
-                stroke-linejoin="round"\r
-                class="icon-check"\r
-              >\r
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-                <path d="M7 12l5 5l10 -10" />\r
-                <path d="M2 12l5 5m5 -5l5 -5" />\r
-              </svg>\r
-              Cultural and spiritual activities\r
-            </li>\r
-          </ul>\r
-        </li>\r
-      </ul>\r
-    </div>\r
-  </div>\r
-</div>\r
-`, styles: ["/* src/app/components/safari-card/safari-card.css */\n.safari-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image {\n  margin-bottom: 20px;\n}\n.card-img {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body {\n  padding: 10px;\n}\n.card-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body ul li {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body ul li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body li {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n@media (max-width: 768px) {\n  .safari-cards-container {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title {\n    font-size: 28px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards {\n    grid-template-columns: 1fr;\n  }\n  .safari-title {\n    font-size: 24px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */\n"] }]
-  }], null, null);
-})();
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SafariCard, { className: "SafariCard", filePath: "src/app/components/safari-card/safari-card.ts", lineNumber: 11 });
 })();
 
 // node_modules/@angular/forms/fesm2022/forms.mjs
@@ -43403,7 +42970,7 @@ var UntypedFormBuilder = class _UntypedFormBuilder extends FormBuilder {
     }]
   }], null, null);
 })();
-var VERSION5 = new Version("20.1.4");
+var VERSION5 = new Version("20.1.7");
 var FormsModule = class _FormsModule {
   /**
    * @description
@@ -43488,30 +43055,582 @@ var ReactiveFormsModule = class _ReactiveFormsModule {
   }], null, null);
 })();
 
+// node_modules/emailjs-com/es/store/store.js
+var store2 = {
+  _origin: "https://api.emailjs.com"
+};
+
+// node_modules/emailjs-com/es/methods/init/init.js
+var init = (userID, origin = "https://api.emailjs.com") => {
+  store2._userID = userID;
+  store2._origin = origin;
+};
+
+// node_modules/emailjs-com/es/utils/validateParams.js
+var validateParams = (userID, serviceID, templateID) => {
+  if (!userID) {
+    throw "The user ID is required. Visit https://dashboard.emailjs.com/admin/integration";
+  }
+  if (!serviceID) {
+    throw "The service ID is required. Visit https://dashboard.emailjs.com/admin";
+  }
+  if (!templateID) {
+    throw "The template ID is required. Visit https://dashboard.emailjs.com/admin/templates";
+  }
+  return true;
+};
+
+// node_modules/emailjs-com/es/models/EmailJSResponseStatus.js
+var EmailJSResponseStatus = class {
+  constructor(httpResponse) {
+    this.status = httpResponse.status;
+    this.text = httpResponse.responseText;
+  }
+};
+
+// node_modules/emailjs-com/es/api/sendPost.js
+var sendPost = (url, data, headers = {}) => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", ({ target }) => {
+      const responseStatus = new EmailJSResponseStatus(target);
+      if (responseStatus.status === 200 || responseStatus.text === "OK") {
+        resolve(responseStatus);
+      } else {
+        reject(responseStatus);
+      }
+    });
+    xhr.addEventListener("error", ({ target }) => {
+      reject(new EmailJSResponseStatus(target));
+    });
+    xhr.open("POST", store2._origin + url, true);
+    Object.keys(headers).forEach((key) => {
+      xhr.setRequestHeader(key, headers[key]);
+    });
+    xhr.send(data);
+  });
+};
+
+// node_modules/emailjs-com/es/methods/send/send.js
+var send = (serviceID, templateID, templatePrams, userID) => {
+  const uID = userID || store2._userID;
+  validateParams(uID, serviceID, templateID);
+  const params = {
+    lib_version: "3.2.0",
+    user_id: uID,
+    service_id: serviceID,
+    template_id: templateID,
+    template_params: templatePrams
+  };
+  return sendPost("/api/v1.0/email/send", JSON.stringify(params), {
+    "Content-type": "application/json"
+  });
+};
+
+// node_modules/emailjs-com/es/methods/sendForm/sendForm.js
+var findHTMLForm = (form) => {
+  let currentForm;
+  if (typeof form === "string") {
+    currentForm = document.querySelector(form);
+  } else {
+    currentForm = form;
+  }
+  if (!currentForm || currentForm.nodeName !== "FORM") {
+    throw "The 3rd parameter is expected to be the HTML form element or the style selector of form";
+  }
+  return currentForm;
+};
+var sendForm = (serviceID, templateID, form, userID) => {
+  const uID = userID || store2._userID;
+  const currentForm = findHTMLForm(form);
+  validateParams(uID, serviceID, templateID);
+  const formData = new FormData(currentForm);
+  formData.append("lib_version", "3.2.0");
+  formData.append("service_id", serviceID);
+  formData.append("template_id", templateID);
+  formData.append("user_id", uID);
+  return sendPost("/api/v1.0/email/send-form", formData);
+};
+
+// node_modules/emailjs-com/es/index.js
+var es_default = {
+  init,
+  send,
+  sendForm
+};
+
+// src/environments/environment.ts
+var environment = {
+  production: false,
+  emailJS: {
+    serviceID: "service_4mi3aht",
+    templateID: "template_u4bdiww",
+    userID: "gho1b7zy9yL5TeKpB"
+  }
+};
+
+// src/app/components/safari-card/safari-card.ts
+function SafariCard_div_4_li_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "li");
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(1, "svg", 14);
+    \u0275\u0275element(2, "path", 15)(3, "path", 16)(4, "path", 17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const detail_r2 = ctx.$implicit;
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate1(" ", detail_r2, " ");
+  }
+}
+function SafariCard_div_4_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 5)(1, "div", 6)(2, "strong");
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(4, "div", 7)(5, "div", 8);
+    \u0275\u0275element(6, "img", 9);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "p")(8, "strong");
+    \u0275\u0275text(9, "Includes:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(10);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "ul");
+    \u0275\u0275template(12, SafariCard_div_4_li_12_Template, 6, 1, "li", 10);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "div", 11)(14, "button", 12);
+    \u0275\u0275listener("click", function SafariCard_div_4_Template_button_click_14_listener() {
+      const package_r3 = \u0275\u0275restoreView(_r1).$implicit;
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.openModal(package_r3.title));
+    });
+    \u0275\u0275text(15, "View Details");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(16, "button", 13);
+    \u0275\u0275listener("click", function SafariCard_div_4_Template_button_click_16_listener() {
+      const package_r3 = \u0275\u0275restoreView(_r1).$implicit;
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.openModal(package_r3.title));
+    });
+    \u0275\u0275text(17, "Book Now");
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const package_r3 = ctx.$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(package_r3.title);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("alt", \u0275\u0275interpolate1("", package_r3.title, " Image"))("src", package_r3.image, \u0275\u0275sanitizeUrl);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1(" ", package_r3.includes);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", package_r3.details);
+  }
+}
+function SafariCard_div_5_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r5 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 18);
+    \u0275\u0275listener("click", function SafariCard_div_5_Template_div_click_0_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275elementStart(1, "div", 19);
+    \u0275\u0275listener("click", function SafariCard_div_5_Template_div_click_1_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      return \u0275\u0275resetView($event.stopPropagation());
+    });
+    \u0275\u0275elementStart(2, "div", 20)(3, "h3");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "button", 21);
+    \u0275\u0275listener("click", function SafariCard_div_5_Template_button_click_5_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275text(6, "\u2716");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "div", 22)(8, "form", 23);
+    \u0275\u0275listener("ngSubmit", function SafariCard_div_5_Template_form_ngSubmit_8_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.onSubmitBooking());
+    });
+    \u0275\u0275elementStart(9, "label", 24);
+    \u0275\u0275text(10, "Your Name:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "input", 25);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_5_Template_input_ngModelChange_11_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.name, $event) || (ctx_r3.name = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "label", 26);
+    \u0275\u0275text(13, "Your Email:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(14, "input", 27);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_5_Template_input_ngModelChange_14_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.email, $event) || (ctx_r3.email = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(15, "label", 28);
+    \u0275\u0275text(16, "Your Phone:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(17, "input", 29);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_5_Template_input_ngModelChange_17_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.phone, $event) || (ctx_r3.phone = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(18, "label", 30);
+    \u0275\u0275text(19, "Number of Adults:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(20, "input", 31);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_5_Template_input_ngModelChange_20_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.numAdults, $event) || (ctx_r3.numAdults = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(21, "label", 32);
+    \u0275\u0275text(22, "Number of Kids:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(23, "input", 33);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_5_Template_input_ngModelChange_23_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.numKids, $event) || (ctx_r3.numKids = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(24, "label", 34);
+    \u0275\u0275text(25, "From Date:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(26, "input", 35);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_5_Template_input_ngModelChange_26_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.fromDate, $event) || (ctx_r3.fromDate = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(27, "label", 36);
+    \u0275\u0275text(28, "To Date:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(29, "input", 37);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_5_Template_input_ngModelChange_29_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.toDate, $event) || (ctx_r3.toDate = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(30, "div", 38);
+    \u0275\u0275elementStart(31, "button", 39);
+    \u0275\u0275text(32, "Confirm Booking");
+    \u0275\u0275elementEnd()()()()();
+  }
+  if (rf & 2) {
+    const ctx_r3 = \u0275\u0275nextContext();
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1("", ctx_r3.selectedPackageDetails, " - Safari Package Booking");
+    \u0275\u0275advance(7);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.name);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.email);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.phone);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.numAdults);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.numKids);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.fromDate);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.toDate);
+    \u0275\u0275advance();
+    \u0275\u0275attribute("data-sitekey", "6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ");
+  }
+}
+var SafariCard = class _SafariCard {
+  sanitizer;
+  safariPackages = [
+    {
+      title: "\u{1F5D3}\uFE0F 3-Day Beginners Safari",
+      includes: "Maasai Mara, Lake Nakuru, or Lake Naivasha",
+      details: ["Daily game drives", "Lodges & meals", "Transfers & guides"],
+      image: "assets/images/cheetah1.jpeg",
+      showDetails: false
+    },
+    {
+      title: "\u{1F5D3}\uFE0F 7-Day Classic Safari",
+      includes: "Maasai Mara, Lake Nakuru, Cultural Visit",
+      details: ["Daily game drives", "Lodges & meals", "Transfers & guides"],
+      image: "assets/images/giraffe1.jpeg",
+      showDetails: false
+    },
+    {
+      title: "\u{1F5D3}\uFE0F 10-Day Deluxe Safari + Mission",
+      includes: "Combine safari with service\u2014visit schools, churches, or clinics.",
+      details: [
+        "Perfect for youth or mission teams",
+        "Includes devotionals and worship sessions"
+      ],
+      image: "assets/images/lions1.jpeg",
+      showDetails: false
+    },
+    {
+      title: "\u{1F5D3}\uFE0F 14-Day Grand Safari",
+      includes: "Kenya & Tanzania combo: Mara, Serengeti, Ngorongoro",
+      details: ["Optional 3-day Zanzibar retreat"],
+      image: "assets/images/wilderbeast1.jpeg",
+      showDetails: false
+    }
+  ];
+  selectedPackageDetails = null;
+  // Modal form data
+  name = "";
+  email = "";
+  // Email field
+  phone = "";
+  // Phone field
+  numAdults = 1;
+  numKids = 0;
+  fromDate = "";
+  toDate = "";
+  constructor(sanitizer) {
+    this.sanitizer = sanitizer;
+  }
+  openModal(packageTitle) {
+    this.selectedPackageDetails = packageTitle;
+  }
+  closeModal() {
+    this.selectedPackageDetails = null;
+  }
+  // Handle the form submission
+  onSubmitBooking() {
+    if (!this.name || !this.email || !this.phone || !this.fromDate || !this.toDate || this.numAdults <= 0) {
+      alert("Please fill all required fields.");
+      return;
+    }
+    this.name = this.sanitizeInput(this.name);
+    this.email = this.sanitizeInput(this.email);
+    this.phone = this.sanitizeInput(this.phone);
+    this.fromDate = this.sanitizeInput(this.fromDate);
+    this.toDate = this.sanitizeInput(this.toDate);
+    if (this.numAdults <= 0 || this.numKids < 0) {
+      alert("Invalid number of adults or kids.");
+      return;
+    }
+    grecaptcha.execute("6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ", { action: "submit" }).then((token) => {
+      const formData = {
+        name: this.name,
+        email: this.email,
+        phone: this.phone,
+        numAdults: this.numAdults,
+        numKids: this.numKids,
+        fromDate: this.fromDate,
+        toDate: this.toDate,
+        packageTitle: this.selectedPackageDetails,
+        // Include the selected package details
+        recaptchaToken: token
+      };
+      es_default.send(environment.emailJS.serviceID, environment.emailJS.templateID, formData, environment.emailJS.userID).then((response) => {
+        console.log("Email sent successfully:", response);
+        this.closeModal();
+        alert("Your booking has been confirmed! A confirmation email has been sent.");
+        this.clearForm();
+      }, (error) => {
+        console.error("Error sending email:", error);
+        alert("There was an error submitting the form. Please try again later.");
+      });
+    }).catch((error) => {
+      console.error("reCAPTCHA error:", error);
+      alert("reCAPTCHA verification failed. Please try again.");
+    });
+  }
+  // Reset form fields to initial values
+  clearForm() {
+    this.name = "";
+    this.email = "";
+    this.phone = "";
+    this.numAdults = 1;
+    this.numKids = 0;
+    this.fromDate = "";
+    this.toDate = "";
+    this.selectedPackageDetails = null;
+  }
+  sanitizeInput(input2) {
+    return input2.trim();
+  }
+  static \u0275fac = function SafariCard_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _SafariCard)(\u0275\u0275directiveInject(DomSanitizer));
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SafariCard, selectors: [["app-safari-card"]], decls: 6, vars: 2, consts: [[1, "safari-cards-container"], [1, "safari-title"], [1, "cards"], ["class", "card", 4, "ngFor", "ngForOf"], ["class", "modal-overlay", 3, "click", 4, "ngIf"], [1, "card"], [1, "card-header"], [1, "card-body"], [1, "card-image"], [1, "card-img", 3, "src", "alt"], [4, "ngFor", "ngForOf"], [1, "button-wrapper"], [1, "view-details-btn", 3, "click"], [1, "book-now-btn", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "16", "height", "16", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M7 12l5 5l10 -10"], ["d", "M2 12l5 5m5 -5l5 -5"], [1, "modal-overlay", 3, "click"], [1, "modal-content", 3, "click"], [1, "modal-header"], [1, "close-btn", 3, "click"], [1, "modal-body"], [3, "ngSubmit"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", "", 3, "ngModelChange", "ngModel"], ["for", "email"], ["type", "email", "id", "email", "name", "email", "required", "", 3, "ngModelChange", "ngModel"], ["for", "phone"], ["type", "text", "id", "phone", "name", "phone", "required", "", 3, "ngModelChange", "ngModel"], ["for", "adults"], ["type", "number", "id", "adults", "name", "numAdults", "min", "1", "required", "", 3, "ngModelChange", "ngModel"], ["for", "kids"], ["type", "number", "id", "kids", "name", "numKids", "min", "0", 3, "ngModelChange", "ngModel"], ["for", "fromDate"], ["type", "date", "id", "fromDate", "name", "fromDate", "required", "", 3, "ngModelChange", "ngModel"], ["for", "toDate"], ["type", "date", "id", "toDate", "name", "toDate", "required", "", 3, "ngModelChange", "ngModel"], [1, "g-recaptcha"], ["type", "submit", 1, "book-now-btn"]], template: function SafariCard_Template(rf, ctx) {
+    if (rf & 1) {
+      \u0275\u0275elementStart(0, "div", 0)(1, "h2", 1);
+      \u0275\u0275text(2, "\u{1F6CF}\uFE0F Safari Packages");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(3, "div", 2);
+      \u0275\u0275template(4, SafariCard_div_4_Template, 18, 6, "div", 3);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275template(5, SafariCard_div_5_Template, 33, 9, "div", 4);
+    }
+    if (rf & 2) {
+      \u0275\u0275advance(4);
+      \u0275\u0275property("ngForOf", ctx.safariPackages);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", ctx.selectedPackageDetails);
+    }
+  }, dependencies: [CommonModule, NgForOf, NgIf, ReactiveFormsModule, \u0275NgNoValidate, DefaultValueAccessor, NumberValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinValidator, FormsModule, NgModel, NgForm], styles: ["\n\n.safari-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container[_ngcontent-%COMP%] {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card[_ngcontent-%COMP%] {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image[_ngcontent-%COMP%] {\n  margin-bottom: 20px;\n}\n.card-img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body[_ngcontent-%COMP%] {\n  padding: 10px;\n}\n.card-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay[_ngcontent-%COMP%] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 9999;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n  z-index: 10000;\n}\n.modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn[_ngcontent-%COMP%] {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body[_ngcontent-%COMP%] {\n  max-height: 500px;\n  overflow-y: scroll;\n  padding-right: 10px;\n  scrollbar-width: thin;\n  scrollbar-color: transparent transparent;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: transparent;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.modal-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.modal-body[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.modal-body[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  font-size: 16px;\n  margin-bottom: 5px;\n}\n.modal-body[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.modal-body[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 10px;\n  font-size: 16px;\n  border-radius: 5px;\n  cursor: pointer;\n  margin-top: 20px;\n}\n.modal-body[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:disabled {\n  background-color: #ccc;\n  cursor: not-allowed;\n}\n@media (max-width: 768px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */"] });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SafariCard, [{
+    type: Component,
+    args: [{ selector: "app-safari-card", standalone: true, imports: [CommonModule, ReactiveFormsModule, FormsModule], template: `<div class="safari-cards-container">\r
+  <h2 class="safari-title">\u{1F6CF}\uFE0F Safari Packages</h2>\r
+\r
+  <div class="cards">\r
+    <div *ngFor="let package of safariPackages" class="card">\r
+      <div class="card-header">\r
+        <strong>{{ package.title }}</strong>\r
+      </div>\r
+      <div class="card-body">\r
+        <div class="card-image">\r
+          <img [src]="package.image" alt="{{ package.title }} Image" class="card-img" />\r
+        </div>\r
+        <p><strong>Includes:</strong> {{ package.includes }}</p>\r
+        <ul>\r
+          <li *ngFor="let detail of package.details">\r
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-check">\r
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r
+              <path d="M7 12l5 5l10 -10" />\r
+              <path d="M2 12l5 5m5 -5l5 -5" />\r
+            </svg>\r
+            {{ detail }}\r
+          </li>\r
+        </ul>\r
+        <div class="button-wrapper">\r
+          <button class="view-details-btn" (click)="openModal(package.title)">View Details</button>\r
+          <button class="book-now-btn" (click)="openModal(package.title)">Book Now</button>\r
+        </div>\r
+      </div>\r
+    </div>\r
+  </div>\r
+</div>\r
+\r
+<!-- Modal for Booking -->\r
+<div *ngIf="selectedPackageDetails" class="modal-overlay" (click)="closeModal()">\r
+  <div class="modal-content" (click)="$event.stopPropagation()">\r
+    <div class="modal-header">\r
+      <h3>{{ selectedPackageDetails }} - Safari Package Booking</h3>\r
+      <button class="close-btn" (click)="closeModal()">\u2716</button>\r
+    </div>\r
+    <div class="modal-body">\r
+      <form (ngSubmit)="onSubmitBooking()">\r
+        <!-- Name Field -->\r
+        <label for="name">Your Name:</label>\r
+        <input type="text" id="name" [(ngModel)]="name" name="name" required />\r
+\r
+        <!-- Email Field -->\r
+        <label for="email">Your Email:</label>\r
+        <input type="email" id="email" [(ngModel)]="email" name="email" required />\r
+\r
+        <!-- Phone Field -->\r
+        <label for="phone">Your Phone:</label>\r
+        <input type="text" id="phone" [(ngModel)]="phone" name="phone" required />\r
+\r
+        <!-- Number of Adults Field -->\r
+        <label for="adults">Number of Adults:</label>\r
+        <input type="number" id="adults" [(ngModel)]="numAdults" name="numAdults" min="1" required />\r
+\r
+        <!-- Number of Kids Field -->\r
+        <label for="kids">Number of Kids:</label>\r
+        <input type="number" id="kids" [(ngModel)]="numKids" name="numKids" min="0" />\r
+\r
+        <!-- From Date Field -->\r
+        <label for="fromDate">From Date:</label>\r
+        <input type="date" id="fromDate" [(ngModel)]="fromDate" name="fromDate" required />\r
+\r
+        <!-- To Date Field -->\r
+        <label for="toDate">To Date:</label>\r
+        <input type="date" id="toDate" [(ngModel)]="toDate" name="toDate" required />\r
+\r
+        <!-- reCAPTCHA widget -->\r
+        <div class="g-recaptcha" [attr.data-sitekey]="'6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ'"></div>\r
+\r
+        <!-- Submit Button -->\r
+        <button type="submit" class="book-now-btn">Confirm Booking</button>\r
+      </form>\r
+    </div>\r
+  </div>\r
+</div>\r
+\r
+`, styles: ["/* src/app/components/safari-card/safari-card.css */\n.safari-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image {\n  margin-bottom: 20px;\n}\n.card-img {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body {\n  padding: 10px;\n}\n.card-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body ul li {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body ul li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 9999;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n  z-index: 10000;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body {\n  max-height: 500px;\n  overflow-y: scroll;\n  padding-right: 10px;\n  scrollbar-width: thin;\n  scrollbar-color: transparent transparent;\n}\n.modal-body::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n}\n.modal-body::-webkit-scrollbar-thumb {\n  background: transparent;\n}\n.modal-body::-webkit-scrollbar-track {\n  background: transparent;\n}\n.modal-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body li {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.modal-body form {\n  display: flex;\n  flex-direction: column;\n}\n.modal-body label {\n  font-size: 16px;\n  margin-bottom: 5px;\n}\n.modal-body input {\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.modal-body button {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 10px;\n  font-size: 16px;\n  border-radius: 5px;\n  cursor: pointer;\n  margin-top: 20px;\n}\n.modal-body button:disabled {\n  background-color: #ccc;\n  cursor: not-allowed;\n}\n@media (max-width: 768px) {\n  .safari-cards-container {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title {\n    font-size: 28px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards {\n    grid-template-columns: 1fr;\n  }\n  .safari-title {\n    font-size: 24px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */\n"] }]
+  }], () => [{ type: DomSanitizer }], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SafariCard, { className: "SafariCard", filePath: "src/app/components/safari-card/safari-card.ts", lineNumber: 17 });
+})();
+
 // src/app/footer/footer.ts
 var Footer = class _Footer {
   fb;
+  sanitizer;
   contactForm;
-  // Inject FormBuilder into the constructor
-  constructor(fb) {
+  constructor(fb, sanitizer) {
     this.fb = fb;
+    this.sanitizer = sanitizer;
     this.contactForm = this.fb.group({
       name: ["", [Validators.required, Validators.minLength(3)]],
       email: ["", [Validators.required, Validators.email]],
-      message: ["", [Validators.required, Validators.minLength(10)]]
+      message: ["", [Validators.required, Validators.minLength(10)]],
+      recaptchaToken: ["", Validators.required]
+      // Hidden field for reCAPTCHA token
     });
   }
-  // Form submission handler
+  // This method will trigger the reCAPTCHA validation and token generation
   onSubmit() {
     if (this.contactForm.valid) {
-      const formData = this.contactForm.value;
-      console.log("Form Submitted:", formData);
+      let formData = this.contactForm.value;
+      formData.name = this.sanitizeInput(formData.name);
+      formData.email = this.sanitizeInput(formData.email);
+      formData.message = this.sanitizeInput(formData.message);
+      grecaptcha.execute("6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ", { action: "submit" }).then((token) => {
+        formData.recaptchaToken = token;
+        console.log("Form Submitted with reCAPTCHA Token:", formData);
+      }).catch((error) => {
+        console.error("reCAPTCHA error:", error);
+      });
     }
   }
+  // Helper method to sanitize input data by stripping dangerous HTML tags
+  sanitizeInput(input2) {
+    return this.sanitizeInputForHTML(input2);
+  }
+  // Optionally, you could also check that the input doesn't contain dangerous HTML tags
+  sanitizeInputForHTML(input2) {
+    return this.sanitizer.sanitize(1, input2) || input2;
+  }
   static \u0275fac = function Footer_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _Footer)(\u0275\u0275directiveInject(FormBuilder));
+    return new (__ngFactoryType__ || _Footer)(\u0275\u0275directiveInject(FormBuilder), \u0275\u0275directiveInject(DomSanitizer));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Footer, selectors: [["app-footer"]], decls: 88, vars: 2, consts: [[1, "footer"], [1, "footer-title"], [1, "contact-container"], [1, "container"], [1, "row"], [1, "col-md-6", "contact-info"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-world"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"], ["d", "M3.6 9h16.8"], ["d", "M3.6 15h16.8"], ["d", "M11.5 3a17 17 0 0 0 0 18"], ["d", "M12.5 3a17 17 0 0 1 0 18"], ["href", "http://www.jambosafariafrica.com", "target", "_blank"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-mail"], ["d", "M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"], ["d", "M3 7l9 6l9 -6"], ["href", "mailto:info@jambosafariafrica.com"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-phone"], ["d", "M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-map-pin"], ["d", "M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"], ["d", "M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"], [1, "follow-us"], [1, "social-icons"], ["href", "https://www.facebook.com/JamboSafariAfrica", "target", "_blank"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-brand-facebook"], ["d", "M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3"], ["href", "https://www.instagram.com/JamboSafariAfrica", "target", "_blank"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-brand-instagram"], ["d", "M4 8a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z"], ["d", "M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"], ["d", "M16.5 7.5v.01"], ["href", "https://www.youtube.com/c/JamboSafariAfrica", "target", "_blank"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-brand-youtube"], ["d", "M2 8a4 4 0 0 1 4 -4h12a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-12a4 4 0 0 1 -4 -4v-8z"], ["d", "M10 9l5 3l-5 3z"], [1, "col-md-6", "contact-form"], [3, "ngSubmit", "formGroup"], [1, "form-group"], ["for", "name"], ["type", "text", "id", "name", "formControlName", "name", "required", "", 1, "form-control"], ["for", "email"], ["type", "email", "id", "email", "formControlName", "email", "required", "", 1, "form-control"], ["for", "message"], ["id", "message", "formControlName", "message", "rows", "4", "required", "", 1, "form-control"], ["type", "submit", 1, "btn", "btn-primary", 3, "disabled"], [1, "credits-container"], [1, "col-12", "text-center"]], template: function Footer_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Footer, selectors: [["app-footer"]], decls: 47, vars: 2, consts: [["id", "contact", 1, "footer"], [1, "footer-title"], [1, "contact-container"], [1, "container"], [1, "row"], [1, "col-md-6", "contact-info"], ["href", "http://www.jambosafariafrica.com", "target", "_blank"], ["href", "mailto:info@jambosafariafrica.com"], [1, "col-md-6", "contact-form"], [3, "ngSubmit", "formGroup"], [1, "form-group"], ["for", "name"], ["type", "text", "id", "name", "formControlName", "name", "required", "", 1, "form-control"], ["for", "email"], ["type", "email", "id", "email", "formControlName", "email", "required", "", 1, "form-control"], ["for", "message"], ["id", "message", "formControlName", "message", "rows", "4", "required", "", 1, "form-control"], ["type", "hidden", "formControlName", "recaptchaToken"], ["type", "submit", 1, "btn", "btn-primary", 3, "disabled"], [1, "credits-container"], [1, "col-12", "text-center"]], template: function Footer_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "footer", 0)(1, "h2", 1);
       \u0275\u0275text(2, "\u{1F4DE} Contact & Booking");
@@ -43520,109 +43639,83 @@ var Footer = class _Footer {
       \u0275\u0275text(8, "Contact Info");
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(9, "ul")(10, "li");
-      \u0275\u0275namespaceSVG();
-      \u0275\u0275elementStart(11, "svg", 6);
-      \u0275\u0275element(12, "path", 7)(13, "path", 8)(14, "path", 9)(15, "path", 10)(16, "path", 11)(17, "path", 12);
-      \u0275\u0275elementEnd();
-      \u0275\u0275text(18, " Website: ");
-      \u0275\u0275namespaceHTML();
-      \u0275\u0275elementStart(19, "a", 13);
-      \u0275\u0275text(20, "www.jambosafariafrica.com");
+      \u0275\u0275text(11, "Website: ");
+      \u0275\u0275elementStart(12, "a", 6);
+      \u0275\u0275text(13, "www.jambosafariafrica.com");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(21, "li");
-      \u0275\u0275namespaceSVG();
-      \u0275\u0275elementStart(22, "svg", 14);
-      \u0275\u0275element(23, "path", 7)(24, "path", 15)(25, "path", 16);
-      \u0275\u0275elementEnd();
-      \u0275\u0275text(26, " Email: ");
-      \u0275\u0275namespaceHTML();
-      \u0275\u0275elementStart(27, "a", 17);
-      \u0275\u0275text(28, "info@jambosafariafrica.com");
+      \u0275\u0275elementStart(14, "li");
+      \u0275\u0275text(15, "Email: ");
+      \u0275\u0275elementStart(16, "a", 7);
+      \u0275\u0275text(17, "info@jambosafariafrica.com");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(29, "li");
-      \u0275\u0275namespaceSVG();
-      \u0275\u0275elementStart(30, "svg", 18);
-      \u0275\u0275element(31, "path", 7)(32, "path", 19);
+      \u0275\u0275elementStart(18, "li");
+      \u0275\u0275text(19, "Phone/WhatsApp: +254 700 214 101 (Kenya) | +1 (404) 565-9657 (USA)");
       \u0275\u0275elementEnd();
-      \u0275\u0275text(33, " Phone/WhatsApp: +254 700 214 101 (Kenya) | ");
-      \u0275\u0275namespaceHTML();
-      \u0275\u0275element(34, "br");
-      \u0275\u0275text(35, "+1 (404) 565-9657 (USA) ");
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(36, "li");
-      \u0275\u0275namespaceSVG();
-      \u0275\u0275elementStart(37, "svg", 20);
-      \u0275\u0275element(38, "path", 7)(39, "path", 21)(40, "path", 22);
-      \u0275\u0275elementEnd();
-      \u0275\u0275text(41, " Offices: Nairobi, Kenya | Dallas, Texas ");
-      \u0275\u0275elementEnd()();
-      \u0275\u0275namespaceHTML();
-      \u0275\u0275elementStart(42, "div", 23)(43, "h3");
-      \u0275\u0275text(44, "Follow Us:");
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(45, "ul", 24)(46, "li")(47, "a", 25);
-      \u0275\u0275namespaceSVG();
-      \u0275\u0275elementStart(48, "svg", 26);
-      \u0275\u0275element(49, "path", 7)(50, "path", 27);
+      \u0275\u0275elementStart(20, "li");
+      \u0275\u0275text(21, "Offices: Nairobi, Kenya | Dallas, Texas");
       \u0275\u0275elementEnd()()();
-      \u0275\u0275namespaceHTML();
-      \u0275\u0275elementStart(51, "li")(52, "a", 28);
-      \u0275\u0275namespaceSVG();
-      \u0275\u0275elementStart(53, "svg", 29);
-      \u0275\u0275element(54, "path", 7)(55, "path", 30)(56, "path", 31)(57, "path", 32);
-      \u0275\u0275elementEnd()()();
-      \u0275\u0275namespaceHTML();
-      \u0275\u0275elementStart(58, "li")(59, "a", 33);
-      \u0275\u0275namespaceSVG();
-      \u0275\u0275elementStart(60, "svg", 34);
-      \u0275\u0275element(61, "path", 7)(62, "path", 35)(63, "path", 36);
-      \u0275\u0275elementEnd()()()()()();
-      \u0275\u0275namespaceHTML();
-      \u0275\u0275elementStart(64, "div", 37)(65, "h3");
-      \u0275\u0275text(66, "Send Message");
+      \u0275\u0275elementStart(22, "div", 8)(23, "h3");
+      \u0275\u0275text(24, "Send Message");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(67, "form", 38);
-      \u0275\u0275listener("ngSubmit", function Footer_Template_form_ngSubmit_67_listener() {
+      \u0275\u0275elementStart(25, "form", 9);
+      \u0275\u0275listener("ngSubmit", function Footer_Template_form_ngSubmit_25_listener() {
         return ctx.onSubmit();
       });
-      \u0275\u0275elementStart(68, "div", 39)(69, "label", 40);
-      \u0275\u0275text(70, "Name");
+      \u0275\u0275elementStart(26, "div", 10)(27, "label", 11);
+      \u0275\u0275text(28, "Name");
       \u0275\u0275elementEnd();
-      \u0275\u0275element(71, "input", 41);
+      \u0275\u0275element(29, "input", 12);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(72, "div", 39)(73, "label", 42);
-      \u0275\u0275text(74, "Email");
+      \u0275\u0275elementStart(30, "div", 10)(31, "label", 13);
+      \u0275\u0275text(32, "Email");
       \u0275\u0275elementEnd();
-      \u0275\u0275element(75, "input", 43);
+      \u0275\u0275element(33, "input", 14);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(76, "div", 39)(77, "label", 44);
-      \u0275\u0275text(78, "Message");
+      \u0275\u0275elementStart(34, "div", 10)(35, "label", 15);
+      \u0275\u0275text(36, "Message");
       \u0275\u0275elementEnd();
-      \u0275\u0275element(79, "textarea", 45);
+      \u0275\u0275element(37, "textarea", 16);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(80, "button", 46);
-      \u0275\u0275text(81, "Submit");
+      \u0275\u0275element(38, "input", 17);
+      \u0275\u0275elementStart(39, "button", 18);
+      \u0275\u0275text(40, "Submit");
       \u0275\u0275elementEnd()()()()()();
-      \u0275\u0275elementStart(82, "div", 47)(83, "div", 3)(84, "div", 4)(85, "div", 48)(86, "p");
-      \u0275\u0275text(87, "\xA9 2025 Jambo Safari Africa. All rights reserved.");
+      \u0275\u0275elementStart(41, "div", 19)(42, "div", 3)(43, "div", 4)(44, "div", 20)(45, "p");
+      \u0275\u0275text(46, "\xA9 2025 Jambo Safari Africa. All rights reserved.");
       \u0275\u0275elementEnd()()()()()();
     }
     if (rf & 2) {
-      \u0275\u0275advance(67);
+      \u0275\u0275advance(25);
       \u0275\u0275property("formGroup", ctx.contactForm);
-      \u0275\u0275advance(13);
+      \u0275\u0275advance(14);
       \u0275\u0275property("disabled", ctx.contactForm.invalid);
     }
-  }, dependencies: [ReactiveFormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, FormGroupDirective, FormControlName], styles: ["\n\n.footer[_ngcontent-%COMP%] {\n  color: #000;\n  padding: 80px 100px 40px 100px;\n  position: relative;\n  width: 100%;\n  clear: both;\n}\n.footer-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2c6e49;\n  margin-bottom: 40px;\n}\n.contact-container[_ngcontent-%COMP%] {\n  padding: 100px 0;\n  margin-bottom: 100px;\n}\n.credits-container[_ngcontent-%COMP%] {\n  background-color: #D8C6B3;\n  color: #4a3c31;\n  padding: 10px 0;\n  width: 100%;\n  position: absolute;\n  bottom: 0;\n  left: 0;\n}\n.footer[_ngcontent-%COMP%]   .container[_ngcontent-%COMP%] {\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.footer[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  margin: 10px 0;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  width: 24px;\n  height: 24px;\n  fill: none;\n  stroke: #ffb940;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  color: #000;\n  text-decoration: none;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover {\n  text-decoration: underline;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  display: inline-block;\n  margin-right: 10px;\n}\n.phone-numbers[_ngcontent-%COMP%] {\n  margin-top: 5px;\n}\n.phone-numbers[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  display: block;\n  margin-bottom: 5px;\n}\n.contact-form[_ngcontent-%COMP%] {\n  padding-left: 15px;\n}\n.contact-form[_ngcontent-%COMP%]   .form-group[_ngcontent-%COMP%] {\n  margin-bottom: 15px;\n}\n.contact-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.contact-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  padding: 10px;\n  margin-top: 5px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.contact-form[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  margin-top: 10px;\n  background-color: #FFB940;\n  color: #fff;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 4px;\n}\n.contact-form[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:hover {\n  background-color: #e09433;\n}\n.text-center[_ngcontent-%COMP%] {\n  text-align: center;\n  margin-top: 20px;\n  font-size: 0.9rem;\n}\n.follow-us[_ngcontent-%COMP%] {\n  margin-top: 30px;\n  text-align: left;\n}\n.follow-us[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.social-icons[_ngcontent-%COMP%] {\n  list-style: none;\n  display: flex;\n  justify-content: left;\n  gap: 20px;\n}\n.social-icons[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: inline-block;\n}\n.social-icons[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  display: block;\n  width: 40px;\n  height: 40px;\n}\n.social-icons[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 100%;\n  stroke: #ffb940;\n  fill: none;\n}\n.social-icons[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover   svg[_ngcontent-%COMP%] {\n  stroke: #f8a800;\n}\n@media (max-width: 768px) {\n  .footer[_ngcontent-%COMP%] {\n    padding: 40px 20px 20px 20px;\n  }\n  .footer-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .contact-container[_ngcontent-%COMP%] {\n    margin-bottom: 50px;\n    padding: 0px 0px 40px 0px;\n  }\n  .contact-info[_ngcontent-%COMP%], \n   .contact-form[_ngcontent-%COMP%] {\n    padding: 0;\n  }\n  .contact-info[_ngcontent-%COMP%], \n   .contact-form[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n  .social-icons[_ngcontent-%COMP%] {\n    flex-wrap: wrap;\n    gap: 15px;\n    justify-content: center;\n  }\n  .social-icons[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n    width: 35px;\n    height: 35px;\n  }\n  .follow-us[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%], \n   .footer[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    text-align: center;\n  }\n  .footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n    margin-right: 0;\n    margin-bottom: 5px;\n  }\n  .phone-numbers[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n    font-size: 0.9rem;\n  }\n}\n@media (max-width: 480px) {\n  .footer[_ngcontent-%COMP%] {\n    padding: 30px 15px 15px 15px;\n  }\n  .footer-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n  }\n  .contact-container[_ngcontent-%COMP%] {\n    padding: 0px 0px 30px 0px;\n  }\n  .contact-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n   .contact-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n    padding: 8px;\n  }\n  .contact-form[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n    padding: 8px 15px;\n  }\n  .social-icons[_ngcontent-%COMP%] {\n    gap: 10px;\n    justify-content: center;\n  }\n  .social-icons[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n    width: 30px;\n    height: 30px;\n  }\n  .text-center[_ngcontent-%COMP%] {\n    font-size: 0.8rem;\n  }\n  .footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n    margin: 5px 0;\n  }\n  .footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n    margin-bottom: 3px;\n  }\n  .footer[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 1.2rem;\n  }\n  .phone-numbers[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n    font-size: 0.8rem;\n  }\n}\n/*# sourceMappingURL=footer.css.map */"] });
+  }, dependencies: [
+    CommonModule,
+    // Angular's common directives (e.g. ngIf, ngFor)
+    ReactiveFormsModule,
+    \u0275NgNoValidate,
+    DefaultValueAccessor,
+    NgControlStatus,
+    NgControlStatusGroup,
+    RequiredValidator,
+    FormGroupDirective,
+    FormControlName
+  ], styles: ["\n\n.footer[_ngcontent-%COMP%] {\n  color: #000;\n  padding: 80px 100px 40px 100px;\n  position: relative;\n  width: 100%;\n  clear: both;\n}\n.footer-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2c6e49;\n  margin-bottom: 40px;\n}\n.contact-container[_ngcontent-%COMP%] {\n  padding: 100px 0;\n  margin-bottom: 100px;\n}\n.credits-container[_ngcontent-%COMP%] {\n  background-color: #D8C6B3;\n  color: #4a3c31;\n  padding: 10px 0;\n  width: 100%;\n  position: absolute;\n  bottom: 0;\n  left: 0;\n}\n.footer[_ngcontent-%COMP%]   .container[_ngcontent-%COMP%] {\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.footer[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  margin: 10px 0;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  width: 24px;\n  height: 24px;\n  fill: none;\n  stroke: #ffb940;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  color: #000;\n  text-decoration: none;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover {\n  text-decoration: underline;\n}\n.footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  display: inline-block;\n  margin-right: 10px;\n}\n.phone-numbers[_ngcontent-%COMP%] {\n  margin-top: 5px;\n}\n.phone-numbers[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  display: block;\n  margin-bottom: 5px;\n}\n.contact-form[_ngcontent-%COMP%] {\n  padding-left: 15px;\n}\n.contact-form[_ngcontent-%COMP%]   .form-group[_ngcontent-%COMP%] {\n  margin-bottom: 15px;\n}\n.contact-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.contact-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  padding: 10px;\n  margin-top: 5px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.contact-form[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  margin-top: 10px;\n  background-color: #FFB940;\n  color: #fff;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 4px;\n}\n.contact-form[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:hover {\n  background-color: #e09433;\n}\n.text-center[_ngcontent-%COMP%] {\n  text-align: center;\n  margin-top: 20px;\n  font-size: 0.9rem;\n}\n.follow-us[_ngcontent-%COMP%] {\n  margin-top: 30px;\n  text-align: left;\n}\n.follow-us[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.social-icons[_ngcontent-%COMP%] {\n  list-style: none;\n  display: flex;\n  justify-content: left;\n  gap: 20px;\n}\n.social-icons[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: inline-block;\n}\n.social-icons[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  display: block;\n  width: 40px;\n  height: 40px;\n}\n.social-icons[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 100%;\n  stroke: #ffb940;\n  fill: none;\n}\n.social-icons[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover   svg[_ngcontent-%COMP%] {\n  stroke: #f8a800;\n}\n@media (max-width: 768px) {\n  .footer[_ngcontent-%COMP%] {\n    padding: 40px 20px 20px 20px;\n  }\n  .footer-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .contact-container[_ngcontent-%COMP%] {\n    margin-bottom: 50px;\n    padding: 0px 0px 40px 0px;\n  }\n  .contact-info[_ngcontent-%COMP%], \n   .contact-form[_ngcontent-%COMP%] {\n    padding: 0;\n  }\n  .contact-info[_ngcontent-%COMP%], \n   .contact-form[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n  .social-icons[_ngcontent-%COMP%] {\n    flex-wrap: wrap;\n    gap: 15px;\n    justify-content: center;\n  }\n  .social-icons[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n    width: 35px;\n    height: 35px;\n  }\n  .follow-us[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%], \n   .footer[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    text-align: center;\n  }\n  .footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: center;\n  }\n  .footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n    margin-right: 0;\n    margin-bottom: 5px;\n  }\n  .phone-numbers[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n    font-size: 0.9rem;\n  }\n}\n@media (max-width: 480px) {\n  .footer[_ngcontent-%COMP%] {\n    padding: 40px 15px 15px 15px;\n  }\n  .footer-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n  }\n  .contact-container[_ngcontent-%COMP%] {\n    padding: 0px 0px 30px 0px;\n  }\n  .contact-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n   .contact-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n    padding: 8px;\n  }\n  .contact-form[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n    padding: 8px 15px;\n  }\n  .social-icons[_ngcontent-%COMP%] {\n    gap: 10px;\n    justify-content: center;\n  }\n  .social-icons[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n    width: 30px;\n    height: 30px;\n  }\n  .text-center[_ngcontent-%COMP%] {\n    font-size: 0.8rem;\n  }\n  .footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n    margin: 5px 0;\n  }\n  .footer[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n    margin-bottom: 3px;\n  }\n  .footer[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 1.2rem;\n  }\n  .phone-numbers[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n    font-size: 0.8rem;\n  }\n}\n/*# sourceMappingURL=footer.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Footer, [{
     type: Component,
-    args: [{ selector: "app-footer", standalone: true, imports: [ReactiveFormsModule], template: '<footer class="footer">\r\n    <h2 class="footer-title">\u{1F4DE} Contact & Booking</h2>\r\n\r\n  <!-- Contact Section -->\r\n  <div class="contact-container">\r\n    <div class="container">\r\n      <div class="row">\r\n        <!-- Left Column: Contact Info -->\r\n        <div class="col-md-6 contact-info">\r\n          <h3>Contact Info</h3>\r\n          <ul>\r\n            <li>\r\n              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-world">\r\n                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />\r\n                <path d="M3.6 9h16.8" />\r\n                <path d="M3.6 15h16.8" />\r\n                <path d="M11.5 3a17 17 0 0 0 0 18" />\r\n                <path d="M12.5 3a17 17 0 0 1 0 18" />\r\n              </svg>\r\n              Website: <a href="http://www.jambosafariafrica.com" target="_blank">www.jambosafariafrica.com</a>\r\n            </li>\r\n            <li>\r\n              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-mail">\r\n                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n                <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />\r\n                <path d="M3 7l9 6l9 -6" />\r\n              </svg>\r\n              Email: <a href="mailto:info@jambosafariafrica.com">info@jambosafariafrica.com</a>\r\n            </li>\r\n            <li>\r\n              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-phone">\r\n                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n                <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />\r\n              </svg>\r\n              Phone/WhatsApp: +254 700 214 101 (Kenya) | <br>+1 (404) 565-9657 (USA)\r\n            </li>\r\n            <li>\r\n              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-map-pin">\r\n                <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n                <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />\r\n                <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />\r\n              </svg>\r\n              Offices: Nairobi, Kenya | Dallas, Texas\r\n            </li>\r\n          </ul>\r\n\r\n          <!-- Follow Us Section -->\r\n          <div class="follow-us">\r\n            <h3>Follow Us:</h3>\r\n            <ul class="social-icons">\r\n              <li>\r\n                <a href="https://www.facebook.com/JamboSafariAfrica" target="_blank">\r\n                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-brand-facebook">\r\n                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n                    <path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3"/>\r\n                  </svg>\r\n                </a>\r\n              </li>\r\n              <li>\r\n                <a href="https://www.instagram.com/JamboSafariAfrica" target="_blank">\r\n                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-brand-instagram">\r\n                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n                    <path d="M4 8a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z"/>\r\n                    <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/>\r\n                    <path d="M16.5 7.5v.01"/>\r\n                  </svg>\r\n                </a>\r\n              </li>\r\n              <li>\r\n                <a href="https://www.youtube.com/c/JamboSafariAfrica" target="_blank">\r\n                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-brand-youtube">\r\n                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n                    <path d="M2 8a4 4 0 0 1 4 -4h12a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-12a4 4 0 0 1 -4 -4v-8z"/>\r\n                    <path d="M10 9l5 3l-5 3z"/>\r\n                  </svg>\r\n                </a>\r\n              </li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n\r\n        <!-- Right Column: Contact Form -->\r\n        <div class="col-md-6 contact-form">\r\n          <h3>Send Message</h3>\r\n          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">\r\n            <div class="form-group">\r\n              <label for="name">Name</label>\r\n              <input type="text" id="name" class="form-control" formControlName="name" required />\r\n            </div>\r\n            <div class="form-group">\r\n              <label for="email">Email</label>\r\n              <input type="email" id="email" class="form-control" formControlName="email" required />\r\n            </div>\r\n            <div class="form-group">\r\n              <label for="message">Message</label>\r\n              <textarea id="message" class="form-control" formControlName="message" rows="4" required></textarea>\r\n            </div>\r\n            <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid">Submit</button>\r\n          </form>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Copyright Section -->\r\n  <div class="credits-container">\r\n    <div class="container">\r\n      <div class="row">\r\n        <div class="col-12 text-center">\r\n          <p>&copy; 2025 Jambo Safari Africa. All rights reserved.</p>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</footer>\r\n', styles: ["/* src/app/footer/footer.css */\n.footer {\n  color: #000;\n  padding: 80px 100px 40px 100px;\n  position: relative;\n  width: 100%;\n  clear: both;\n}\n.footer-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2c6e49;\n  margin-bottom: 40px;\n}\n.contact-container {\n  padding: 100px 0;\n  margin-bottom: 100px;\n}\n.credits-container {\n  background-color: #D8C6B3;\n  color: #4a3c31;\n  padding: 10px 0;\n  width: 100%;\n  position: absolute;\n  bottom: 0;\n  left: 0;\n}\n.footer .container {\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.footer h3 {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.footer ul {\n  list-style: none;\n  padding: 0;\n}\n.footer ul li {\n  display: flex;\n  align-items: center;\n  margin: 10px 0;\n}\n.footer ul li svg {\n  margin-right: 10px;\n  width: 24px;\n  height: 24px;\n  fill: none;\n  stroke: #ffb940;\n}\n.footer ul li a {\n  color: #000;\n  text-decoration: none;\n}\n.footer ul li a:hover {\n  text-decoration: underline;\n}\n.footer ul li span {\n  display: inline-block;\n  margin-right: 10px;\n}\n.phone-numbers {\n  margin-top: 5px;\n}\n.phone-numbers span {\n  display: block;\n  margin-bottom: 5px;\n}\n.contact-form {\n  padding-left: 15px;\n}\n.contact-form .form-group {\n  margin-bottom: 15px;\n}\n.contact-form input,\n.contact-form textarea {\n  width: 100%;\n  padding: 10px;\n  margin-top: 5px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.contact-form button {\n  margin-top: 10px;\n  background-color: #FFB940;\n  color: #fff;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 4px;\n}\n.contact-form button:hover {\n  background-color: #e09433;\n}\n.text-center {\n  text-align: center;\n  margin-top: 20px;\n  font-size: 0.9rem;\n}\n.follow-us {\n  margin-top: 30px;\n  text-align: left;\n}\n.follow-us h3 {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.social-icons {\n  list-style: none;\n  display: flex;\n  justify-content: left;\n  gap: 20px;\n}\n.social-icons li {\n  display: inline-block;\n}\n.social-icons a {\n  display: block;\n  width: 40px;\n  height: 40px;\n}\n.social-icons svg {\n  width: 100%;\n  height: 100%;\n  stroke: #ffb940;\n  fill: none;\n}\n.social-icons a:hover svg {\n  stroke: #f8a800;\n}\n@media (max-width: 768px) {\n  .footer {\n    padding: 40px 20px 20px 20px;\n  }\n  .footer-title {\n    font-size: 28px;\n  }\n  .contact-container {\n    margin-bottom: 50px;\n    padding: 0px 0px 40px 0px;\n  }\n  .contact-info,\n  .contact-form {\n    padding: 0;\n  }\n  .contact-info,\n  .contact-form {\n    width: 100%;\n  }\n  .social-icons {\n    flex-wrap: wrap;\n    gap: 15px;\n    justify-content: center;\n  }\n  .social-icons a {\n    width: 35px;\n    height: 35px;\n  }\n  .follow-us h3,\n  .footer h3 {\n    text-align: center;\n  }\n  .footer ul li {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .footer ul li svg {\n    margin-right: 0;\n    margin-bottom: 5px;\n  }\n  .phone-numbers span {\n    font-size: 0.9rem;\n  }\n}\n@media (max-width: 480px) {\n  .footer {\n    padding: 30px 15px 15px 15px;\n  }\n  .footer-title {\n    font-size: 24px;\n  }\n  .contact-container {\n    padding: 0px 0px 30px 0px;\n  }\n  .contact-form input,\n  .contact-form textarea {\n    padding: 8px;\n  }\n  .contact-form button {\n    padding: 8px 15px;\n  }\n  .social-icons {\n    gap: 10px;\n    justify-content: center;\n  }\n  .social-icons a {\n    width: 30px;\n    height: 30px;\n  }\n  .text-center {\n    font-size: 0.8rem;\n  }\n  .footer ul li {\n    margin: 5px 0;\n  }\n  .footer ul li svg {\n    margin-bottom: 3px;\n  }\n  .footer h3 {\n    font-size: 1.2rem;\n  }\n  .phone-numbers span {\n    font-size: 0.8rem;\n  }\n}\n/*# sourceMappingURL=footer.css.map */\n"] }]
-  }], () => [{ type: FormBuilder }], null);
+    args: [{ selector: "app-footer", standalone: true, imports: [
+      CommonModule,
+      // Angular's common directives (e.g. ngIf, ngFor)
+      ReactiveFormsModule
+      // Reactive forms module for handling the form
+    ], template: '<!-- footer.component.html -->\r\n<footer class="footer" id="contact">\r\n  <h2 class="footer-title">\u{1F4DE} Contact & Booking</h2>\r\n\r\n  <!-- Contact Section -->\r\n  <div class="contact-container">\r\n    <div class="container">\r\n      <div class="row">\r\n        <!-- Left Column: Contact Info -->\r\n        <div class="col-md-6 contact-info">\r\n          <h3>Contact Info</h3>\r\n          <ul>\r\n            <li>Website: <a href="http://www.jambosafariafrica.com" target="_blank">www.jambosafariafrica.com</a></li>\r\n            <li>Email: <a href="mailto:info@jambosafariafrica.com">info@jambosafariafrica.com</a></li>\r\n            <li>Phone/WhatsApp: +254 700 214 101 (Kenya) | +1 (404) 565-9657 (USA)</li>\r\n            <li>Offices: Nairobi, Kenya | Dallas, Texas</li>\r\n          </ul>\r\n        </div>\r\n\r\n        <!-- Right Column: Contact Form -->\r\n        <div class="col-md-6 contact-form">\r\n          <h3>Send Message</h3>\r\n          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">\r\n            <div class="form-group">\r\n              <label for="name">Name</label>\r\n              <input type="text" id="name" class="form-control" formControlName="name" required />\r\n            </div>\r\n            <div class="form-group">\r\n              <label for="email">Email</label>\r\n              <input type="email" id="email" class="form-control" formControlName="email" required />\r\n            </div>\r\n            <div class="form-group">\r\n              <label for="message">Message</label>\r\n              <textarea id="message" class="form-control" formControlName="message" rows="4" required></textarea>\r\n            </div>\r\n\r\n            <!-- Hidden reCAPTCHA Token Field -->\r\n            <input type="hidden" formControlName="recaptchaToken" />\r\n\r\n            <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid">Submit</button>\r\n          </form>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Copyright Section -->\r\n  <div class="credits-container">\r\n    <div class="container">\r\n      <div class="row">\r\n        <div class="col-12 text-center">\r\n          <p>&copy; 2025 Jambo Safari Africa. All rights reserved.</p>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</footer>\r\n', styles: ["/* src/app/footer/footer.css */\n.footer {\n  color: #000;\n  padding: 80px 100px 40px 100px;\n  position: relative;\n  width: 100%;\n  clear: both;\n}\n.footer-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2c6e49;\n  margin-bottom: 40px;\n}\n.contact-container {\n  padding: 100px 0;\n  margin-bottom: 100px;\n}\n.credits-container {\n  background-color: #D8C6B3;\n  color: #4a3c31;\n  padding: 10px 0;\n  width: 100%;\n  position: absolute;\n  bottom: 0;\n  left: 0;\n}\n.footer .container {\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.footer h3 {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.footer ul {\n  list-style: none;\n  padding: 0;\n}\n.footer ul li {\n  display: flex;\n  align-items: center;\n  margin: 10px 0;\n}\n.footer ul li svg {\n  margin-right: 10px;\n  width: 24px;\n  height: 24px;\n  fill: none;\n  stroke: #ffb940;\n}\n.footer ul li a {\n  color: #000;\n  text-decoration: none;\n}\n.footer ul li a:hover {\n  text-decoration: underline;\n}\n.footer ul li span {\n  display: inline-block;\n  margin-right: 10px;\n}\n.phone-numbers {\n  margin-top: 5px;\n}\n.phone-numbers span {\n  display: block;\n  margin-bottom: 5px;\n}\n.contact-form {\n  padding-left: 15px;\n}\n.contact-form .form-group {\n  margin-bottom: 15px;\n}\n.contact-form input,\n.contact-form textarea {\n  width: 100%;\n  padding: 10px;\n  margin-top: 5px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.contact-form button {\n  margin-top: 10px;\n  background-color: #FFB940;\n  color: #fff;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 4px;\n}\n.contact-form button:hover {\n  background-color: #e09433;\n}\n.text-center {\n  text-align: center;\n  margin-top: 20px;\n  font-size: 0.9rem;\n}\n.follow-us {\n  margin-top: 30px;\n  text-align: left;\n}\n.follow-us h3 {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.social-icons {\n  list-style: none;\n  display: flex;\n  justify-content: left;\n  gap: 20px;\n}\n.social-icons li {\n  display: inline-block;\n}\n.social-icons a {\n  display: block;\n  width: 40px;\n  height: 40px;\n}\n.social-icons svg {\n  width: 100%;\n  height: 100%;\n  stroke: #ffb940;\n  fill: none;\n}\n.social-icons a:hover svg {\n  stroke: #f8a800;\n}\n@media (max-width: 768px) {\n  .footer {\n    padding: 40px 20px 20px 20px;\n  }\n  .footer-title {\n    font-size: 28px;\n  }\n  .contact-container {\n    margin-bottom: 50px;\n    padding: 0px 0px 40px 0px;\n  }\n  .contact-info,\n  .contact-form {\n    padding: 0;\n  }\n  .contact-info,\n  .contact-form {\n    width: 100%;\n  }\n  .social-icons {\n    flex-wrap: wrap;\n    gap: 15px;\n    justify-content: center;\n  }\n  .social-icons a {\n    width: 35px;\n    height: 35px;\n  }\n  .follow-us h3,\n  .footer h3 {\n    text-align: center;\n  }\n  .footer ul li {\n    flex-direction: column;\n    align-items: center;\n  }\n  .footer ul li svg {\n    margin-right: 0;\n    margin-bottom: 5px;\n  }\n  .phone-numbers span {\n    font-size: 0.9rem;\n  }\n}\n@media (max-width: 480px) {\n  .footer {\n    padding: 40px 15px 15px 15px;\n  }\n  .footer-title {\n    font-size: 24px;\n  }\n  .contact-container {\n    padding: 0px 0px 30px 0px;\n  }\n  .contact-form input,\n  .contact-form textarea {\n    padding: 8px;\n  }\n  .contact-form button {\n    padding: 8px 15px;\n  }\n  .social-icons {\n    gap: 10px;\n    justify-content: center;\n  }\n  .social-icons a {\n    width: 30px;\n    height: 30px;\n  }\n  .text-center {\n    font-size: 0.8rem;\n  }\n  .footer ul li {\n    margin: 5px 0;\n  }\n  .footer ul li svg {\n    margin-bottom: 3px;\n  }\n  .footer h3 {\n    font-size: 1.2rem;\n  }\n  .phone-numbers span {\n    font-size: 0.8rem;\n  }\n}\n/*# sourceMappingURL=footer.css.map */\n"] }]
+  }], () => [{ type: FormBuilder }, { type: DomSanitizer }], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Footer, { className: "Footer", filePath: "src/app/footer/footer.ts", lineNumber: 11 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Footer, { className: "Footer", filePath: "src/app/footer/footer.ts", lineNumber: 18 });
 })();
 
 // src/app/components/testimonials/testimonials.ts
@@ -43701,12 +43794,12 @@ var TestimonialsComponent = class _TestimonialsComponent {
       \u0275\u0275advance(4);
       \u0275\u0275property("ngForOf", ctx.testimonials);
     }
-  }, dependencies: [CommonModule, NgForOf], styles: ['\n\n.testimonials[_ngcontent-%COMP%] {\n  background-color: #f4f4f4;\n  padding: 80px 100px 100px 100px;\n  font-family: "Arial", sans-serif;\n}\n.testimonials-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: bold;\n}\n.testimonial-slider[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n}\n.testimonial-slide[_ngcontent-%COMP%] {\n  display: none;\n  opacity: 0;\n  transition: opacity 0.5s ease;\n  text-align: center;\n}\n.testimonial-slide.active[_ngcontent-%COMP%] {\n  display: block;\n  opacity: 1;\n}\n.testimonial[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n  font-style: italic;\n  font-size: 1.2rem;\n  color: #4A3C31;\n  margin: 0 auto;\n  max-width: 80%;\n}\n.testimonial[_ngcontent-%COMP%]   footer[_ngcontent-%COMP%] {\n  margin-top: 15px;\n  font-size: 1rem;\n  color: #6d4c41;\n  font-weight: bold;\n  text-align: center;\n}\n.testimonial-footer[_ngcontent-%COMP%] {\n  text-align: center;\n  margin-top: 30px;\n  padding: 60px 0px 10px 0px;\n}\n.highlight[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  font-weight: bold;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.quote[_ngcontent-%COMP%] {\n  font-size: 1.25rem;\n  color: #FFB940;\n  font-style: italic;\n}\n@media (max-width: 768px) {\n  .testimonials[_ngcontent-%COMP%] {\n    padding: 60px 50px;\n  }\n  .testimonials-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n    margin-bottom: 30px;\n  }\n  .testimonial[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n    font-size: 1rem;\n    max-width: 90%;\n  }\n  .testimonial[_ngcontent-%COMP%]   footer[_ngcontent-%COMP%] {\n    font-size: 0.9rem;\n  }\n  .highlight[_ngcontent-%COMP%] {\n    font-size: 1.3rem;\n  }\n  .quote[_ngcontent-%COMP%] {\n    font-size: 1rem;\n  }\n}\n@media (max-width: 480px) {\n  .testimonials[_ngcontent-%COMP%] {\n    padding: 40px 20px;\n  }\n  .testimonials-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n    margin-bottom: 20px;\n  }\n  .testimonial[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n    font-size: 0.9rem;\n    max-width: 95%;\n  }\n  .testimonial[_ngcontent-%COMP%]   footer[_ngcontent-%COMP%] {\n    font-size: 0.8rem;\n  }\n  .highlight[_ngcontent-%COMP%] {\n    font-size: 1.2rem;\n  }\n  .quote[_ngcontent-%COMP%] {\n    font-size: 1rem;\n  }\n}\n/*# sourceMappingURL=testimonials.css.map */'] });
+  }, dependencies: [CommonModule, NgForOf], styles: ['\n\n.testimonials[_ngcontent-%COMP%] {\n  background-color: #f4f4f4;\n  padding: 80px 100px 100px 100px;\n  font-family: "Arial", sans-serif;\n}\n.testimonials-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: bold;\n}\n.testimonial-slider[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n}\n.testimonial-slide[_ngcontent-%COMP%] {\n  display: none;\n  opacity: 0;\n  transition: opacity 0.5s ease;\n  text-align: center;\n}\n.testimonial-slide.active[_ngcontent-%COMP%] {\n  display: block;\n  opacity: 1;\n}\n.testimonial[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n  font-style: italic;\n  font-size: 1.2rem;\n  color: #4A3C31;\n  margin: 0 auto;\n  max-width: 80%;\n}\n.testimonial[_ngcontent-%COMP%]   footer[_ngcontent-%COMP%] {\n  margin-top: 15px;\n  font-size: 1rem;\n  color: #6d4c41;\n  font-weight: bold;\n  text-align: center;\n}\n.testimonial-footer[_ngcontent-%COMP%] {\n  text-align: center;\n  margin-top: 30px;\n  padding: 40px 0px 10px 0px;\n}\n.highlight[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  font-weight: bold;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.quote[_ngcontent-%COMP%] {\n  font-size: 1.25rem;\n  color: #FFB940;\n  font-style: italic;\n}\n@media (max-width: 768px) {\n  .testimonials[_ngcontent-%COMP%] {\n    padding: 60px 50px;\n  }\n  .testimonials-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n    margin-bottom: 30px;\n  }\n  .testimonial[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n    font-size: 1rem;\n    max-width: 90%;\n  }\n  .testimonial[_ngcontent-%COMP%]   footer[_ngcontent-%COMP%] {\n    font-size: 0.9rem;\n  }\n  .highlight[_ngcontent-%COMP%] {\n    font-size: 1.3rem;\n  }\n  .quote[_ngcontent-%COMP%] {\n    font-size: 1rem;\n  }\n}\n@media (max-width: 480px) {\n  .testimonials[_ngcontent-%COMP%] {\n    padding: 40px 20px;\n  }\n  .testimonials-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n    margin-bottom: 20px;\n  }\n  .testimonial[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n    font-size: 0.9rem;\n    max-width: 95%;\n  }\n  .testimonial[_ngcontent-%COMP%]   footer[_ngcontent-%COMP%] {\n    font-size: 0.8rem;\n  }\n  .highlight[_ngcontent-%COMP%] {\n    font-size: 1.2rem;\n  }\n  .quote[_ngcontent-%COMP%] {\n    font-size: 1rem;\n  }\n}\n/*# sourceMappingURL=testimonials.css.map */'] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TestimonialsComponent, [{
     type: Component,
-    args: [{ selector: "app-testimonials", standalone: true, imports: [CommonModule], template: '<section class="testimonials">\r\n  <h2 class="testimonials-title">\u{1F4AC} What People Are Saying</h2>\r\n  \r\n  <!-- Slider container -->\r\n  <div class="testimonial-slider">\r\n    <div *ngFor="let testimonial of testimonials; let i = index" \r\n         [class.active]="currentIndex === i" class="testimonial-slide">\r\n      <blockquote>{{ testimonial.text }}</blockquote>\r\n      <footer>\u2013 {{ testimonial.author }}</footer>\r\n    </div>\r\n  </div>\r\n  \r\n  <!-- Additional section for the footer content -->\r\n  <div class="testimonial-footer">\r\n    <p class="highlight">\u{1F64C} Mission Meets Majesty</p>\r\n    <p>Whether you are seeking adventure, rest, spiritual renewal, or a cultural connection, Jambo Safari brings it all together in one unforgettable experience.</p>\r\n    <p class="quote">\u2728 \u201CTravel shouldn\u2019t just change the view\u2014it should change you.\u201D \u2728</p>\r\n  </div>\r\n</section>\r\n', styles: ['/* src/app/components/testimonials/testimonials.css */\n.testimonials {\n  background-color: #f4f4f4;\n  padding: 80px 100px 100px 100px;\n  font-family: "Arial", sans-serif;\n}\n.testimonials-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: bold;\n}\n.testimonial-slider {\n  position: relative;\n  overflow: hidden;\n}\n.testimonial-slide {\n  display: none;\n  opacity: 0;\n  transition: opacity 0.5s ease;\n  text-align: center;\n}\n.testimonial-slide.active {\n  display: block;\n  opacity: 1;\n}\n.testimonial blockquote {\n  font-style: italic;\n  font-size: 1.2rem;\n  color: #4A3C31;\n  margin: 0 auto;\n  max-width: 80%;\n}\n.testimonial footer {\n  margin-top: 15px;\n  font-size: 1rem;\n  color: #6d4c41;\n  font-weight: bold;\n  text-align: center;\n}\n.testimonial-footer {\n  text-align: center;\n  margin-top: 30px;\n  padding: 60px 0px 10px 0px;\n}\n.highlight {\n  font-size: 1.5rem;\n  font-weight: bold;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.quote {\n  font-size: 1.25rem;\n  color: #FFB940;\n  font-style: italic;\n}\n@media (max-width: 768px) {\n  .testimonials {\n    padding: 60px 50px;\n  }\n  .testimonials-title {\n    font-size: 28px;\n    margin-bottom: 30px;\n  }\n  .testimonial blockquote {\n    font-size: 1rem;\n    max-width: 90%;\n  }\n  .testimonial footer {\n    font-size: 0.9rem;\n  }\n  .highlight {\n    font-size: 1.3rem;\n  }\n  .quote {\n    font-size: 1rem;\n  }\n}\n@media (max-width: 480px) {\n  .testimonials {\n    padding: 40px 20px;\n  }\n  .testimonials-title {\n    font-size: 24px;\n    margin-bottom: 20px;\n  }\n  .testimonial blockquote {\n    font-size: 0.9rem;\n    max-width: 95%;\n  }\n  .testimonial footer {\n    font-size: 0.8rem;\n  }\n  .highlight {\n    font-size: 1.2rem;\n  }\n  .quote {\n    font-size: 1rem;\n  }\n}\n/*# sourceMappingURL=testimonials.css.map */\n'] }]
+    args: [{ selector: "app-testimonials", standalone: true, imports: [CommonModule], template: '<section class="testimonials">\r\n  <h2 class="testimonials-title">\u{1F4AC} What People Are Saying</h2>\r\n  \r\n  <!-- Slider container -->\r\n  <div class="testimonial-slider">\r\n    <div *ngFor="let testimonial of testimonials; let i = index" \r\n         [class.active]="currentIndex === i" class="testimonial-slide">\r\n      <blockquote>{{ testimonial.text }}</blockquote>\r\n      <footer>\u2013 {{ testimonial.author }}</footer>\r\n    </div>\r\n  </div>\r\n  \r\n  <!-- Additional section for the footer content -->\r\n  <div class="testimonial-footer">\r\n    <p class="highlight">\u{1F64C} Mission Meets Majesty</p>\r\n    <p>Whether you are seeking adventure, rest, spiritual renewal, or a cultural connection, Jambo Safari brings it all together in one unforgettable experience.</p>\r\n    <p class="quote">\u2728 \u201CTravel shouldn\u2019t just change the view\u2014it should change you.\u201D \u2728</p>\r\n  </div>\r\n</section>\r\n', styles: ['/* src/app/components/testimonials/testimonials.css */\n.testimonials {\n  background-color: #f4f4f4;\n  padding: 80px 100px 100px 100px;\n  font-family: "Arial", sans-serif;\n}\n.testimonials-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: bold;\n}\n.testimonial-slider {\n  position: relative;\n  overflow: hidden;\n}\n.testimonial-slide {\n  display: none;\n  opacity: 0;\n  transition: opacity 0.5s ease;\n  text-align: center;\n}\n.testimonial-slide.active {\n  display: block;\n  opacity: 1;\n}\n.testimonial blockquote {\n  font-style: italic;\n  font-size: 1.2rem;\n  color: #4A3C31;\n  margin: 0 auto;\n  max-width: 80%;\n}\n.testimonial footer {\n  margin-top: 15px;\n  font-size: 1rem;\n  color: #6d4c41;\n  font-weight: bold;\n  text-align: center;\n}\n.testimonial-footer {\n  text-align: center;\n  margin-top: 30px;\n  padding: 40px 0px 10px 0px;\n}\n.highlight {\n  font-size: 1.5rem;\n  font-weight: bold;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.quote {\n  font-size: 1.25rem;\n  color: #FFB940;\n  font-style: italic;\n}\n@media (max-width: 768px) {\n  .testimonials {\n    padding: 60px 50px;\n  }\n  .testimonials-title {\n    font-size: 28px;\n    margin-bottom: 30px;\n  }\n  .testimonial blockquote {\n    font-size: 1rem;\n    max-width: 90%;\n  }\n  .testimonial footer {\n    font-size: 0.9rem;\n  }\n  .highlight {\n    font-size: 1.3rem;\n  }\n  .quote {\n    font-size: 1rem;\n  }\n}\n@media (max-width: 480px) {\n  .testimonials {\n    padding: 40px 20px;\n  }\n  .testimonials-title {\n    font-size: 24px;\n    margin-bottom: 20px;\n  }\n  .testimonial blockquote {\n    font-size: 0.9rem;\n    max-width: 95%;\n  }\n  .testimonial footer {\n    font-size: 0.8rem;\n  }\n  .highlight {\n    font-size: 1.2rem;\n  }\n  .quote {\n    font-size: 1rem;\n  }\n}\n/*# sourceMappingURL=testimonials.css.map */\n'] }]
   }], null, null);
 })();
 (() => {
@@ -43714,24 +43807,78 @@ var TestimonialsComponent = class _TestimonialsComponent {
 })();
 
 // src/app/components/home/home.ts
+function Home_button_0_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 1);
+    \u0275\u0275listener("click", function Home_button_0_Template_button_click_0_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.scrollToTop());
+    });
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(1, "svg", 2);
+    \u0275\u0275element(2, "path", 3)(3, "path", 4)(4, "path", 5)(5, "path", 6);
+    \u0275\u0275elementEnd()();
+  }
+}
 var Home = class _Home {
+  isScrolled = false;
+  // Listen to the scroll event
+  onWindowScroll() {
+    this.isScrolled = window.scrollY > 100;
+  }
+  // Scroll to top method
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
   static \u0275fac = function Home_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _Home)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Home, selectors: [["app-home"]], decls: 6, vars: 0, template: function Home_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Home, selectors: [["app-home"]], hostBindings: function Home_HostBindings(rf, ctx) {
     if (rf & 1) {
-      \u0275\u0275element(0, "app-hero-carousel")(1, "app-about-us")(2, "app-destination-and-highlights")(3, "app-safari-card")(4, "app-testimonials")(5, "app-footer");
+      \u0275\u0275listener("scroll", function Home_scroll_HostBindingHandler() {
+        return ctx.onWindowScroll();
+      }, \u0275\u0275resolveWindow);
     }
-  }, dependencies: [DestinationAndHighlightsComponent, HeroCarousel, AboutUs, SafariCard, Footer, TestimonialsComponent], encapsulation: 2 });
+  }, decls: 7, vars: 1, consts: [["class", "scroll-to-top", 3, "click", 4, "ngIf"], [1, "scroll-to-top", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icons-tabler-outline", "icon-tabler-arrow-up"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M12 5l0 14"], ["d", "M18 11l-6 -6"], ["d", "M6 11l6 -6"]], template: function Home_Template(rf, ctx) {
+    if (rf & 1) {
+      \u0275\u0275template(0, Home_button_0_Template, 6, 0, "button", 0);
+      \u0275\u0275element(1, "app-hero-carousel")(2, "app-about-us")(3, "app-destination-and-highlights")(4, "app-safari-card")(5, "app-testimonials")(6, "app-footer");
+    }
+    if (rf & 2) {
+      \u0275\u0275property("ngIf", ctx.isScrolled);
+    }
+  }, dependencies: [
+    CommonModule,
+    NgIf,
+    DestinationAndHighlightsComponent,
+    HeroCarousel,
+    AboutUs,
+    SafariCard,
+    Footer,
+    TestimonialsComponent
+  ], styles: ["\n\n.scroll-to-top[_ngcontent-%COMP%] {\n  position: fixed;\n  bottom: 20px;\n  right: 20px;\n  width: 50px;\n  height: 50px;\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  border-radius: 10px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n  z-index: 9999;\n}\n.scroll-to-top[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n  stroke: white;\n  transition: stroke 0.3s ease;\n}\n.scroll-to-top[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n}\n.scroll-to-top[_ngcontent-%COMP%]:hover   svg[_ngcontent-%COMP%] {\n  stroke: #2C6E49;\n}\n.scroll-to-top[_ngcontent-%COMP%]:focus {\n  outline: none;\n}\n/*# sourceMappingURL=home.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Home, [{
     type: Component,
-    args: [{ selector: "app-home", imports: [DestinationAndHighlightsComponent, HeroCarousel, AboutUs, SafariCard, Footer, TestimonialsComponent], template: "<app-hero-carousel></app-hero-carousel>\r\n<app-about-us></app-about-us>\r\n<app-destination-and-highlights></app-destination-and-highlights>\r\n<app-safari-card></app-safari-card>\r\n<app-testimonials></app-testimonials>\r\n<app-footer></app-footer>\r\n" }]
-  }], null, null);
+    args: [{ selector: "app-home", imports: [
+      CommonModule,
+      DestinationAndHighlightsComponent,
+      HeroCarousel,
+      AboutUs,
+      SafariCard,
+      Footer,
+      TestimonialsComponent
+    ], template: '<!-- Scroll to Top Button -->\r\n<button *ngIf="isScrolled" class="scroll-to-top" (click)="scrollToTop()">\r\n  <!-- SVG Icon for the Arrow -->\r\n  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up">\r\n    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n    <path d="M12 5l0 14" />\r\n    <path d="M18 11l-6 -6" />\r\n    <path d="M6 11l6 -6" />\r\n  </svg>\r\n</button>\r\n\r\n<!-- Content sections of the home page -->\r\n<app-hero-carousel></app-hero-carousel>\r\n<app-about-us></app-about-us>\r\n<app-destination-and-highlights></app-destination-and-highlights>\r\n<app-safari-card></app-safari-card>\r\n<app-testimonials></app-testimonials>\r\n<app-footer></app-footer>\r\n', styles: ["/* src/app/components/home/home.css */\n.scroll-to-top {\n  position: fixed;\n  bottom: 20px;\n  right: 20px;\n  width: 50px;\n  height: 50px;\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  border-radius: 10px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n  z-index: 9999;\n}\n.scroll-to-top svg {\n  width: 24px;\n  height: 24px;\n  stroke: white;\n  transition: stroke 0.3s ease;\n}\n.scroll-to-top:hover {\n  background-color: #FFD76D;\n}\n.scroll-to-top:hover svg {\n  stroke: #2C6E49;\n}\n.scroll-to-top:focus {\n  outline: none;\n}\n/*# sourceMappingURL=home.css.map */\n"] }]
+  }], null, { onWindowScroll: [{
+    type: HostListener,
+    args: ["window:scroll", []]
+  }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Home, { className: "Home", filePath: "src/app/components/home/home.ts", lineNumber: 17 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Home, { className: "Home", filePath: "src/app/components/home/home.ts", lineNumber: 24 });
 })();
 
 // src/app/app.routes.ts
@@ -43786,10 +43933,15 @@ function NavbarComponent_div_4_Template(rf, ctx) {
   }
 }
 var NavbarComponent = class _NavbarComponent {
+  router;
   isModalOpen = false;
   // Modal state
   menuOpen = false;
   // Track if the mobile menu is open
+  constructor(router) {
+    this.router = router;
+  }
+  // Inject Router
   // Function to open the modal
   openModal() {
     this.isModalOpen = true;
@@ -43802,28 +43954,49 @@ var NavbarComponent = class _NavbarComponent {
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
+  // Function to close the menu when a link is clicked
+  navigateAndCloseMenu() {
+    if (this.menuOpen) {
+      this.toggleMenu();
+    }
+  }
   static \u0275fac = function NavbarComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _NavbarComponent)();
+    return new (__ngFactoryType__ || _NavbarComponent)(\u0275\u0275directiveInject(Router));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NavbarComponent, selectors: [["app-navbar"]], decls: 33, vars: 5, consts: [[1, "navbar"], [1, "navbar-left"], [1, "logo-text"], ["class", "navbar-hamburger", 3, "click", 4, "ngIf"], [1, "navbar-right"], ["href", "#home", 1, "nav-link"], ["href", "#about", 1, "nav-link"], ["href", "#Destinations", 1, "nav-link"], ["href", "#Safaris", 1, "nav-link"], ["href", "#contact", 1, "nav-link"], [1, "book-now-btn", 3, "click"], [1, "modal", 3, "click"], [1, "modal-content", 3, "click"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", ""], ["for", "date"], ["type", "date", "id", "date", "name", "date", "required", ""], ["type", "submit"], [1, "close-modal", 3, "click"], [1, "navbar-hamburger", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-menu", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-x", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-menu"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M4 6l16 0"], ["d", "M4 12l16 0"], ["d", "M4 18l16 0"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-x"], ["d", "M18 6L6 18"], ["d", "M6 6l12 12"]], template: function NavbarComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NavbarComponent, selectors: [["app-navbar"]], decls: 33, vars: 5, consts: [[1, "navbar"], [1, "navbar-left"], [1, "logo-text"], ["class", "navbar-hamburger", 3, "click", 4, "ngIf"], [1, "navbar-right"], ["href", "/", 1, "nav-link", 3, "click"], ["href", "#about", 1, "nav-link", 3, "click"], ["href", "#destinations", 1, "nav-link", 3, "click"], ["href", "#safaris", 1, "nav-link", 3, "click"], ["href", "#contact", 1, "nav-link", 3, "click"], [1, "book-now-btn", 3, "click"], [1, "modal", 3, "click"], [1, "modal-content", 3, "click"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", ""], ["for", "date"], ["type", "date", "id", "date", "name", "date", "required", ""], ["type", "submit"], [1, "close-modal", 3, "click"], [1, "navbar-hamburger", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-menu", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-x", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-menu"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M4 6l16 0"], ["d", "M4 12l16 0"], ["d", "M4 18l16 0"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-x"], ["d", "M18 6L6 18"], ["d", "M6 6l12 12"]], template: function NavbarComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "nav", 0)(1, "div", 1)(2, "span", 2);
       \u0275\u0275text(3, "\u{1F981} JAMBO SAFARI");
       \u0275\u0275elementEnd()();
       \u0275\u0275template(4, NavbarComponent_div_4_Template, 3, 2, "div", 3);
       \u0275\u0275elementStart(5, "div", 4)(6, "a", 5);
+      \u0275\u0275listener("click", function NavbarComponent_Template_a_click_6_listener() {
+        return ctx.navigateAndCloseMenu();
+      });
       \u0275\u0275text(7, "Home");
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(8, "a", 6);
+      \u0275\u0275listener("click", function NavbarComponent_Template_a_click_8_listener() {
+        return ctx.navigateAndCloseMenu();
+      });
       \u0275\u0275text(9, "About");
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(10, "a", 7);
+      \u0275\u0275listener("click", function NavbarComponent_Template_a_click_10_listener() {
+        return ctx.navigateAndCloseMenu();
+      });
       \u0275\u0275text(11, "Destinations");
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(12, "a", 8);
+      \u0275\u0275listener("click", function NavbarComponent_Template_a_click_12_listener() {
+        return ctx.navigateAndCloseMenu();
+      });
       \u0275\u0275text(13, "Safaris");
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(14, "a", 9);
+      \u0275\u0275listener("click", function NavbarComponent_Template_a_click_14_listener() {
+        return ctx.navigateAndCloseMenu();
+      });
       \u0275\u0275text(15, "Contact");
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(16, "button", 10);
@@ -43869,16 +44042,16 @@ var NavbarComponent = class _NavbarComponent {
       \u0275\u0275advance(13);
       \u0275\u0275classProp("show", ctx.isModalOpen);
     }
-  }, dependencies: [CommonModule, NgIf], styles: ["\n\n.navbar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.nav-link[_ngcontent-%COMP%] {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link[_ngcontent-%COMP%]:hover {\n  color: #FFD76D;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler.icon-tabler-menu.open[_ngcontent-%COMP%] {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar[_ngcontent-%COMP%] {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left[_ngcontent-%COMP%] {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show[_ngcontent-%COMP%] {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link[_ngcontent-%COMP%] {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: flex;\n  }\n}\n.modal[_ngcontent-%COMP%] {\n  display: none;\n  opacity: 0;\n  transition: opacity 0.3s ease;\n}\n.modal.show[_ngcontent-%COMP%] {\n  display: block;\n  opacity: 1;\n  z-index: 9999;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 20px;\n  border-radius: 5px;\n  width: 300px;\n  margin: 50px auto;\n}\n.close-modal[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 10px;\n}\n.close-modal[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n}\n/*# sourceMappingURL=navbar.css.map */"] });
+  }, dependencies: [CommonModule, NgIf], styles: ["\n\n.navbar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.nav-link[_ngcontent-%COMP%] {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link[_ngcontent-%COMP%]:hover {\n  color: #FFD76D;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler.icon-tabler-menu.open[_ngcontent-%COMP%] {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar[_ngcontent-%COMP%] {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left[_ngcontent-%COMP%] {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show[_ngcontent-%COMP%] {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link[_ngcontent-%COMP%] {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: flex;\n  }\n}\n.modal[_ngcontent-%COMP%] {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show[_ngcontent-%COMP%] {\n  display: block;\n  opacity: 1;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: _ngcontent-%COMP%_fadeIn 0.5s ease-out;\n}\n.modal-content[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NavbarComponent, [{
     type: Component,
-    args: [{ selector: "app-navbar", standalone: true, imports: [CommonModule], template: '<nav class="navbar">\r\n  <!-- Logo and Text on the Left -->\r\n  <div class="navbar-left">\r\n    <span class="logo-text">\u{1F981} JAMBO SAFARI</span>\r\n  </div>\r\n\r\n  <!-- Hamburger Icon for Mobile (Only visible on mobile) -->\r\n  <div class="navbar-hamburger" *ngIf="menuOpen !== null" (click)="toggleMenu()">\r\n    <svg *ngIf="!menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-menu">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M4 6l16 0"/>\r\n      <path d="M4 12l16 0"/>\r\n      <path d="M4 18l16 0"/>\r\n    </svg>\r\n    <svg *ngIf="menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-x">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M18 6L6 18"/>\r\n      <path d="M6 6l12 12"/>\r\n    </svg>\r\n  </div>\r\n\r\n  <!-- Menu Links on the Right (Initially Hidden on Mobile) -->\r\n  <div class="navbar-right" [class.show]="menuOpen">\r\n    <a href="#home" class="nav-link">Home</a>\r\n    <a href="#about" class="nav-link">About</a>\r\n    <a href="#Destinations" class="nav-link">Destinations</a>\r\n    <a href="#Safaris" class="nav-link">Safaris</a>\r\n    <a href="#contact" class="nav-link">Contact</a>\r\n    \r\n    <!-- Book Now Button -->\r\n    <button class="book-now-btn" (click)="openModal()">Book Now</button>\r\n  </div>\r\n</nav>\r\n\r\n<!-- Modal for Booking -->\r\n<div class="modal" [class.show]="isModalOpen" (click)="closeModal()">\r\n  <div class="modal-content" (click)="$event.stopPropagation()">\r\n    <h2>Book Now</h2>\r\n    <form>\r\n      <label for="name">Name:</label>\r\n      <input type="text" id="name" name="name" required />\r\n      <label for="date">Preferred Date:</label>\r\n      <input type="date" id="date" name="date" required />\r\n      <button type="submit">Submit</button>\r\n    </form>\r\n    <button class="close-modal" (click)="closeModal()">Close</button>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/navbar/navbar.css */\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right {\n  display: flex;\n  align-items: center;\n}\n.nav-link {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link:hover {\n  color: #FFD76D;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger svg.icon-tabler {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger svg.icon-tabler.icon-tabler-menu.open {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger {\n    display: none;\n  }\n  .navbar-right {\n    display: flex;\n  }\n}\n.modal {\n  display: none;\n  opacity: 0;\n  transition: opacity 0.3s ease;\n}\n.modal.show {\n  display: block;\n  opacity: 1;\n  z-index: 9999;\n}\n.modal-content {\n  background-color: white;\n  padding: 20px;\n  border-radius: 5px;\n  width: 300px;\n  margin: 50px auto;\n}\n.close-modal {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 10px;\n}\n.close-modal:hover {\n  background-color: #FFD76D;\n}\n/*# sourceMappingURL=navbar.css.map */\n"] }]
-  }], null, null);
+    args: [{ selector: "app-navbar", standalone: true, imports: [CommonModule], template: '<nav class="navbar">\r\n  <!-- Logo and Text on the Left -->\r\n  <div class="navbar-left">\r\n    <span class="logo-text">\u{1F981} JAMBO SAFARI</span>\r\n  </div>\r\n\r\n  <!-- Hamburger Icon for Mobile (Only visible on mobile) -->\r\n  <div class="navbar-hamburger" *ngIf="menuOpen !== null" (click)="toggleMenu()">\r\n    <svg *ngIf="!menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-menu">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M4 6l16 0"/>\r\n      <path d="M4 12l16 0"/>\r\n      <path d="M4 18l16 0"/>\r\n    </svg>\r\n    <svg *ngIf="menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-x">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M18 6L6 18"/>\r\n      <path d="M6 6l12 12"/>\r\n    </svg>\r\n  </div>\r\n\r\n  <!-- Menu Links on the Right (Initially Hidden on Mobile) -->\r\n  <div class="navbar-right" [class.show]="menuOpen">\r\n    <a href="/" class="nav-link" (click)="navigateAndCloseMenu()">Home</a>\r\n    <a href="#about" class="nav-link" (click)="navigateAndCloseMenu()">About</a>\r\n    <a href="#destinations" class="nav-link" (click)="navigateAndCloseMenu()">Destinations</a>\r\n    <a href="#safaris" class="nav-link" (click)="navigateAndCloseMenu()">Safaris</a>\r\n    <a href="#contact" class="nav-link" (click)="navigateAndCloseMenu()">Contact</a>\r\n    \r\n    <!-- Book Now Button -->\r\n    <button class="book-now-btn" (click)="openModal()">Book Now</button>\r\n  </div>\r\n</nav>\r\n\r\n<!-- Modal for Booking -->\r\n<div class="modal" [class.show]="isModalOpen" (click)="closeModal()">\r\n  <div class="modal-content" (click)="$event.stopPropagation()">\r\n    <h2>Book Now</h2>\r\n    <form>\r\n      <label for="name">Name:</label>\r\n      <input type="text" id="name" name="name" required />\r\n      <label for="date">Preferred Date:</label>\r\n      <input type="date" id="date" name="date" required />\r\n      <button type="submit">Submit</button>\r\n    </form>\r\n    <button class="close-modal" (click)="closeModal()">Close</button>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/navbar/navbar.css */\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right {\n  display: flex;\n  align-items: center;\n}\n.nav-link {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link:hover {\n  color: #FFD76D;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger svg.icon-tabler {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger svg.icon-tabler.icon-tabler-menu.open {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger {\n    display: none;\n  }\n  .navbar-right {\n    display: flex;\n  }\n}\n.modal {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show {\n  display: block;\n  opacity: 1;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: fadeIn 0.5s ease-out;\n}\n.modal-content h2 {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content input {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content button[type=submit] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content button[type=submit]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal:hover {\n  background-color: #FFD76D;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */\n"] }]
+  }], () => [{ type: Router }], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(NavbarComponent, { className: "NavbarComponent", filePath: "src/app/components/navbar/navbar.ts", lineNumber: 11 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(NavbarComponent, { className: "NavbarComponent", filePath: "src/app/components/navbar/navbar.ts", lineNumber: 12 });
 })();
 
 // src/app/app.ts
@@ -43891,12 +44064,12 @@ var App = class _App {
     if (rf & 1) {
       \u0275\u0275element(0, "app-navbar")(1, "router-outlet");
     }
-  }, dependencies: [RouterOutlet, NavbarComponent], encapsulation: 2 });
+  }, dependencies: [RouterOutlet, NavbarComponent], styles: ["\n\nhtml[_ngcontent-%COMP%] {\n  scroll-behavior: smooth;\n}\n/*# sourceMappingURL=app.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(App, [{
     type: Component,
-    args: [{ selector: "app-root", imports: [RouterOutlet, NavbarComponent], template: "<app-navbar></app-navbar>\r\n<router-outlet />" }]
+    args: [{ selector: "app-root", imports: [RouterOutlet, NavbarComponent], template: "<app-navbar></app-navbar>\r\n<router-outlet />", styles: ["/* src/app/app.css */\nhtml {\n  scroll-behavior: smooth;\n}\n/*# sourceMappingURL=app.css.map */\n"] }]
   }], null, null);
 })();
 (() => {
@@ -43928,7 +44101,7 @@ bootstrapApplication(App, appConfig).catch((err) => console.error(err));
 @angular/router/fesm2022/router.mjs:
 @angular/forms/fesm2022/forms.mjs:
   (**
-   * @license Angular v20.1.4
+   * @license Angular v20.1.7
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)

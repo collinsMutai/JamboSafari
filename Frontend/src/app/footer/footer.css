@@ -202,7 +202,7 @@
   /* Footer Links and Phone Number */
   .footer ul li {
     flex-direction: column; /* Stack icons and text vertically */
-    align-items: flex-start; /* Align items to the start */
+    align-items: center; /* Align items to the start */
   }
 
   .footer ul li svg {
@@ -218,7 +218,7 @@
 /* Small Mobile Devices: 480px and below */
 @media (max-width: 480px) {
   .footer {
-    padding: 30px 15px 15px 15px; /* Adjust footer padding for very small screens */
+    padding: 40px 15px 15px 15px; /* Adjust footer padding for very small screens */
   }
 
   .footer-title {

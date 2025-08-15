@@ -21,11 +21,11 @@
 
   <!-- Menu Links on the Right (Initially Hidden on Mobile) -->
   <div class="navbar-right" [class.show]="menuOpen">
-    <a href="#home" class="nav-link">Home</a>
-    <a href="#about" class="nav-link">About</a>
-    <a href="#Destinations" class="nav-link">Destinations</a>
-    <a href="#Safaris" class="nav-link">Safaris</a>
-    <a href="#contact" class="nav-link">Contact</a>
+    <a href="/" class="nav-link" (click)="navigateAndCloseMenu()">Home</a>
+    <a href="#about" class="nav-link" (click)="navigateAndCloseMenu()">About</a>
+    <a href="#destinations" class="nav-link" (click)="navigateAndCloseMenu()">Destinations</a>
+    <a href="#safaris" class="nav-link" (click)="navigateAndCloseMenu()">Safaris</a>
+    <a href="#contact" class="nav-link" (click)="navigateAndCloseMenu()">Contact</a>
     
     <!-- Book Now Button -->
     <button class="book-now-btn" (click)="openModal()">Book Now</button>

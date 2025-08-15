@@ -128,7 +128,8 @@ button svg {
 }
 
 .image-title p {
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: normal;
   margin-top: 5px;
 }
 
@@ -149,7 +150,7 @@ button svg {
 /* Medium screens (tablets) */
 @media (max-width: 1024px) {
   .carousel-container {
-    padding: 40px 80px; /* Reduce padding */
+    padding: 100px 40px; /* Reduce padding */
   }
 
   .destination-slide {
@@ -166,11 +167,12 @@ button svg {
   }
 
   .image-title h3 {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .image-title p {
-    font-size: 12px;
+    font-size: 16px;
+    font-weight: 400;
   }
 
   .title-container h2 {
@@ -244,11 +246,11 @@ button svg {
   }
 
   .image-title h3 {
-    font-size: 14px;
+    font-size: 19px;
   }
 
   .image-title p {
-    font-size: 10px;
+    font-size: 16px;
   }
 
   .destination-image img {
@@ -271,11 +273,11 @@ button svg {
   }
 
   .image-title h3 {
-    font-size: 12px; /* Even smaller font for extra small screens */
+    font-size: 19px; /* Even smaller font for extra small screens */
   }
 
   .image-title p {
-    font-size: 8px;
+    font-size: 15px;
   }
 
   .destination-image img {

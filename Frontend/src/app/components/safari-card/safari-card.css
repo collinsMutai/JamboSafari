@@ -133,6 +133,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
 
 .modal-content {
@@ -142,6 +143,7 @@
   width: 80%;
   max-width: 600px;
   position: relative;
+  z-index: 10000;
 }
 
 .modal-header {
@@ -158,6 +160,29 @@
   padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+/* Modal Body Styling - Content Area */
+.modal-body {
+  max-height: 500px; /* Set a max height for the modal body */
+  overflow-y: scroll; /* Enable vertical scrolling */
+  padding-right: 10px; /* Ensure content doesn't touch the scrollbar */
+  scrollbar-width: thin; /* For Firefox: Makes the scrollbar thinner */
+  scrollbar-color: transparent transparent; /* For Firefox: Hides the scrollbar */
+}
+
+/* Hide the scrollbar in Webkit-based browsers (Chrome, Safari, etc.) */
+.modal-body::-webkit-scrollbar {
+  width: 0;  /* Hide the scrollbar */
+  height: 0; /* For horizontal scroll if required */
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: transparent; /* Make the scrollbar thumb invisible */
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: transparent; /* Make the track invisible */
 }
 
 .modal-body ul {
@@ -189,6 +214,41 @@
   height: 16px;
   width: 16px;
   vertical-align: middle; /* Align the icon vertically with the text */
+}
+
+/* Modal form styling */
+.modal-body form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body label {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.modal-body input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.modal-body button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.modal-body button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 /* Responsive Styling for Mobile */

@@ -1,204 +1,79 @@
 <div class="safari-cards-container">
-  <!-- Component Title -->
   <h2 class="safari-title">🛏️ Safari Packages</h2>
 
-  <!-- Safari Packages Cards -->
   <div class="cards">
     <div *ngFor="let package of safariPackages" class="card">
-      <!-- Card Header -->
       <div class="card-header">
         <strong>{{ package.title }}</strong>
       </div>
-
-      <!-- Card Body -->
       <div class="card-body">
-        <!-- Image inside the card body -->
         <div class="card-image">
-          <img
-            [src]="package.image"
-            alt="{{ package.title }} Image"
-            class="card-img"
-          />
+          <img [src]="package.image" alt="{{ package.title }} Image" class="card-img" />
         </div>
-
-        <!-- Card Content -->
         <p><strong>Includes:</strong> {{ package.includes }}</p>
         <ul>
           <li *ngFor="let detail of package.details">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="icon-check"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-check">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
               <path d="M7 12l5 5l10 -10" />
               <path d="M2 12l5 5m5 -5l5 -5" />
             </svg>
             {{ detail }}
           </li>
         </ul>
-
-        <!-- Button Wrapper (added space between buttons) -->
         <div class="button-wrapper">
-          <!-- View Details Button -->
-          <button class="view-details-btn" (click)="openModal(package.title)">
-            View Details
-          </button>
-
-          <!-- Book Now Button -->
-          <button class="book-now-btn" (click)="bookNow(package.title)">
-            Book Now
-          </button>
+          <button class="view-details-btn" (click)="openModal(package.title)">View Details</button>
+          <button class="book-now-btn" (click)="openModal(package.title)">Book Now</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal for Package Details -->
-<div
-  *ngIf="selectedPackageDetails"
-  class="modal-overlay"
-  (click)="closeModal()"
->
+<!-- Modal for Booking -->
+<div *ngIf="selectedPackageDetails" class="modal-overlay" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>{{ selectedPackageDetails }} - Safari Package Details</h3>
+      <h3>{{ selectedPackageDetails }} - Safari Package Booking</h3>
       <button class="close-btn" (click)="closeModal()">✖</button>
     </div>
     <div class="modal-body">
-      <p><strong>✅ What’s Included?</strong></p>
-      <ul>
-        <li
-          *ngFor="let package of safariPackages"
-          [hidden]="package.title !== selectedPackageDetails"
-        >
-          <!-- 'Includes' section is now placed at the top -->
-          <ul>
-            <li>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon-check"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 12l5 5l10 -10" />
-                <path d="M2 12l5 5m5 -5l5 -5" />
-              </svg>
-              Private 4x4 Land Cruiser with pop-up roof
-            </li>
-            <li>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon-check"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 12l5 5l10 -10" />
-                <path d="M2 12l5 5m5 -5l5 -5" />
-              </svg>
-              All park entry fees and professional English-speaking guides
-            </li>
-            <li>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon-check"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 12l5 5l10 -10" />
-                <path d="M2 12l5 5m5 -5l5 -5" />
-              </svg>
-              Full-board accommodation (lodges or tents)
-            </li>
-            <li>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon-check"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 12l5 5l10 -10" />
-                <path d="M2 12l5 5m5 -5l5 -5" />
-              </svg>
-              Airport pickup and drop-off
-            </li>
-            <li>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon-check"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 12l5 5l10 -10" />
-                <path d="M2 12l5 5m5 -5l5 -5" />
-              </svg>
-              Daily bottled water and meals
-            </li>
-            <li>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon-check"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 12l5 5l10 -10" />
-                <path d="M2 12l5 5m5 -5l5 -5" />
-              </svg>
-              Cultural and spiritual activities
-            </li>
-          </ul>
-        </li>
-      </ul>
+      <form (ngSubmit)="onSubmitBooking()">
+        <!-- Name Field -->
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" [(ngModel)]="name" name="name" required />
+
+        <!-- Email Field -->
+        <label for="email">Your Email:</label>
+        <input type="email" id="email" [(ngModel)]="email" name="email" required />
+
+        <!-- Phone Field -->
+        <label for="phone">Your Phone:</label>
+        <input type="text" id="phone" [(ngModel)]="phone" name="phone" required />
+
+        <!-- Number of Adults Field -->
+        <label for="adults">Number of Adults:</label>
+        <input type="number" id="adults" [(ngModel)]="numAdults" name="numAdults" min="1" required />
+
+        <!-- Number of Kids Field -->
+        <label for="kids">Number of Kids:</label>
+        <input type="number" id="kids" [(ngModel)]="numKids" name="numKids" min="0" />
+
+        <!-- From Date Field -->
+        <label for="fromDate">From Date:</label>
+        <input type="date" id="fromDate" [(ngModel)]="fromDate" name="fromDate" required />
+
+        <!-- To Date Field -->
+        <label for="toDate">To Date:</label>
+        <input type="date" id="toDate" [(ngModel)]="toDate" name="toDate" required />
+
+        <!-- reCAPTCHA widget -->
+        <div class="g-recaptcha" [attr.data-sitekey]="'6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ'"></div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="book-now-btn">Confirm Booking</button>
+      </form>
     </div>
   </div>
 </div>
+
