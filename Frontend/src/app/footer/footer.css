@@ -1,3 +1,14 @@
+
+::ng-deep .mat-snack-bar-container.snackbar-success {
+  background-color: #4caf50 !important;  /* Green background */
+  color: white !important;  /* White text */
+}
+
+::ng-deep .mat-snack-bar-container.snackbar-error {
+  background-color: #f44336 !important;  /* Red background */
+  color: white !important;  /* White text */
+}
+
 /* General Footer Styling */
 .footer {
   color: #000; /* Black text color */

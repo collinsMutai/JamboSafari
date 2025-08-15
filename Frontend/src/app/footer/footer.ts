@@ -1,12 +1,9 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common'; // For common Angular directives
 import { DomSanitizer } from '@angular/platform-browser'; // Angular sanitizer
+import { MatSnackBarModule } from '@angular/material/snack-bar'; // Import MatSnackBarModule
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar service
 import emailjs from 'emailjs-com'; // Import EmailJS SDK
 import { environment } from '../../environments/environment';
 
@@ -18,6 +15,7 @@ declare var grecaptcha: any; // Declare the global grecaptcha object for TypeScr
   imports: [
     CommonModule, // Angular's common directives (e.g. ngIf, ngFor)
     ReactiveFormsModule, // Reactive forms module for handling the form
+    MatSnackBarModule // Import MatSnackBarModule here
   ],
   templateUrl: './footer.html',
   styleUrls: ['./footer.css'],
@@ -28,7 +26,8 @@ export class Footer implements OnInit {
   constructor(
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private snackBar: MatSnackBar // Inject MatSnackBar service
   ) {
     this.contactForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -82,7 +81,7 @@ export class Footer implements OnInit {
   // Handle form submission
   onSubmit() {
     if (this.contactForm.valid) {
-      let formData = this.contactForm.value;
+      const formData = this.contactForm.value;
 
       // Sanitize inputs to prevent XSS or any unsafe content
       formData.name = this.sanitizeInput(formData.name);
@@ -91,9 +90,11 @@ export class Footer implements OnInit {
 
       // Send the form data to EmailJS
       this.sendEmail(formData);
+
+      // Reset the form
       this.contactForm.reset();
     } else {
-      console.log('Form is invalid');
+      this.showSnackbar('Form is invalid', 'error');
     }
   }
 
@@ -125,11 +126,29 @@ export class Footer implements OnInit {
       )
       .then((response) => {
         console.log('Email sent successfully', response);
-        // Handle success (e.g., show a confirmation message to the user)
+        this.showSnackbar('Message sent successfully!', 'success');
       })
       .catch((error) => {
         console.error('Email sending failed', error);
-        // Handle failure (e.g., show an error message to the user)
+        this.showSnackbar('There was an error sending your message. Please try again later.', 'error');
       });
   }
+
+  // Show a Material Snackbar message
+showSnackbar(message: string, type: string) {
+  // Determine which class to apply based on the message type
+  let snackBarClass = type === 'success' ? 'snackbar-success' : 'snackbar-error';
+
+  // Snackbar configuration
+  const snackBarConfig = {
+    duration: 3000,
+    panelClass: [snackBarClass],  // Apply the custom class based on message type
+    horizontalPosition: 'right' as 'right',
+    verticalPosition: 'top' as 'top',
+  };
+
+  // Open the snackbar
+  this.snackBar.open(message, 'Close', snackBarConfig);
+}
+
 }
