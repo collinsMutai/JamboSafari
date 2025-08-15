@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DomSanitizer } from '@angular/platform-browser'; // Import Angular sanitizer
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar service
 import emailjs from 'emailjs-com'; // Import EmailJS SDK
 import { environment } from '../../../environments/environment';
+import { SafariService, SafariPackage } from '../../safari-service';
 
-declare var grecaptcha: any; // Declare the global grecaptcha object for TypeScript
+declare var grecaptcha: any;
 
 @Component({
   selector: 'app-safari-card',
@@ -13,76 +15,50 @@ declare var grecaptcha: any; // Declare the global grecaptcha object for TypeScr
   styleUrls: ['./safari-card.css'],
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  providers: [SafariService],
 })
-export class SafariCard {
-  safariPackages = [
-    {
-      title: '🗓️ 3-Day Beginners Safari',
-      includes: 'Maasai Mara, Lake Nakuru, or Lake Naivasha',
-      details: ['Daily game drives', 'Lodges & meals', 'Transfers & guides'],
-      image: 'assets/images/cheetah1.jpeg',
-      showDetails: false,
-      fullDetails: 'This 3-day safari includes daily game drives through Maasai Mara, Lake Nakuru, and Lake Naivasha, all with luxury lodges, meals, and expert guides.'
-    },
-    {
-      title: '🗓️ 7-Day Classic Safari',
-      includes: 'Maasai Mara, Lake Nakuru, Cultural Visit',
-      details: ['Daily game drives', 'Lodges & meals', 'Transfers & guides'],
-      image: 'assets/images/giraffe1.jpeg',
-      showDetails: false,
-      fullDetails: 'This 7-day safari provides an in-depth experience, including visits to Maasai Mara, Lake Nakuru, and a cultural visit to a local Maasai village.'
-    },
-    {
-      title: '🗓️ 10-Day Deluxe Safari + Mission',
-      includes:
-        'Combine safari with service—visit schools, churches, or clinics.',
-      details: [
-        'Perfect for youth or mission teams',
-        'Includes devotionals and worship sessions',
-      ],
-      image: 'assets/images/lions1.jpeg',
-      showDetails: false,
-      fullDetails: 'The 10-day deluxe safari includes not only breathtaking safaris but also mission activities like visiting local schools, churches, and clinics.'
-    },
-    {
-      title: '🗓️ 14-Day Grand Safari',
-      includes: 'Kenya & Tanzania combo: Mara, Serengeti, Ngorongoro',
-      details: ['Optional 3-day Zanzibar retreat'],
-      image: 'assets/images/wilderbeast1.jpeg',
-      showDetails: false,
-      fullDetails: 'This is the ultimate safari experience, covering both Kenya and Tanzania with the Mara, Serengeti, Ngorongoro, and an optional 3-day Zanzibar retreat.'
-    },
-  ];
-
+export class SafariCard implements OnInit {
+  safariPackages: SafariPackage[] = [];
   selectedPackageDetails: string | null = null;
-  selectedPackage: any = null; // Add this line to store selected package details
+  selectedPackage: SafariPackage | null = null;
 
-  // Modal form data
   name: string = '';
-  email: string = ''; // Email field
-  phone: string = ''; // Phone field
+  email: string = '';
+  phone: string = '';
   numAdults: number = 1;
   numKids: number = 0;
   fromDate: string = '';
   toDate: string = '';
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(
+    private sanitizer: DomSanitizer,
+    private safariService: SafariService,
+    private snackBar: MatSnackBar // Inject MatSnackBar service
+  ) {}
 
-  openModal(packageTitle: string) {
+  ngOnInit(): void {
+    this.safariService.getAllPackages().subscribe((packages: SafariPackage[]) => {
+      this.safariPackages = packages;
+    });
+  }
+
+  openModal(packageTitle: string): void {
     this.selectedPackageDetails = packageTitle;
   }
 
-  openDetailsModal(packageDetails: any) {
-    this.selectedPackage = packageDetails; // Store the selected package for viewing its details
+  openDetailsModal(packageTitle: string): void {
+    this.safariService.getPackageByTitle(packageTitle).subscribe((packageData: SafariPackage | undefined) => {
+      this.selectedPackage = packageData ?? null;
+    });
   }
 
-  closeModal() {
+  closeModal(): void {
     this.selectedPackageDetails = null;
-    this.selectedPackage = null; // Reset selected package
+    this.selectedPackage = null;
   }
 
-  // Handle the form submission
-  onSubmitBooking() {
+  // Handle form submission
+  onSubmitBooking(): void {
     if (
       !this.name ||
       !this.email ||
@@ -91,11 +67,10 @@ export class SafariCard {
       !this.toDate ||
       this.numAdults <= 0
     ) {
-      alert('Please fill all required fields.');
+      this.showSnackbar('Please fill all required fields.', 'error');
       return;
     }
 
-    // Sanitize inputs
     this.name = this.sanitizeInput(this.name);
     this.email = this.sanitizeInput(this.email);
     this.phone = this.sanitizeInput(this.phone);
@@ -103,11 +78,10 @@ export class SafariCard {
     this.toDate = this.sanitizeInput(this.toDate);
 
     if (this.numAdults <= 0 || this.numKids < 0) {
-      alert('Invalid number of adults or kids.');
+      this.showSnackbar('Invalid number of adults or kids.', 'error');
       return;
     }
 
-    // Trigger reCAPTCHA
     grecaptcha
       .execute('6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ', { action: 'submit' })
       .then((token: string) => {
@@ -119,11 +93,10 @@ export class SafariCard {
           numKids: this.numKids,
           fromDate: this.fromDate,
           toDate: this.toDate,
-          packageTitle: this.selectedPackageDetails, // Include the selected package details
+          packageTitle: this.selectedPackageDetails,
           recaptchaToken: token,
         };
 
-        // Send email using EmailJS
         emailjs
           .send(
             environment.emailJS.serviceID,
@@ -135,29 +108,22 @@ export class SafariCard {
             (response) => {
               console.log('Email sent successfully:', response);
               this.closeModal();
-              alert(
-                'Your booking has been confirmed! A confirmation email has been sent.'
-              );
-
-              // Clear the form fields after successful submission
+              this.showSnackbar('Your booking has been confirmed! A confirmation email has been sent.', 'success');
               this.clearForm();
             },
             (error) => {
               console.error('Error sending email:', error);
-              alert(
-                'There was an error submitting the form. Please try again later.'
-              );
+              this.showSnackbar('There was an error submitting the form. Please try again later.', 'error');
             }
           );
       })
       .catch((error: any) => {
         console.error('reCAPTCHA error:', error);
-        alert('reCAPTCHA verification failed. Please try again.');
+        this.showSnackbar('reCAPTCHA verification failed. Please try again.', 'error');
       });
   }
 
-  // Reset form fields to initial values
-  clearForm() {
+  clearForm(): void {
     this.name = '';
     this.email = '';
     this.phone = '';
@@ -169,6 +135,20 @@ export class SafariCard {
   }
 
   sanitizeInput(input: string): string {
-    return input.trim(); // Trimming whitespace
+    return input.trim(); // Trim the whitespace
+  }
+
+  // Show Material Snackbar
+  showSnackbar(message: string, type: string) {
+    const snackBarClass = type === 'success' ? 'snackbar-success' : 'snackbar-error';
+
+    const snackBarConfig = {
+      duration: 3000,
+      panelClass: [snackBarClass],  // Apply the custom class based on message type
+      horizontalPosition: 'right' as 'right',
+      verticalPosition: 'top' as 'top',
+    };
+
+    this.snackBar.open(message, 'Close', snackBarConfig);
   }
 }

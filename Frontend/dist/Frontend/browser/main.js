@@ -36852,7 +36852,7 @@ var HeroCarousel = class _HeroCarousel {
   static \u0275fac = function HeroCarousel_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _HeroCarousel)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HeroCarousel, selectors: [["app-hero-carousel"]], decls: 11, vars: 1, consts: [["id", "/", 1, "custom-carousel"], [1, "carousel-container"], ["class", "carousel-item", 3, "active", 4, "ngFor", "ngForOf"], ["type", "button", "aria-label", "Previous", 1, "carousel-control-prev", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-chevron-left"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"], ["type", "button", "aria-label", "Next", 1, "carousel-control-next", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-chevron-right"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"], [1, "carousel-item"], [1, "d-block", "w-100", 3, "src", "alt"], [1, "carousel-caption", "d-md-block"], ["href", "#", 1, "btn-discover"], ["href", "#", 1, "btn-book-now"]], template: function HeroCarousel_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HeroCarousel, selectors: [["app-hero-carousel"]], decls: 11, vars: 1, consts: [["id", "/", 1, "custom-carousel"], [1, "carousel-container"], ["class", "carousel-item", 3, "active", 4, "ngFor", "ngForOf"], ["type", "button", "aria-label", "Previous", 1, "carousel-control-prev", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-chevron-left"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"], ["type", "button", "aria-label", "Next", 1, "carousel-control-next", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "currentColor", 1, "icon", "icon-tabler", "icons-tabler-filled", "icon-tabler-square-chevron-right"], ["d", "M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"], [1, "carousel-item"], [1, "d-block", "w-100", 3, "src", "alt"], [1, "carousel-caption", "d-md-block"], ["href", "#about", 1, "btn-discover"], ["href", "#safaris", 1, "btn-book-now"]], template: function HeroCarousel_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "div", 0)(1, "div", 1);
       \u0275\u0275template(2, HeroCarousel_div_2_Template, 11, 8, "div", 2);
@@ -36884,7 +36884,7 @@ var HeroCarousel = class _HeroCarousel {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HeroCarousel, [{
     type: Component,
-    args: [{ selector: "app-hero-carousel", standalone: true, imports: [CommonModule], template: '<div class="custom-carousel" id="/">\r\n  <div class="carousel-container">\r\n    <div\r\n      *ngFor="let slide of slides; let i = index"\r\n      class="carousel-item"\r\n      [class.active]="i === currentSlideIndex"\r\n    >\r\n      <img [src]="slide.image" [alt]="slide.title" class="d-block w-100" />\r\n      <div class="carousel-caption d-md-block">\r\n        <h1>{{ slide.title }}</h1>\r\n        <p>{{ slide.description }}</p>\r\n        <!-- First button -->\r\n        <a href="#" class="btn-discover">{{ slide.buttonText }}</a>\r\n        <!-- Second button (Book Now) -->\r\n        <a href="#" class="btn-book-now">{{ slide.bookNowText }}</a>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Custom Carousel Controls with SVG -->\r\n  <button\r\n    class="carousel-control-prev"\r\n    type="button"\r\n    (click)="moveSlide(-1)"\r\n    aria-label="Previous"\r\n  >\r\n    <svg\r\n      xmlns="http://www.w3.org/2000/svg"\r\n      width="24"\r\n      height="24"\r\n      viewBox="0 0 24 24"\r\n      fill="currentColor"\r\n      class="icon icon-tabler icons-tabler-filled icon-tabler-square-chevron-left"\r\n    >\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n      <path\r\n        d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"\r\n      />\r\n    </svg>\r\n  </button>\r\n\r\n  <button\r\n    class="carousel-control-next"\r\n    type="button"\r\n    (click)="moveSlide(1)"\r\n    aria-label="Next"\r\n  >\r\n    <svg\r\n      xmlns="http://www.w3.org/2000/svg"\r\n      width="24"\r\n      height="24"\r\n      viewBox="0 0 24 24"\r\n      fill="currentColor"\r\n      class="icon icon-tabler icons-tabler-filled icon-tabler-square-chevron-right"\r\n    >\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n      <path\r\n        d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"\r\n      />\r\n    </svg>\r\n  </button>\r\n</div>\r\n', styles: ["/* src/app/components/hero-carousel/hero-carousel.css */\n.custom-carousel {\n  position: relative;\n  width: 100%;\n  height: 100vh;\n  overflow: hidden;\n}\n.carousel-container {\n  display: flex;\n  transition: transform 1s ease-in-out;\n}\n.carousel-item {\n  flex: 0 0 100%;\n  position: relative;\n  height: 100vh;\n  opacity: 0;\n  transition: opacity 1s ease-out;\n}\n.carousel-item.active {\n  opacity: 1;\n}\n.carousel-item img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center center;\n  animation: zoomInOut 10s ease-in-out infinite;\n}\n.carousel-item > div {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  text-align: center;\n  color: white;\n  z-index: 10;\n  width: 100%;\n  max-width: 800px;\n  padding: 20px;\n  border-radius: 10px;\n  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);\n  opacity: 0;\n  animation: fadeInText 1s ease-out 1s forwards;\n}\n@keyframes fadeInText {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.carousel-item h1 {\n  font-size: 80px;\n  margin-bottom: 15px;\n  font-weight: bold;\n}\n.carousel-item p {\n  font-size: 1.1rem;\n  margin-bottom: 20px;\n  max-width: 90%;\n  margin-left: auto;\n  margin-right: auto;\n}\n.carousel-item .btn-discover {\n  padding: 10px 30px;\n  font-size: 1.4rem;\n  background-color: #2C6E49;\n  color: white;\n  border: none;\n  border-radius: 5px;\n  text-decoration: none;\n  transition: background-color 0.3s ease;\n}\n.carousel-item .btn-discover:hover {\n  background-color: #6A7F41;\n}\n.carousel-item .btn-book-now {\n  padding: 10px 30px;\n  font-size: 1.4rem;\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  border-radius: 5px;\n  text-decoration: none;\n  margin-left: 20px;\n  transition: background-color 0.3s ease;\n}\n.carousel-item .btn-book-now:hover {\n  background-color: #FFD76D;\n}\nbutton.prev,\nbutton.next {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  background-color: #fff !important;\n  color: white;\n  font-size: 2rem;\n  border: none;\n  padding: 15px;\n  cursor: pointer;\n  z-index: 10;\n  border-radius: 50%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  transition: transform 0.2s ease;\n}\nbutton.prev {\n  left: 10px;\n}\nbutton.next {\n  right: 10px;\n}\nbutton svg {\n  width: 40px;\n  height: 40px;\n}\nbutton:hover {\n  transform: scale(1.1);\n  color: #FFD76D;\n}\nbutton:focus {\n  outline: none;\n}\n@media (max-width: 768px) {\n  .carousel-item {\n    height: 100vh;\n  }\n  .carousel-item img {\n    height: 100%;\n  }\n  .carousel-item > div {\n    padding: 15px;\n    bottom: 15%;\n  }\n  .carousel-item h1 {\n    font-size: 55px;\n  }\n  .carousel-item p {\n    font-size: 1rem;\n  }\n  .carousel-item .btn-discover,\n  .carousel-item .btn-book-now {\n    font-size: 1.2rem;\n    padding: 8px 25px;\n  }\n  button.prev,\n  button.next {\n    font-size: 1.8rem;\n    padding: 12px;\n  }\n  button svg {\n    width: 35px;\n    height: 35px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-item {\n    height: 100vh;\n  }\n  .carousel-item img {\n    height: 100%;\n  }\n  .carousel-item > div {\n    padding: 10px;\n    bottom: 20%;\n  }\n  .carousel-item h1 {\n    font-size: 36px;\n  }\n  .carousel-item p {\n    font-size: 0.9rem;\n  }\n  .carousel-item .btn-discover,\n  .carousel-item .btn-book-now {\n    font-size: 1rem;\n    padding: 6px 20px;\n  }\n  button.prev,\n  button.next {\n    font-size: 1.6rem;\n    padding: 10px;\n  }\n  button svg {\n    width: 30px;\n    height: 30px;\n  }\n}\n/*# sourceMappingURL=hero-carousel.css.map */\n"] }]
+    args: [{ selector: "app-hero-carousel", standalone: true, imports: [CommonModule], template: '<div class="custom-carousel" id="/">\r\n  <div class="carousel-container">\r\n    <div\r\n      *ngFor="let slide of slides; let i = index"\r\n      class="carousel-item"\r\n      [class.active]="i === currentSlideIndex"\r\n    >\r\n      <img [src]="slide.image" [alt]="slide.title" class="d-block w-100" />\r\n      <div class="carousel-caption d-md-block">\r\n        <h1>{{ slide.title }}</h1>\r\n        <p>{{ slide.description }}</p>\r\n        <!-- First button -->\r\n        <a href="#about" class="btn-discover">{{ slide.buttonText }}</a>\r\n        <!-- Second button (Book Now) -->\r\n        <a href="#safaris" class="btn-book-now">{{ slide.bookNowText }}</a>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Custom Carousel Controls with SVG -->\r\n  <button\r\n    class="carousel-control-prev"\r\n    type="button"\r\n    (click)="moveSlide(-1)"\r\n    aria-label="Previous"\r\n  >\r\n    <svg\r\n      xmlns="http://www.w3.org/2000/svg"\r\n      width="24"\r\n      height="24"\r\n      viewBox="0 0 24 24"\r\n      fill="currentColor"\r\n      class="icon icon-tabler icons-tabler-filled icon-tabler-square-chevron-left"\r\n    >\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n      <path\r\n        d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"\r\n      />\r\n    </svg>\r\n  </button>\r\n\r\n  <button\r\n    class="carousel-control-next"\r\n    type="button"\r\n    (click)="moveSlide(1)"\r\n    aria-label="Next"\r\n  >\r\n    <svg\r\n      xmlns="http://www.w3.org/2000/svg"\r\n      width="24"\r\n      height="24"\r\n      viewBox="0 0 24 24"\r\n      fill="currentColor"\r\n      class="icon icon-tabler icons-tabler-filled icon-tabler-square-chevron-right"\r\n    >\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n      <path\r\n        d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"\r\n      />\r\n    </svg>\r\n  </button>\r\n</div>\r\n', styles: ["/* src/app/components/hero-carousel/hero-carousel.css */\n.custom-carousel {\n  position: relative;\n  width: 100%;\n  height: 100vh;\n  overflow: hidden;\n}\n.carousel-container {\n  display: flex;\n  transition: transform 1s ease-in-out;\n}\n.carousel-item {\n  flex: 0 0 100%;\n  position: relative;\n  height: 100vh;\n  opacity: 0;\n  transition: opacity 1s ease-out;\n}\n.carousel-item.active {\n  opacity: 1;\n}\n.carousel-item img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center center;\n  animation: zoomInOut 10s ease-in-out infinite;\n}\n.carousel-item > div {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  text-align: center;\n  color: white;\n  z-index: 10;\n  width: 100%;\n  max-width: 800px;\n  padding: 20px;\n  border-radius: 10px;\n  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);\n  opacity: 0;\n  animation: fadeInText 1s ease-out 1s forwards;\n}\n@keyframes fadeInText {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.carousel-item h1 {\n  font-size: 80px;\n  margin-bottom: 15px;\n  font-weight: bold;\n}\n.carousel-item p {\n  font-size: 1.1rem;\n  margin-bottom: 20px;\n  max-width: 90%;\n  margin-left: auto;\n  margin-right: auto;\n}\n.carousel-item .btn-discover {\n  padding: 10px 30px;\n  font-size: 1.4rem;\n  background-color: #2C6E49;\n  color: white;\n  border: none;\n  border-radius: 5px;\n  text-decoration: none;\n  transition: background-color 0.3s ease;\n}\n.carousel-item .btn-discover:hover {\n  background-color: #6A7F41;\n}\n.carousel-item .btn-book-now {\n  padding: 10px 30px;\n  font-size: 1.4rem;\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  border-radius: 5px;\n  text-decoration: none;\n  margin-left: 20px;\n  transition: background-color 0.3s ease;\n}\n.carousel-item .btn-book-now:hover {\n  background-color: #FFD76D;\n}\nbutton.prev,\nbutton.next {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  background-color: #fff !important;\n  color: white;\n  font-size: 2rem;\n  border: none;\n  padding: 15px;\n  cursor: pointer;\n  z-index: 10;\n  border-radius: 50%;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  transition: transform 0.2s ease;\n}\nbutton.prev {\n  left: 10px;\n}\nbutton.next {\n  right: 10px;\n}\nbutton svg {\n  width: 40px;\n  height: 40px;\n}\nbutton:hover {\n  transform: scale(1.1);\n  color: #FFD76D;\n}\nbutton:focus {\n  outline: none;\n}\n@media (max-width: 768px) {\n  .carousel-item {\n    height: 100vh;\n  }\n  .carousel-item img {\n    height: 100%;\n  }\n  .carousel-item > div {\n    padding: 15px;\n    bottom: 15%;\n  }\n  .carousel-item h1 {\n    font-size: 55px;\n  }\n  .carousel-item p {\n    font-size: 1rem;\n  }\n  .carousel-item .btn-discover,\n  .carousel-item .btn-book-now {\n    font-size: 1.2rem;\n    padding: 8px 25px;\n  }\n  button.prev,\n  button.next {\n    font-size: 1.8rem;\n    padding: 12px;\n  }\n  button svg {\n    width: 35px;\n    height: 35px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-item {\n    height: 100vh;\n  }\n  .carousel-item img {\n    height: 100%;\n  }\n  .carousel-item > div {\n    padding: 10px;\n    bottom: 20%;\n  }\n  .carousel-item h1 {\n    font-size: 36px;\n  }\n  .carousel-item p {\n    font-size: 0.9rem;\n  }\n  .carousel-item .btn-discover,\n  .carousel-item .btn-book-now {\n    font-size: 1rem;\n    padding: 6px 20px;\n  }\n  button.prev,\n  button.next {\n    font-size: 1.6rem;\n    padding: 10px;\n  }\n  button svg {\n    width: 30px;\n    height: 30px;\n  }\n}\n/*# sourceMappingURL=hero-carousel.css.map */\n"] }]
   }], null, null);
 })();
 (() => {
@@ -43979,294 +43979,10 @@ var environment = {
   }
 };
 
-// src/app/components/safari-card/safari-card.ts
-function SafariCard_div_4_li_12_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(1, "svg", 14);
-    \u0275\u0275element(2, "path", 15)(3, "path", 16)(4, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(5);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const detail_r2 = ctx.$implicit;
-    \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate1(" ", detail_r2, " ");
-  }
-}
-function SafariCard_div_4_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 5)(1, "div", 6)(2, "strong");
-    \u0275\u0275text(3);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(4, "div", 7)(5, "div", 8);
-    \u0275\u0275element(6, "img", 9);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p")(8, "strong");
-    \u0275\u0275text(9, "Includes:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(10);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "ul");
-    \u0275\u0275template(12, SafariCard_div_4_li_12_Template, 6, 1, "li", 10);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(13, "div", 11)(14, "button", 12);
-    \u0275\u0275listener("click", function SafariCard_div_4_Template_button_click_14_listener() {
-      const package_r3 = \u0275\u0275restoreView(_r1).$implicit;
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.openDetailsModal(package_r3));
-    });
-    \u0275\u0275text(15, " View Details ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(16, "button", 13);
-    \u0275\u0275listener("click", function SafariCard_div_4_Template_button_click_16_listener() {
-      const package_r3 = \u0275\u0275restoreView(_r1).$implicit;
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.openModal(package_r3.title));
-    });
-    \u0275\u0275text(17, " Book Now ");
-    \u0275\u0275elementEnd()()()();
-  }
-  if (rf & 2) {
-    const package_r3 = ctx.$implicit;
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(package_r3.title);
-    \u0275\u0275advance(3);
-    \u0275\u0275property("alt", \u0275\u0275interpolate1("", package_r3.title, " Image"))("src", package_r3.image, \u0275\u0275sanitizeUrl);
-    \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate1(" ", package_r3.includes);
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", package_r3.details);
-  }
-}
-function SafariCard_div_5_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r5 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 18);
-    \u0275\u0275listener("click", function SafariCard_div_5_Template_div_click_0_listener() {
-      \u0275\u0275restoreView(_r5);
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.closeModal());
-    });
-    \u0275\u0275elementStart(1, "div", 19);
-    \u0275\u0275listener("click", function SafariCard_div_5_Template_div_click_1_listener($event) {
-      \u0275\u0275restoreView(_r5);
-      return \u0275\u0275resetView($event.stopPropagation());
-    });
-    \u0275\u0275elementStart(2, "div", 20)(3, "h3");
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "button", 21);
-    \u0275\u0275listener("click", function SafariCard_div_5_Template_button_click_5_listener() {
-      \u0275\u0275restoreView(_r5);
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.closeModal());
-    });
-    \u0275\u0275text(6, "\u2716");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 22)(8, "p");
-    \u0275\u0275text(9);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "p")(11, "strong");
-    \u0275\u0275text(12, "\u2705 What\u2019s Included?");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(13, "ul")(14, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(15, "svg", 14);
-    \u0275\u0275element(16, "path", 15)(17, "path", 16)(18, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(19, "Private 4x4 Land Cruiser with pop-up roof ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(20, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(21, "svg", 14);
-    \u0275\u0275element(22, "path", 15)(23, "path", 16)(24, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(25, "All park entry fees and professional English-speaking guides ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(26, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(27, "svg", 14);
-    \u0275\u0275element(28, "path", 15)(29, "path", 16)(30, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(31, "Full-board accommodation (lodges or tents) ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(32, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(33, "svg", 14);
-    \u0275\u0275element(34, "path", 15)(35, "path", 16)(36, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(37, "Airport pickup and drop-off ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(38, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(39, "svg", 14);
-    \u0275\u0275element(40, "path", 15)(41, "path", 16)(42, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(43, "Daily bottled water and meals ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(44, "li");
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(45, "svg", 14);
-    \u0275\u0275element(46, "path", 15)(47, "path", 16)(48, "path", 17);
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(49, "Cultural and spiritual activities ");
-    \u0275\u0275elementEnd()()()()();
-  }
-  if (rf & 2) {
-    const ctx_r3 = \u0275\u0275nextContext();
-    \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate1("", ctx_r3.selectedPackage.title, " - Safari Package Details");
-    \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate(ctx_r3.selectedPackage.fullDetails);
-  }
-}
-function SafariCard_div_6_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r6 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 18);
-    \u0275\u0275listener("click", function SafariCard_div_6_Template_div_click_0_listener() {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.closeModal());
-    });
-    \u0275\u0275elementStart(1, "div", 19);
-    \u0275\u0275listener("click", function SafariCard_div_6_Template_div_click_1_listener($event) {
-      \u0275\u0275restoreView(_r6);
-      return \u0275\u0275resetView($event.stopPropagation());
-    });
-    \u0275\u0275elementStart(2, "div", 20)(3, "h3");
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "button", 21);
-    \u0275\u0275listener("click", function SafariCard_div_6_Template_button_click_5_listener() {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.closeModal());
-    });
-    \u0275\u0275text(6, "\u2716");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 22)(8, "form", 23);
-    \u0275\u0275listener("ngSubmit", function SafariCard_div_6_Template_form_ngSubmit_8_listener() {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.onSubmitBooking());
-    });
-    \u0275\u0275elementStart(9, "label", 24);
-    \u0275\u0275text(10, "Your Name:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "input", 25);
-    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_11_listener($event) {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      \u0275\u0275twoWayBindingSet(ctx_r3.name, $event) || (ctx_r3.name = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(12, "label", 26);
-    \u0275\u0275text(13, "Your Email:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "input", 27);
-    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_14_listener($event) {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      \u0275\u0275twoWayBindingSet(ctx_r3.email, $event) || (ctx_r3.email = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(15, "label", 28);
-    \u0275\u0275text(16, "Your Phone:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(17, "input", 29);
-    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_17_listener($event) {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      \u0275\u0275twoWayBindingSet(ctx_r3.phone, $event) || (ctx_r3.phone = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(18, "label", 30);
-    \u0275\u0275text(19, "Number of Adults:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(20, "input", 31);
-    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_20_listener($event) {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      \u0275\u0275twoWayBindingSet(ctx_r3.numAdults, $event) || (ctx_r3.numAdults = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(21, "label", 32);
-    \u0275\u0275text(22, "Number of Kids:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(23, "input", 33);
-    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_23_listener($event) {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      \u0275\u0275twoWayBindingSet(ctx_r3.numKids, $event) || (ctx_r3.numKids = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(24, "label", 34);
-    \u0275\u0275text(25, "From Date:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(26, "input", 35);
-    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_26_listener($event) {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      \u0275\u0275twoWayBindingSet(ctx_r3.fromDate, $event) || (ctx_r3.fromDate = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(27, "label", 36);
-    \u0275\u0275text(28, "To Date:");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(29, "input", 37);
-    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_29_listener($event) {
-      \u0275\u0275restoreView(_r6);
-      const ctx_r3 = \u0275\u0275nextContext();
-      \u0275\u0275twoWayBindingSet(ctx_r3.toDate, $event) || (ctx_r3.toDate = $event);
-      return \u0275\u0275resetView($event);
-    });
-    \u0275\u0275elementEnd();
-    \u0275\u0275element(30, "div", 38);
-    \u0275\u0275elementStart(31, "button", 39);
-    \u0275\u0275text(32, "Confirm Booking");
-    \u0275\u0275elementEnd()()()()();
-  }
-  if (rf & 2) {
-    const ctx_r3 = \u0275\u0275nextContext();
-    \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate1("", ctx_r3.selectedPackageDetails, " - Safari Package Booking");
-    \u0275\u0275advance(7);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r3.name);
-    \u0275\u0275advance(3);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r3.email);
-    \u0275\u0275advance(3);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r3.phone);
-    \u0275\u0275advance(3);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r3.numAdults);
-    \u0275\u0275advance(3);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r3.numKids);
-    \u0275\u0275advance(3);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r3.fromDate);
-    \u0275\u0275advance(3);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r3.toDate);
-    \u0275\u0275advance();
-    \u0275\u0275attribute("data-sitekey", "6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ");
-  }
-}
-var SafariCard = class _SafariCard {
-  sanitizer;
-  safariPackages = [
+// src/app/safari-service.ts
+var SafariService = class _SafariService {
+  // State for safari packages, initialized with sample data
+  safariPackagesSubject = new BehaviorSubject([
     {
       title: "\u{1F5D3}\uFE0F 3-Day Beginners Safari",
       includes: "Maasai Mara, Lake Nakuru, or Lake Naivasha",
@@ -44286,10 +44002,7 @@ var SafariCard = class _SafariCard {
     {
       title: "\u{1F5D3}\uFE0F 10-Day Deluxe Safari + Mission",
       includes: "Combine safari with service\u2014visit schools, churches, or clinics.",
-      details: [
-        "Perfect for youth or mission teams",
-        "Includes devotionals and worship sessions"
-      ],
+      details: ["Perfect for youth or mission teams", "Includes devotionals and worship sessions"],
       image: "assets/images/lions1.jpeg",
       showDetails: false,
       fullDetails: "The 10-day deluxe safari includes not only breathtaking safaris but also mission activities like visiting local schools, churches, and clinics."
@@ -44302,344 +44015,48 @@ var SafariCard = class _SafariCard {
       showDetails: false,
       fullDetails: "This is the ultimate safari experience, covering both Kenya and Tanzania with the Mara, Serengeti, Ngorongoro, and an optional 3-day Zanzibar retreat."
     }
-  ];
-  selectedPackageDetails = null;
-  selectedPackage = null;
-  // Add this line to store selected package details
-  // Modal form data
-  name = "";
-  email = "";
-  // Email field
-  phone = "";
-  // Phone field
-  numAdults = 1;
-  numKids = 0;
-  fromDate = "";
-  toDate = "";
-  constructor(sanitizer) {
-    this.sanitizer = sanitizer;
+  ]);
+  constructor() {
   }
-  openModal(packageTitle) {
-    this.selectedPackageDetails = packageTitle;
+  // Observable that other components can subscribe to in order to get the current state of safari packages
+  getAllPackages() {
+    return this.safariPackagesSubject.asObservable();
   }
-  openDetailsModal(packageDetails) {
-    this.selectedPackage = packageDetails;
-  }
-  closeModal() {
-    this.selectedPackageDetails = null;
-    this.selectedPackage = null;
-  }
-  // Handle the form submission
-  onSubmitBooking() {
-    if (!this.name || !this.email || !this.phone || !this.fromDate || !this.toDate || this.numAdults <= 0) {
-      alert("Please fill all required fields.");
-      return;
-    }
-    this.name = this.sanitizeInput(this.name);
-    this.email = this.sanitizeInput(this.email);
-    this.phone = this.sanitizeInput(this.phone);
-    this.fromDate = this.sanitizeInput(this.fromDate);
-    this.toDate = this.sanitizeInput(this.toDate);
-    if (this.numAdults <= 0 || this.numKids < 0) {
-      alert("Invalid number of adults or kids.");
-      return;
-    }
-    grecaptcha.execute("6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ", { action: "submit" }).then((token) => {
-      const formData = {
-        name: this.name,
-        email: this.email,
-        phone: this.phone,
-        numAdults: this.numAdults,
-        numKids: this.numKids,
-        fromDate: this.fromDate,
-        toDate: this.toDate,
-        packageTitle: this.selectedPackageDetails,
-        // Include the selected package details
-        recaptchaToken: token
-      };
-      es_default.send(environment.emailJS.serviceID, environment.emailJS.templateID, formData, environment.emailJS.userID).then((response) => {
-        console.log("Email sent successfully:", response);
-        this.closeModal();
-        alert("Your booking has been confirmed! A confirmation email has been sent.");
-        this.clearForm();
-      }, (error) => {
-        console.error("Error sending email:", error);
-        alert("There was an error submitting the form. Please try again later.");
-      });
-    }).catch((error) => {
-      console.error("reCAPTCHA error:", error);
-      alert("reCAPTCHA verification failed. Please try again.");
+  // Get a single safari package by title
+  getPackageByTitle(title) {
+    return new Observable((observer) => {
+      const packageFound = this.safariPackagesSubject.getValue().find((pkg) => pkg.title === title);
+      observer.next(packageFound);
+      observer.complete();
     });
   }
-  // Reset form fields to initial values
-  clearForm() {
-    this.name = "";
-    this.email = "";
-    this.phone = "";
-    this.numAdults = 1;
-    this.numKids = 0;
-    this.fromDate = "";
-    this.toDate = "";
-    this.selectedPackageDetails = null;
+  // Add a new safari package
+  addPackage(newPackage) {
+    const updatedPackages = [...this.safariPackagesSubject.getValue(), newPackage];
+    this.safariPackagesSubject.next(updatedPackages);
   }
-  sanitizeInput(input2) {
-    return input2.trim();
+  // Update an existing safari package
+  updatePackage(updatedPackage) {
+    const updatedPackages = this.safariPackagesSubject.getValue().map((pkg) => pkg.title === updatedPackage.title ? updatedPackage : pkg);
+    this.safariPackagesSubject.next(updatedPackages);
   }
-  static \u0275fac = function SafariCard_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _SafariCard)(\u0275\u0275directiveInject(DomSanitizer));
+  // Remove a safari package
+  deletePackage(title) {
+    const updatedPackages = this.safariPackagesSubject.getValue().filter((pkg) => pkg.title !== title);
+    this.safariPackagesSubject.next(updatedPackages);
+  }
+  static \u0275fac = function SafariService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _SafariService)();
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SafariCard, selectors: [["app-safari-card"]], decls: 7, vars: 3, consts: [["id", "safaris", 1, "safari-cards-container"], [1, "safari-title"], [1, "cards"], ["class", "card", 4, "ngFor", "ngForOf"], ["class", "modal-overlay", 3, "click", 4, "ngIf"], [1, "card"], [1, "card-header"], [1, "card-body"], [1, "card-image"], [1, "card-img", 3, "src", "alt"], [4, "ngFor", "ngForOf"], [1, "button-wrapper"], [1, "view-details-btn", 3, "click"], [1, "book-now-btn", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "16", "height", "16", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M7 12l5 5l10 -10"], ["d", "M2 12l5 5m5 -5l5 -5"], [1, "modal-overlay", 3, "click"], [1, "modal-content", 3, "click"], [1, "modal-header"], [1, "close-btn", 3, "click"], [1, "modal-body"], [3, "ngSubmit"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", "", 3, "ngModelChange", "ngModel"], ["for", "email"], ["type", "email", "id", "email", "name", "email", "required", "", 3, "ngModelChange", "ngModel"], ["for", "phone"], ["type", "text", "id", "phone", "name", "phone", "required", "", 3, "ngModelChange", "ngModel"], ["for", "adults"], ["type", "number", "id", "adults", "name", "numAdults", "min", "1", "required", "", 3, "ngModelChange", "ngModel"], ["for", "kids"], ["type", "number", "id", "kids", "name", "numKids", "min", "0", 3, "ngModelChange", "ngModel"], ["for", "fromDate"], ["type", "date", "id", "fromDate", "name", "fromDate", "required", "", 3, "ngModelChange", "ngModel"], ["for", "toDate"], ["type", "date", "id", "toDate", "name", "toDate", "required", "", 3, "ngModelChange", "ngModel"], [1, "g-recaptcha"], ["type", "submit", 1, "book-now-btn"]], template: function SafariCard_Template(rf, ctx) {
-    if (rf & 1) {
-      \u0275\u0275elementStart(0, "div", 0)(1, "h2", 1);
-      \u0275\u0275text(2, "\u{1F6CF}\uFE0F Safari Packages");
-      \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(3, "div", 2);
-      \u0275\u0275template(4, SafariCard_div_4_Template, 18, 6, "div", 3);
-      \u0275\u0275elementEnd()();
-      \u0275\u0275template(5, SafariCard_div_5_Template, 50, 2, "div", 4)(6, SafariCard_div_6_Template, 33, 9, "div", 4);
-    }
-    if (rf & 2) {
-      \u0275\u0275advance(4);
-      \u0275\u0275property("ngForOf", ctx.safariPackages);
-      \u0275\u0275advance();
-      \u0275\u0275property("ngIf", ctx.selectedPackage);
-      \u0275\u0275advance();
-      \u0275\u0275property("ngIf", ctx.selectedPackageDetails);
-    }
-  }, dependencies: [CommonModule, NgForOf, NgIf, ReactiveFormsModule, \u0275NgNoValidate, DefaultValueAccessor, NumberValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinValidator, FormsModule, NgModel, NgForm], styles: ["\n\n.safari-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container[_ngcontent-%COMP%] {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card[_ngcontent-%COMP%] {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image[_ngcontent-%COMP%] {\n  margin-bottom: 20px;\n}\n.card-img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body[_ngcontent-%COMP%] {\n  padding: 10px;\n}\n.card-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay[_ngcontent-%COMP%] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 9999;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n  z-index: 10000;\n}\n.modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn[_ngcontent-%COMP%] {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body[_ngcontent-%COMP%] {\n  max-height: 500px;\n  overflow-y: scroll;\n  padding-right: 10px;\n  scrollbar-width: thin;\n  scrollbar-color: transparent transparent;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: transparent;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.modal-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.modal-body[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.modal-body[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  font-size: 16px;\n  margin-bottom: 5px;\n}\n.modal-body[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.modal-body[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 10px;\n  font-size: 16px;\n  border-radius: 5px;\n  cursor: pointer;\n  margin-top: 20px;\n}\n.modal-body[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:disabled {\n  background-color: #ccc;\n  cursor: not-allowed;\n}\n@media (max-width: 768px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */"] });
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _SafariService, factory: _SafariService.\u0275fac, providedIn: "root" });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SafariCard, [{
-    type: Component,
-    args: [{ selector: "app-safari-card", standalone: true, imports: [CommonModule, ReactiveFormsModule, FormsModule], template: `<div class="safari-cards-container" id="safaris">\r
-  <h2 class="safari-title">\u{1F6CF}\uFE0F Safari Packages</h2>\r
-\r
-  <div class="cards">\r
-    <div *ngFor="let package of safariPackages" class="card">\r
-      <div class="card-header">\r
-        <strong>{{ package.title }}</strong>\r
-      </div>\r
-      <div class="card-body">\r
-        <div class="card-image">\r
-          <img\r
-            [src]="package.image"\r
-            alt="{{ package.title }} Image"\r
-            class="card-img"\r
-          />\r
-        </div>\r
-        <p><strong>Includes:</strong> {{ package.includes }}</p>\r
-        <ul>\r
-          <li *ngFor="let detail of package.details">\r
-            <svg\r
-              xmlns="http://www.w3.org/2000/svg"\r
-              width="16"\r
-              height="16"\r
-              viewBox="0 0 24 24"\r
-              fill="none"\r
-              stroke="currentColor"\r
-              stroke-width="2"\r
-              stroke-linecap="round"\r
-              stroke-linejoin="round"\r
-              class="icon-check"\r
-            >\r
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-              <path d="M7 12l5 5l10 -10" />\r
-              <path d="M2 12l5 5m5 -5l5 -5" />\r
-            </svg>\r
-            {{ detail }}\r
-          </li>\r
-        </ul>\r
-        <div class="button-wrapper">\r
-          <button class="view-details-btn" (click)="openDetailsModal(package)">\r
-            View Details\r
-          </button>\r
-          <button class="book-now-btn" (click)="openModal(package.title)">\r
-            Book Now\r
-          </button>\r
-        </div>\r
-      </div>\r
-    </div>\r
-  </div>\r
-</div>\r
-\r
-<!-- Modal for Package Details -->\r
-<div *ngIf="selectedPackage" class="modal-overlay" (click)="closeModal()">\r
-  <div class="modal-content" (click)="$event.stopPropagation()">\r
-    <div class="modal-header">\r
-      <h3>{{ selectedPackage.title }} - Safari Package Details</h3>\r
-      <button class="close-btn" (click)="closeModal()">\u2716</button>\r
-    </div>\r
-    <div class="modal-body">\r
-      <!-- Hardcoded full details text -->\r
-      <p>{{ selectedPackage.fullDetails }}</p>\r
-      <p><strong>\u2705 What\u2019s Included?</strong></p>\r
-\r
-      <!-- Hardcoded inclusions list -->\r
-      <ul>\r
-        <li>\r
-          <svg\r
-            xmlns="http://www.w3.org/2000/svg"\r
-            width="16"\r
-            height="16"\r
-            viewBox="0 0 24 24"\r
-            fill="none"\r
-            stroke="currentColor"\r
-            stroke-width="2"\r
-            stroke-linecap="round"\r
-            stroke-linejoin="round"\r
-            class="icon-check"\r
-          >\r
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-            <path d="M7 12l5 5l10 -10" />\r
-            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
-          >Private 4x4 Land Cruiser with pop-up roof\r
-        </li>\r
-        <li>\r
-          <svg\r
-            xmlns="http://www.w3.org/2000/svg"\r
-            width="16"\r
-            height="16"\r
-            viewBox="0 0 24 24"\r
-            fill="none"\r
-            stroke="currentColor"\r
-            stroke-width="2"\r
-            stroke-linecap="round"\r
-            stroke-linejoin="round"\r
-            class="icon-check"\r
-          >\r
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-            <path d="M7 12l5 5l10 -10" />\r
-            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
-          >All park entry fees and professional English-speaking guides\r
-        </li>\r
-        <li>\r
-          <svg\r
-            xmlns="http://www.w3.org/2000/svg"\r
-            width="16"\r
-            height="16"\r
-            viewBox="0 0 24 24"\r
-            fill="none"\r
-            stroke="currentColor"\r
-            stroke-width="2"\r
-            stroke-linecap="round"\r
-            stroke-linejoin="round"\r
-            class="icon-check"\r
-          >\r
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-            <path d="M7 12l5 5l10 -10" />\r
-            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
-          >Full-board accommodation (lodges or tents)\r
-        </li>\r
-        <li>\r
-          <svg\r
-            xmlns="http://www.w3.org/2000/svg"\r
-            width="16"\r
-            height="16"\r
-            viewBox="0 0 24 24"\r
-            fill="none"\r
-            stroke="currentColor"\r
-            stroke-width="2"\r
-            stroke-linecap="round"\r
-            stroke-linejoin="round"\r
-            class="icon-check"\r
-          >\r
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-            <path d="M7 12l5 5l10 -10" />\r
-            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
-          >Airport pickup and drop-off\r
-        </li>\r
-        <li>\r
-          <svg\r
-            xmlns="http://www.w3.org/2000/svg"\r
-            width="16"\r
-            height="16"\r
-            viewBox="0 0 24 24"\r
-            fill="none"\r
-            stroke="currentColor"\r
-            stroke-width="2"\r
-            stroke-linecap="round"\r
-            stroke-linejoin="round"\r
-            class="icon-check"\r
-          >\r
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-            <path d="M7 12l5 5l10 -10" />\r
-            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
-          >Daily bottled water and meals\r
-        </li>\r
-        <li>\r
-          <svg\r
-            xmlns="http://www.w3.org/2000/svg"\r
-            width="16"\r
-            height="16"\r
-            viewBox="0 0 24 24"\r
-            fill="none"\r
-            stroke="currentColor"\r
-            stroke-width="2"\r
-            stroke-linecap="round"\r
-            stroke-linejoin="round"\r
-            class="icon-check"\r
-          >\r
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
-            <path d="M7 12l5 5l10 -10" />\r
-            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
-          >Cultural and spiritual activities\r
-        </li>\r
-      </ul>\r
-    </div>\r
-  </div>\r
-</div>\r
-\r
-<!-- Modal for Booking -->\r
-<div *ngIf="selectedPackageDetails" class="modal-overlay" (click)="closeModal()">\r
-  <div class="modal-content" (click)="$event.stopPropagation()">\r
-    <div class="modal-header">\r
-      <h3>{{ selectedPackageDetails }} - Safari Package Booking</h3>\r
-      <button class="close-btn" (click)="closeModal()">\u2716</button>\r
-    </div>\r
-    <div class="modal-body">\r
-      <form (ngSubmit)="onSubmitBooking()">\r
-        <!-- Name Field -->\r
-        <label for="name">Your Name:</label>\r
-        <input type="text" id="name" [(ngModel)]="name" name="name" required />\r
-\r
-        <!-- Email Field -->\r
-        <label for="email">Your Email:</label>\r
-        <input type="email" id="email" [(ngModel)]="email" name="email" required />\r
-\r
-        <!-- Phone Field -->\r
-        <label for="phone">Your Phone:</label>\r
-        <input type="text" id="phone" [(ngModel)]="phone" name="phone" required />\r
-\r
-        <!-- Number of Adults Field -->\r
-        <label for="adults">Number of Adults:</label>\r
-        <input type="number" id="adults" [(ngModel)]="numAdults" name="numAdults" min="1" required />\r
-\r
-        <!-- Number of Kids Field -->\r
-        <label for="kids">Number of Kids:</label>\r
-        <input type="number" id="kids" [(ngModel)]="numKids" name="numKids" min="0" />\r
-\r
-        <!-- From Date Field -->\r
-        <label for="fromDate">From Date:</label>\r
-        <input type="date" id="fromDate" [(ngModel)]="fromDate" name="fromDate" required />\r
-\r
-        <!-- To Date Field -->\r
-        <label for="toDate">To Date:</label>\r
-        <input type="date" id="toDate" [(ngModel)]="toDate" name="toDate" required />\r
-\r
-        <!-- reCAPTCHA widget -->\r
-        <div class="g-recaptcha" [attr.data-sitekey]="'6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ'"></div>\r
-\r
-        <!-- Submit Button -->\r
-        <button type="submit" class="book-now-btn">Confirm Booking</button>\r
-      </form>\r
-    </div>\r
-  </div>\r
-</div>\r
-`, styles: ["/* src/app/components/safari-card/safari-card.css */\n.safari-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image {\n  margin-bottom: 20px;\n}\n.card-img {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body {\n  padding: 10px;\n}\n.card-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body ul li {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body ul li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 9999;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n  z-index: 10000;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body {\n  max-height: 500px;\n  overflow-y: scroll;\n  padding-right: 10px;\n  scrollbar-width: thin;\n  scrollbar-color: transparent transparent;\n}\n.modal-body::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n}\n.modal-body::-webkit-scrollbar-thumb {\n  background: transparent;\n}\n.modal-body::-webkit-scrollbar-track {\n  background: transparent;\n}\n.modal-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body li {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.modal-body form {\n  display: flex;\n  flex-direction: column;\n}\n.modal-body label {\n  font-size: 16px;\n  margin-bottom: 5px;\n}\n.modal-body input {\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.modal-body button {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 10px;\n  font-size: 16px;\n  border-radius: 5px;\n  cursor: pointer;\n  margin-top: 20px;\n}\n.modal-body button:disabled {\n  background-color: #ccc;\n  cursor: not-allowed;\n}\n@media (max-width: 768px) {\n  .safari-cards-container {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title {\n    font-size: 28px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards {\n    grid-template-columns: 1fr;\n  }\n  .safari-title {\n    font-size: 24px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */\n"] }]
-  }], () => [{ type: DomSanitizer }], null);
-})();
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SafariCard, { className: "SafariCard", filePath: "src/app/components/safari-card/safari-card.ts", lineNumber: 17 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SafariService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [], null);
 })();
 
 // node_modules/@angular/cdk/fesm2022/fake-event-detection-DWOdFTFz.mjs
@@ -54558,6 +53975,698 @@ var MatSnackBarModule = class _MatSnackBarModule {
   }], null, null);
 })();
 
+// src/app/components/safari-card/safari-card.ts
+function SafariCard_div_4_li_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "li");
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(1, "svg", 14);
+    \u0275\u0275element(2, "path", 15)(3, "path", 16)(4, "path", 17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const detail_r2 = ctx.$implicit;
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate1(" ", detail_r2, " ");
+  }
+}
+function SafariCard_div_4_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 5)(1, "div", 6)(2, "strong");
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(4, "div", 7)(5, "div", 8);
+    \u0275\u0275element(6, "img", 9);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "p")(8, "strong");
+    \u0275\u0275text(9, "Includes:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(10);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "ul");
+    \u0275\u0275template(12, SafariCard_div_4_li_12_Template, 6, 1, "li", 10);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "div", 11)(14, "button", 12);
+    \u0275\u0275listener("click", function SafariCard_div_4_Template_button_click_14_listener() {
+      const package_r3 = \u0275\u0275restoreView(_r1).$implicit;
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.openDetailsModal(package_r3.title));
+    });
+    \u0275\u0275text(15, " View Details ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(16, "button", 13);
+    \u0275\u0275listener("click", function SafariCard_div_4_Template_button_click_16_listener() {
+      const package_r3 = \u0275\u0275restoreView(_r1).$implicit;
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.openModal(package_r3.title));
+    });
+    \u0275\u0275text(17, " Book Now ");
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const package_r3 = ctx.$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(package_r3.title);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("alt", \u0275\u0275interpolate1("", package_r3.title, " Image"))("src", package_r3.image, \u0275\u0275sanitizeUrl);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1(" ", package_r3.includes);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", package_r3.details);
+  }
+}
+function SafariCard_div_5_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r5 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 18);
+    \u0275\u0275listener("click", function SafariCard_div_5_Template_div_click_0_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275elementStart(1, "div", 19);
+    \u0275\u0275listener("click", function SafariCard_div_5_Template_div_click_1_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      return \u0275\u0275resetView($event.stopPropagation());
+    });
+    \u0275\u0275elementStart(2, "div", 20)(3, "h3");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "button", 21);
+    \u0275\u0275listener("click", function SafariCard_div_5_Template_button_click_5_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275text(6, "\u2716");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "div", 22)(8, "p");
+    \u0275\u0275text(9);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "p")(11, "strong");
+    \u0275\u0275text(12, "\u2705 What\u2019s Included?");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(13, "ul")(14, "li");
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(15, "svg", 14);
+    \u0275\u0275element(16, "path", 15)(17, "path", 16)(18, "path", 17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(19, "Private 4x4 Land Cruiser with pop-up roof ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(20, "li");
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(21, "svg", 14);
+    \u0275\u0275element(22, "path", 15)(23, "path", 16)(24, "path", 17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(25, "All park entry fees and professional English-speaking guides ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(26, "li");
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(27, "svg", 14);
+    \u0275\u0275element(28, "path", 15)(29, "path", 16)(30, "path", 17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(31, "Full-board accommodation (lodges or tents) ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(32, "li");
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(33, "svg", 14);
+    \u0275\u0275element(34, "path", 15)(35, "path", 16)(36, "path", 17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(37, "Airport pickup and drop-off ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(38, "li");
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(39, "svg", 14);
+    \u0275\u0275element(40, "path", 15)(41, "path", 16)(42, "path", 17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(43, "Daily bottled water and meals ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(44, "li");
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(45, "svg", 14);
+    \u0275\u0275element(46, "path", 15)(47, "path", 16)(48, "path", 17);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(49, "Cultural and spiritual activities ");
+    \u0275\u0275elementEnd()()()()();
+  }
+  if (rf & 2) {
+    const ctx_r3 = \u0275\u0275nextContext();
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1("", ctx_r3.selectedPackage.title, " - Safari Package Details");
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate(ctx_r3.selectedPackage.fullDetails);
+  }
+}
+function SafariCard_div_6_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r6 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 18);
+    \u0275\u0275listener("click", function SafariCard_div_6_Template_div_click_0_listener() {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275elementStart(1, "div", 19);
+    \u0275\u0275listener("click", function SafariCard_div_6_Template_div_click_1_listener($event) {
+      \u0275\u0275restoreView(_r6);
+      return \u0275\u0275resetView($event.stopPropagation());
+    });
+    \u0275\u0275elementStart(2, "div", 20)(3, "h3");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "button", 21);
+    \u0275\u0275listener("click", function SafariCard_div_6_Template_button_click_5_listener() {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275text(6, "\u2716");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "div", 22)(8, "form", 23);
+    \u0275\u0275listener("ngSubmit", function SafariCard_div_6_Template_form_ngSubmit_8_listener() {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.onSubmitBooking());
+    });
+    \u0275\u0275elementStart(9, "label", 24);
+    \u0275\u0275text(10, "Your Name:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "input", 25);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_11_listener($event) {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.name, $event) || (ctx_r3.name = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "label", 26);
+    \u0275\u0275text(13, "Your Email:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(14, "input", 27);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_14_listener($event) {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.email, $event) || (ctx_r3.email = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(15, "label", 28);
+    \u0275\u0275text(16, "Your Phone:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(17, "input", 29);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_17_listener($event) {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.phone, $event) || (ctx_r3.phone = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(18, "label", 30);
+    \u0275\u0275text(19, "Number of Adults:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(20, "input", 31);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_20_listener($event) {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.numAdults, $event) || (ctx_r3.numAdults = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(21, "label", 32);
+    \u0275\u0275text(22, "Number of Kids:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(23, "input", 33);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_23_listener($event) {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.numKids, $event) || (ctx_r3.numKids = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(24, "label", 34);
+    \u0275\u0275text(25, "From Date:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(26, "input", 35);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_26_listener($event) {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.fromDate, $event) || (ctx_r3.fromDate = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(27, "label", 36);
+    \u0275\u0275text(28, "To Date:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(29, "input", 37);
+    \u0275\u0275twoWayListener("ngModelChange", function SafariCard_div_6_Template_input_ngModelChange_29_listener($event) {
+      \u0275\u0275restoreView(_r6);
+      const ctx_r3 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r3.toDate, $event) || (ctx_r3.toDate = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(30, "div", 38);
+    \u0275\u0275elementStart(31, "button", 39);
+    \u0275\u0275text(32, "Confirm Booking");
+    \u0275\u0275elementEnd()()()()();
+  }
+  if (rf & 2) {
+    const ctx_r3 = \u0275\u0275nextContext();
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1("", ctx_r3.selectedPackageDetails, " - Safari Package Booking");
+    \u0275\u0275advance(7);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.name);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.email);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.phone);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.numAdults);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.numKids);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.fromDate);
+    \u0275\u0275advance(3);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r3.toDate);
+    \u0275\u0275advance();
+    \u0275\u0275attribute("data-sitekey", "6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ");
+  }
+}
+var SafariCard = class _SafariCard {
+  sanitizer;
+  safariService;
+  snackBar;
+  safariPackages = [];
+  selectedPackageDetails = null;
+  selectedPackage = null;
+  name = "";
+  email = "";
+  phone = "";
+  numAdults = 1;
+  numKids = 0;
+  fromDate = "";
+  toDate = "";
+  constructor(sanitizer, safariService, snackBar) {
+    this.sanitizer = sanitizer;
+    this.safariService = safariService;
+    this.snackBar = snackBar;
+  }
+  ngOnInit() {
+    this.safariService.getAllPackages().subscribe((packages) => {
+      this.safariPackages = packages;
+    });
+  }
+  openModal(packageTitle) {
+    this.selectedPackageDetails = packageTitle;
+  }
+  openDetailsModal(packageTitle) {
+    this.safariService.getPackageByTitle(packageTitle).subscribe((packageData) => {
+      this.selectedPackage = packageData ?? null;
+    });
+  }
+  closeModal() {
+    this.selectedPackageDetails = null;
+    this.selectedPackage = null;
+  }
+  // Handle form submission
+  onSubmitBooking() {
+    if (!this.name || !this.email || !this.phone || !this.fromDate || !this.toDate || this.numAdults <= 0) {
+      this.showSnackbar("Please fill all required fields.", "error");
+      return;
+    }
+    this.name = this.sanitizeInput(this.name);
+    this.email = this.sanitizeInput(this.email);
+    this.phone = this.sanitizeInput(this.phone);
+    this.fromDate = this.sanitizeInput(this.fromDate);
+    this.toDate = this.sanitizeInput(this.toDate);
+    if (this.numAdults <= 0 || this.numKids < 0) {
+      this.showSnackbar("Invalid number of adults or kids.", "error");
+      return;
+    }
+    grecaptcha.execute("6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ", { action: "submit" }).then((token) => {
+      const formData = {
+        name: this.name,
+        email: this.email,
+        phone: this.phone,
+        numAdults: this.numAdults,
+        numKids: this.numKids,
+        fromDate: this.fromDate,
+        toDate: this.toDate,
+        packageTitle: this.selectedPackageDetails,
+        recaptchaToken: token
+      };
+      es_default.send(environment.emailJS.serviceID, environment.emailJS.templateID, formData, environment.emailJS.userID).then((response) => {
+        console.log("Email sent successfully:", response);
+        this.closeModal();
+        this.showSnackbar("Your booking has been confirmed! A confirmation email has been sent.", "success");
+        this.clearForm();
+      }, (error) => {
+        console.error("Error sending email:", error);
+        this.showSnackbar("There was an error submitting the form. Please try again later.", "error");
+      });
+    }).catch((error) => {
+      console.error("reCAPTCHA error:", error);
+      this.showSnackbar("reCAPTCHA verification failed. Please try again.", "error");
+    });
+  }
+  clearForm() {
+    this.name = "";
+    this.email = "";
+    this.phone = "";
+    this.numAdults = 1;
+    this.numKids = 0;
+    this.fromDate = "";
+    this.toDate = "";
+    this.selectedPackageDetails = null;
+  }
+  sanitizeInput(input2) {
+    return input2.trim();
+  }
+  // Show Material Snackbar
+  showSnackbar(message, type) {
+    const snackBarClass = type === "success" ? "snackbar-success" : "snackbar-error";
+    const snackBarConfig = {
+      duration: 3e3,
+      panelClass: [snackBarClass],
+      // Apply the custom class based on message type
+      horizontalPosition: "right",
+      verticalPosition: "top"
+    };
+    this.snackBar.open(message, "Close", snackBarConfig);
+  }
+  static \u0275fac = function SafariCard_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _SafariCard)(\u0275\u0275directiveInject(DomSanitizer), \u0275\u0275directiveInject(SafariService), \u0275\u0275directiveInject(MatSnackBar));
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SafariCard, selectors: [["app-safari-card"]], features: [\u0275\u0275ProvidersFeature([SafariService])], decls: 7, vars: 3, consts: [["id", "safaris", 1, "safari-cards-container"], [1, "safari-title"], [1, "cards"], ["class", "card", 4, "ngFor", "ngForOf"], ["class", "modal-overlay", 3, "click", 4, "ngIf"], [1, "card"], [1, "card-header"], [1, "card-body"], [1, "card-image"], [1, "card-img", 3, "src", "alt"], [4, "ngFor", "ngForOf"], [1, "button-wrapper"], [1, "view-details-btn", 3, "click"], [1, "book-now-btn", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "16", "height", "16", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M7 12l5 5l10 -10"], ["d", "M2 12l5 5m5 -5l5 -5"], [1, "modal-overlay", 3, "click"], [1, "modal-content", 3, "click"], [1, "modal-header"], [1, "close-btn", 3, "click"], [1, "modal-body"], [3, "ngSubmit"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", "", 3, "ngModelChange", "ngModel"], ["for", "email"], ["type", "email", "id", "email", "name", "email", "required", "", 3, "ngModelChange", "ngModel"], ["for", "phone"], ["type", "text", "id", "phone", "name", "phone", "required", "", 3, "ngModelChange", "ngModel"], ["for", "adults"], ["type", "number", "id", "adults", "name", "numAdults", "min", "1", "required", "", 3, "ngModelChange", "ngModel"], ["for", "kids"], ["type", "number", "id", "kids", "name", "numKids", "min", "0", 3, "ngModelChange", "ngModel"], ["for", "fromDate"], ["type", "date", "id", "fromDate", "name", "fromDate", "required", "", 3, "ngModelChange", "ngModel"], ["for", "toDate"], ["type", "date", "id", "toDate", "name", "toDate", "required", "", 3, "ngModelChange", "ngModel"], [1, "g-recaptcha"], ["type", "submit", 1, "book-now-btn"]], template: function SafariCard_Template(rf, ctx) {
+    if (rf & 1) {
+      \u0275\u0275elementStart(0, "div", 0)(1, "h2", 1);
+      \u0275\u0275text(2, "\u{1F6CF}\uFE0F Safari Packages");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(3, "div", 2);
+      \u0275\u0275template(4, SafariCard_div_4_Template, 18, 6, "div", 3);
+      \u0275\u0275elementEnd()();
+      \u0275\u0275template(5, SafariCard_div_5_Template, 50, 2, "div", 4)(6, SafariCard_div_6_Template, 33, 9, "div", 4);
+    }
+    if (rf & 2) {
+      \u0275\u0275advance(4);
+      \u0275\u0275property("ngForOf", ctx.safariPackages);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", ctx.selectedPackage);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", ctx.selectedPackageDetails);
+    }
+  }, dependencies: [CommonModule, NgForOf, NgIf, ReactiveFormsModule, \u0275NgNoValidate, DefaultValueAccessor, NumberValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinValidator, FormsModule, NgModel, NgForm], styles: ["\n\n.safari-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container[_ngcontent-%COMP%] {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card[_ngcontent-%COMP%] {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image[_ngcontent-%COMP%] {\n  margin-bottom: 20px;\n}\n.card-img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body[_ngcontent-%COMP%] {\n  padding: 10px;\n}\n.card-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay[_ngcontent-%COMP%] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 9999;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n  z-index: 10000;\n}\n.modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn[_ngcontent-%COMP%] {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body[_ngcontent-%COMP%] {\n  max-height: 500px;\n  overflow-y: scroll;\n  padding-right: 10px;\n  scrollbar-width: thin;\n  scrollbar-color: transparent transparent;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: transparent;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.modal-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.modal-body[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.modal-body[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  font-size: 16px;\n  margin-bottom: 5px;\n}\n.modal-body[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.modal-body[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 10px;\n  font-size: 16px;\n  border-radius: 5px;\n  cursor: pointer;\n  margin-top: 20px;\n}\n.modal-body[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:disabled {\n  background-color: #ccc;\n  cursor: not-allowed;\n}\n@media (max-width: 768px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */"] });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SafariCard, [{
+    type: Component,
+    args: [{ selector: "app-safari-card", standalone: true, imports: [CommonModule, ReactiveFormsModule, FormsModule], providers: [SafariService], template: `<div class="safari-cards-container" id="safaris">\r
+  <h2 class="safari-title">\u{1F6CF}\uFE0F Safari Packages</h2>\r
+\r
+  <div class="cards">\r
+    <div *ngFor="let package of safariPackages" class="card">\r
+      <div class="card-header">\r
+        <strong>{{ package.title }}</strong>\r
+      </div>\r
+      <div class="card-body">\r
+        <div class="card-image">\r
+          <img\r
+            [src]="package.image"\r
+            alt="{{ package.title }} Image"\r
+            class="card-img"\r
+          />\r
+        </div>\r
+        <p><strong>Includes:</strong> {{ package.includes }}</p>\r
+        <ul>\r
+          <li *ngFor="let detail of package.details">\r
+            <svg\r
+              xmlns="http://www.w3.org/2000/svg"\r
+              width="16"\r
+              height="16"\r
+              viewBox="0 0 24 24"\r
+              fill="none"\r
+              stroke="currentColor"\r
+              stroke-width="2"\r
+              stroke-linecap="round"\r
+              stroke-linejoin="round"\r
+              class="icon-check"\r
+            >\r
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+              <path d="M7 12l5 5l10 -10" />\r
+              <path d="M2 12l5 5m5 -5l5 -5" />\r
+            </svg>\r
+            {{ detail }}\r
+          </li>\r
+        </ul>\r
+        <div class="button-wrapper">\r
+          <button\r
+            class="view-details-btn"\r
+            (click)="openDetailsModal(package.title)"\r
+          >\r
+            View Details\r
+          </button>\r
+\r
+          <button class="book-now-btn" (click)="openModal(package.title)">\r
+            Book Now\r
+          </button>\r
+        </div>\r
+      </div>\r
+    </div>\r
+  </div>\r
+</div>\r
+\r
+<!-- Modal for Package Details -->\r
+<div *ngIf="selectedPackage" class="modal-overlay" (click)="closeModal()">\r
+  <div class="modal-content" (click)="$event.stopPropagation()">\r
+    <div class="modal-header">\r
+      <h3>{{ selectedPackage.title }} - Safari Package Details</h3>\r
+      <button class="close-btn" (click)="closeModal()">\u2716</button>\r
+    </div>\r
+    <div class="modal-body">\r
+      <!-- Hardcoded full details text -->\r
+      <p>{{ selectedPackage.fullDetails }}</p>\r
+      <p><strong>\u2705 What\u2019s Included?</strong></p>\r
+\r
+      <!-- Hardcoded inclusions list -->\r
+      <ul>\r
+        <li>\r
+          <svg\r
+            xmlns="http://www.w3.org/2000/svg"\r
+            width="16"\r
+            height="16"\r
+            viewBox="0 0 24 24"\r
+            fill="none"\r
+            stroke="currentColor"\r
+            stroke-width="2"\r
+            stroke-linecap="round"\r
+            stroke-linejoin="round"\r
+            class="icon-check"\r
+          >\r
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+            <path d="M7 12l5 5l10 -10" />\r
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
+          >Private 4x4 Land Cruiser with pop-up roof\r
+        </li>\r
+        <li>\r
+          <svg\r
+            xmlns="http://www.w3.org/2000/svg"\r
+            width="16"\r
+            height="16"\r
+            viewBox="0 0 24 24"\r
+            fill="none"\r
+            stroke="currentColor"\r
+            stroke-width="2"\r
+            stroke-linecap="round"\r
+            stroke-linejoin="round"\r
+            class="icon-check"\r
+          >\r
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+            <path d="M7 12l5 5l10 -10" />\r
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
+          >All park entry fees and professional English-speaking guides\r
+        </li>\r
+        <li>\r
+          <svg\r
+            xmlns="http://www.w3.org/2000/svg"\r
+            width="16"\r
+            height="16"\r
+            viewBox="0 0 24 24"\r
+            fill="none"\r
+            stroke="currentColor"\r
+            stroke-width="2"\r
+            stroke-linecap="round"\r
+            stroke-linejoin="round"\r
+            class="icon-check"\r
+          >\r
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+            <path d="M7 12l5 5l10 -10" />\r
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
+          >Full-board accommodation (lodges or tents)\r
+        </li>\r
+        <li>\r
+          <svg\r
+            xmlns="http://www.w3.org/2000/svg"\r
+            width="16"\r
+            height="16"\r
+            viewBox="0 0 24 24"\r
+            fill="none"\r
+            stroke="currentColor"\r
+            stroke-width="2"\r
+            stroke-linecap="round"\r
+            stroke-linejoin="round"\r
+            class="icon-check"\r
+          >\r
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+            <path d="M7 12l5 5l10 -10" />\r
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
+          >Airport pickup and drop-off\r
+        </li>\r
+        <li>\r
+          <svg\r
+            xmlns="http://www.w3.org/2000/svg"\r
+            width="16"\r
+            height="16"\r
+            viewBox="0 0 24 24"\r
+            fill="none"\r
+            stroke="currentColor"\r
+            stroke-width="2"\r
+            stroke-linecap="round"\r
+            stroke-linejoin="round"\r
+            class="icon-check"\r
+          >\r
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+            <path d="M7 12l5 5l10 -10" />\r
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
+          >Daily bottled water and meals\r
+        </li>\r
+        <li>\r
+          <svg\r
+            xmlns="http://www.w3.org/2000/svg"\r
+            width="16"\r
+            height="16"\r
+            viewBox="0 0 24 24"\r
+            fill="none"\r
+            stroke="currentColor"\r
+            stroke-width="2"\r
+            stroke-linecap="round"\r
+            stroke-linejoin="round"\r
+            class="icon-check"\r
+          >\r
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+            <path d="M7 12l5 5l10 -10" />\r
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg\r
+          >Cultural and spiritual activities\r
+        </li>\r
+      </ul>\r
+    </div>\r
+  </div>\r
+</div>\r
+\r
+<!-- Modal for Booking -->\r
+<div\r
+  *ngIf="selectedPackageDetails"\r
+  class="modal-overlay"\r
+  (click)="closeModal()"\r
+>\r
+  <div class="modal-content" (click)="$event.stopPropagation()">\r
+    <div class="modal-header">\r
+      <h3>{{ selectedPackageDetails }} - Safari Package Booking</h3>\r
+      <button class="close-btn" (click)="closeModal()">\u2716</button>\r
+    </div>\r
+    <div class="modal-body">\r
+      <form (ngSubmit)="onSubmitBooking()">\r
+        <!-- Name Field -->\r
+        <label for="name">Your Name:</label>\r
+        <input type="text" id="name" [(ngModel)]="name" name="name" required />\r
+\r
+        <!-- Email Field -->\r
+        <label for="email">Your Email:</label>\r
+        <input\r
+          type="email"\r
+          id="email"\r
+          [(ngModel)]="email"\r
+          name="email"\r
+          required\r
+        />\r
+\r
+        <!-- Phone Field -->\r
+        <label for="phone">Your Phone:</label>\r
+        <input\r
+          type="text"\r
+          id="phone"\r
+          [(ngModel)]="phone"\r
+          name="phone"\r
+          required\r
+        />\r
+\r
+        <!-- Number of Adults Field -->\r
+        <label for="adults">Number of Adults:</label>\r
+        <input\r
+          type="number"\r
+          id="adults"\r
+          [(ngModel)]="numAdults"\r
+          name="numAdults"\r
+          min="1"\r
+          required\r
+        />\r
+\r
+        <!-- Number of Kids Field -->\r
+        <label for="kids">Number of Kids:</label>\r
+        <input\r
+          type="number"\r
+          id="kids"\r
+          [(ngModel)]="numKids"\r
+          name="numKids"\r
+          min="0"\r
+        />\r
+\r
+        <!-- From Date Field -->\r
+        <label for="fromDate">From Date:</label>\r
+        <input\r
+          type="date"\r
+          id="fromDate"\r
+          [(ngModel)]="fromDate"\r
+          name="fromDate"\r
+          required\r
+        />\r
+\r
+        <!-- To Date Field -->\r
+        <label for="toDate">To Date:</label>\r
+        <input\r
+          type="date"\r
+          id="toDate"\r
+          [(ngModel)]="toDate"\r
+          name="toDate"\r
+          required\r
+        />\r
+\r
+        <!-- reCAPTCHA widget -->\r
+        <div\r
+          class="g-recaptcha"\r
+          [attr.data-sitekey]="'6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ'"\r
+        ></div>\r
+\r
+        <!-- Submit Button -->\r
+        <button type="submit" class="book-now-btn">Confirm Booking</button>\r
+      </form>\r
+    </div>\r
+  </div>\r
+</div>\r
+`, styles: ["/* src/app/components/safari-card/safari-card.css */\n.safari-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image {\n  margin-bottom: 20px;\n}\n.card-img {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body {\n  padding: 10px;\n}\n.card-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body ul li {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body ul li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 9999;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n  z-index: 10000;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body {\n  max-height: 500px;\n  overflow-y: scroll;\n  padding-right: 10px;\n  scrollbar-width: thin;\n  scrollbar-color: transparent transparent;\n}\n.modal-body::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n}\n.modal-body::-webkit-scrollbar-thumb {\n  background: transparent;\n}\n.modal-body::-webkit-scrollbar-track {\n  background: transparent;\n}\n.modal-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body li {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.modal-body form {\n  display: flex;\n  flex-direction: column;\n}\n.modal-body label {\n  font-size: 16px;\n  margin-bottom: 5px;\n}\n.modal-body input {\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.modal-body button {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 10px;\n  font-size: 16px;\n  border-radius: 5px;\n  cursor: pointer;\n  margin-top: 20px;\n}\n.modal-body button:disabled {\n  background-color: #ccc;\n  cursor: not-allowed;\n}\n@media (max-width: 768px) {\n  .safari-cards-container {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title {\n    font-size: 28px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards {\n    grid-template-columns: 1fr;\n  }\n  .safari-title {\n    font-size: 24px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */\n"] }]
+  }], () => [{ type: DomSanitizer }, { type: SafariService }, { type: MatSnackBar }], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SafariCard, { className: "SafariCard", filePath: "src/app/components/safari-card/safari-card.ts", lineNumber: 20 });
+})();
+
 // src/app/footer/footer.ts
 var Footer = class _Footer {
   fb;
@@ -54905,7 +55014,7 @@ var Home = class _Home {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Home, [{
     type: Component,
-    args: [{ selector: "app-home", imports: [
+    args: [{ selector: "app-home", standalone: true, imports: [
       CommonModule,
       DestinationAndHighlightsComponent,
       HeroCarousel,
@@ -54920,7 +55029,7 @@ var Home = class _Home {
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Home, { className: "Home", filePath: "src/app/components/home/home.ts", lineNumber: 24 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Home, { className: "Home", filePath: "src/app/components/home/home.ts", lineNumber: 25 });
 })();
 
 // src/app/app.routes.ts
@@ -55005,7 +55114,7 @@ var NavbarComponent = class _NavbarComponent {
   static \u0275fac = function NavbarComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _NavbarComponent)(\u0275\u0275directiveInject(Router));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NavbarComponent, selectors: [["app-navbar"]], decls: 33, vars: 5, consts: [[1, "navbar"], [1, "navbar-left"], [1, "logo-text"], ["class", "navbar-hamburger", 3, "click", 4, "ngIf"], [1, "navbar-right"], ["href", "/", 1, "nav-link", 3, "click"], ["href", "#about", 1, "nav-link", 3, "click"], ["href", "#destinations", 1, "nav-link", 3, "click"], ["href", "#safaris", 1, "nav-link", 3, "click"], ["href", "#contact", 1, "nav-link", 3, "click"], [1, "book-now-btn", 3, "click"], [1, "modal", 3, "click"], [1, "modal-content", 3, "click"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", ""], ["for", "date"], ["type", "date", "id", "date", "name", "date", "required", ""], ["type", "submit"], [1, "close-modal", 3, "click"], [1, "navbar-hamburger", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-menu", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-x", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-menu"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M4 6l16 0"], ["d", "M4 12l16 0"], ["d", "M4 18l16 0"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-x"], ["d", "M18 6L6 18"], ["d", "M6 6l12 12"]], template: function NavbarComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NavbarComponent, selectors: [["app-navbar"]], decls: 33, vars: 5, consts: [[1, "navbar"], [1, "navbar-left"], [1, "logo-text"], ["class", "navbar-hamburger", 3, "click", 4, "ngIf"], [1, "navbar-right"], ["href", "/", 1, "nav-link", 3, "click"], ["href", "#about", 1, "nav-link", 3, "click"], ["href", "#destinations", 1, "nav-link", 3, "click"], ["href", "#safaris", 1, "nav-link", 3, "click"], ["href", "#contact", 1, "nav-link", 3, "click"], ["type", "button", "href", "#safaris", 1, "book-now-btn"], [1, "modal", 3, "click"], [1, "modal-content", 3, "click"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", ""], ["for", "date"], ["type", "date", "id", "date", "name", "date", "required", ""], ["type", "submit"], [1, "close-modal", 3, "click"], [1, "navbar-hamburger", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-menu", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-x", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-menu"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M4 6l16 0"], ["d", "M4 12l16 0"], ["d", "M4 18l16 0"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-x"], ["d", "M18 6L6 18"], ["d", "M6 6l12 12"]], template: function NavbarComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "nav", 0)(1, "div", 1)(2, "span", 2);
       \u0275\u0275text(3, "\u{1F981} JAMBO SAFARI");
@@ -55041,10 +55150,7 @@ var NavbarComponent = class _NavbarComponent {
       });
       \u0275\u0275text(15, "Contact");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(16, "button", 10);
-      \u0275\u0275listener("click", function NavbarComponent_Template_button_click_16_listener() {
-        return ctx.openModal();
-      });
+      \u0275\u0275elementStart(16, "a", 10);
       \u0275\u0275text(17, "Book Now");
       \u0275\u0275elementEnd()()();
       \u0275\u0275elementStart(18, "div", 11);
@@ -55084,12 +55190,12 @@ var NavbarComponent = class _NavbarComponent {
       \u0275\u0275advance(13);
       \u0275\u0275classProp("show", ctx.isModalOpen);
     }
-  }, dependencies: [CommonModule, NgIf], styles: ["\n\n.navbar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.nav-link[_ngcontent-%COMP%] {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link[_ngcontent-%COMP%]:hover {\n  color: #FFD76D;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler.icon-tabler-menu.open[_ngcontent-%COMP%] {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar[_ngcontent-%COMP%] {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left[_ngcontent-%COMP%] {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show[_ngcontent-%COMP%] {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link[_ngcontent-%COMP%] {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: flex;\n  }\n}\n.modal[_ngcontent-%COMP%] {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show[_ngcontent-%COMP%] {\n  display: block;\n  opacity: 1;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: _ngcontent-%COMP%_fadeIn 0.5s ease-out;\n}\n.modal-content[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */"] });
+  }, dependencies: [CommonModule, NgIf], styles: ["\n\n.navbar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.nav-link[_ngcontent-%COMP%] {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link[_ngcontent-%COMP%]:hover {\n  color: #FFD76D;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  text-decoration: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler.icon-tabler-menu.open[_ngcontent-%COMP%] {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar[_ngcontent-%COMP%] {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left[_ngcontent-%COMP%] {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show[_ngcontent-%COMP%] {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link[_ngcontent-%COMP%] {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: flex;\n  }\n}\n.modal[_ngcontent-%COMP%] {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show[_ngcontent-%COMP%] {\n  display: block;\n  opacity: 1;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: _ngcontent-%COMP%_fadeIn 0.5s ease-out;\n}\n.modal-content[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NavbarComponent, [{
     type: Component,
-    args: [{ selector: "app-navbar", standalone: true, imports: [CommonModule], template: '<nav class="navbar">\r\n  <!-- Logo and Text on the Left -->\r\n  <div class="navbar-left">\r\n    <span class="logo-text">\u{1F981} JAMBO SAFARI</span>\r\n  </div>\r\n\r\n  <!-- Hamburger Icon for Mobile (Only visible on mobile) -->\r\n  <div class="navbar-hamburger" *ngIf="menuOpen !== null" (click)="toggleMenu()">\r\n    <svg *ngIf="!menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-menu">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M4 6l16 0"/>\r\n      <path d="M4 12l16 0"/>\r\n      <path d="M4 18l16 0"/>\r\n    </svg>\r\n    <svg *ngIf="menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-x">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M18 6L6 18"/>\r\n      <path d="M6 6l12 12"/>\r\n    </svg>\r\n  </div>\r\n\r\n  <!-- Menu Links on the Right (Initially Hidden on Mobile) -->\r\n  <div class="navbar-right" [class.show]="menuOpen">\r\n    <a href="/" class="nav-link" (click)="navigateAndCloseMenu()">Home</a>\r\n    <a href="#about" class="nav-link" (click)="navigateAndCloseMenu()">About</a>\r\n    <a href="#destinations" class="nav-link" (click)="navigateAndCloseMenu()">Destinations</a>\r\n    <a href="#safaris" class="nav-link" (click)="navigateAndCloseMenu()">Safaris</a>\r\n    <a href="#contact" class="nav-link" (click)="navigateAndCloseMenu()">Contact</a>\r\n    \r\n    <!-- Book Now Button -->\r\n    <button class="book-now-btn" (click)="openModal()">Book Now</button>\r\n  </div>\r\n</nav>\r\n\r\n<!-- Modal for Booking -->\r\n<div class="modal" [class.show]="isModalOpen" (click)="closeModal()">\r\n  <div class="modal-content" (click)="$event.stopPropagation()">\r\n    <h2>Book Now</h2>\r\n    <form>\r\n      <label for="name">Name:</label>\r\n      <input type="text" id="name" name="name" required />\r\n      <label for="date">Preferred Date:</label>\r\n      <input type="date" id="date" name="date" required />\r\n      <button type="submit">Submit</button>\r\n    </form>\r\n    <button class="close-modal" (click)="closeModal()">Close</button>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/navbar/navbar.css */\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right {\n  display: flex;\n  align-items: center;\n}\n.nav-link {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link:hover {\n  color: #FFD76D;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger svg.icon-tabler {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger svg.icon-tabler.icon-tabler-menu.open {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger {\n    display: none;\n  }\n  .navbar-right {\n    display: flex;\n  }\n}\n.modal {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show {\n  display: block;\n  opacity: 1;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: fadeIn 0.5s ease-out;\n}\n.modal-content h2 {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content input {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content button[type=submit] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content button[type=submit]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal:hover {\n  background-color: #FFD76D;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */\n"] }]
+    args: [{ selector: "app-navbar", standalone: true, imports: [CommonModule], template: '<nav class="navbar">\r\n  <!-- Logo and Text on the Left -->\r\n  <div class="navbar-left">\r\n    <span class="logo-text">\u{1F981} JAMBO SAFARI</span>\r\n  </div>\r\n\r\n  <!-- Hamburger Icon for Mobile (Only visible on mobile) -->\r\n  <div class="navbar-hamburger" *ngIf="menuOpen !== null" (click)="toggleMenu()">\r\n    <svg *ngIf="!menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-menu">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M4 6l16 0"/>\r\n      <path d="M4 12l16 0"/>\r\n      <path d="M4 18l16 0"/>\r\n    </svg>\r\n    <svg *ngIf="menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-x">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M18 6L6 18"/>\r\n      <path d="M6 6l12 12"/>\r\n    </svg>\r\n  </div>\r\n\r\n  <!-- Menu Links on the Right (Initially Hidden on Mobile) -->\r\n  <div class="navbar-right" [class.show]="menuOpen">\r\n    <a href="/" class="nav-link" (click)="navigateAndCloseMenu()">Home</a>\r\n    <a href="#about" class="nav-link" (click)="navigateAndCloseMenu()">About</a>\r\n    <a href="#destinations" class="nav-link" (click)="navigateAndCloseMenu()">Destinations</a>\r\n    <a href="#safaris" class="nav-link" (click)="navigateAndCloseMenu()">Safaris</a>\r\n    <a href="#contact" class="nav-link" (click)="navigateAndCloseMenu()">Contact</a>\r\n    \r\n    <!-- Book Now Button -->\r\n    <a class="book-now-btn" type="button" href="#safaris" >Book Now</a>\r\n  </div>\r\n</nav>\r\n\r\n<!-- Modal for Booking -->\r\n<div class="modal" [class.show]="isModalOpen" (click)="closeModal()">\r\n  <div class="modal-content" (click)="$event.stopPropagation()">\r\n    <h2>Book Now</h2>\r\n    <form>\r\n      <label for="name">Name:</label>\r\n      <input type="text" id="name" name="name" required />\r\n      <label for="date">Preferred Date:</label>\r\n      <input type="date" id="date" name="date" required />\r\n      <button type="submit">Submit</button>\r\n    </form>\r\n    <button class="close-modal" (click)="closeModal()">Close</button>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/navbar/navbar.css */\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right {\n  display: flex;\n  align-items: center;\n}\n.nav-link {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link:hover {\n  color: #FFD76D;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  text-decoration: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger svg.icon-tabler {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger svg.icon-tabler.icon-tabler-menu.open {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger {\n    display: none;\n  }\n  .navbar-right {\n    display: flex;\n  }\n}\n.modal {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show {\n  display: block;\n  opacity: 1;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: fadeIn 0.5s ease-out;\n}\n.modal-content h2 {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content input {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content button[type=submit] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content button[type=submit]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal:hover {\n  background-color: #FFD76D;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */\n"] }]
   }], () => [{ type: Router }], null);
 })();
 (() => {

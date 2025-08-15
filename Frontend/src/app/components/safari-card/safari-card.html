@@ -37,9 +37,13 @@
           </li>
         </ul>
         <div class="button-wrapper">
-          <button class="view-details-btn" (click)="openDetailsModal(package)">
+          <button
+            class="view-details-btn"
+            (click)="openDetailsModal(package.title)"
+          >
             View Details
           </button>
+
           <button class="book-now-btn" (click)="openModal(package.title)">
             Book Now
           </button>
@@ -177,7 +181,11 @@
 </div>
 
 <!-- Modal for Booking -->
-<div *ngIf="selectedPackageDetails" class="modal-overlay" (click)="closeModal()">
+<div
+  *ngIf="selectedPackageDetails"
+  class="modal-overlay"
+  (click)="closeModal()"
+>
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h3>{{ selectedPackageDetails }} - Safari Package Booking</h3>
@@ -191,30 +199,70 @@
 
         <!-- Email Field -->
         <label for="email">Your Email:</label>
-        <input type="email" id="email" [(ngModel)]="email" name="email" required />
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+        />
 
         <!-- Phone Field -->
         <label for="phone">Your Phone:</label>
-        <input type="text" id="phone" [(ngModel)]="phone" name="phone" required />
+        <input
+          type="text"
+          id="phone"
+          [(ngModel)]="phone"
+          name="phone"
+          required
+        />
 
         <!-- Number of Adults Field -->
         <label for="adults">Number of Adults:</label>
-        <input type="number" id="adults" [(ngModel)]="numAdults" name="numAdults" min="1" required />
+        <input
+          type="number"
+          id="adults"
+          [(ngModel)]="numAdults"
+          name="numAdults"
+          min="1"
+          required
+        />
 
         <!-- Number of Kids Field -->
         <label for="kids">Number of Kids:</label>
-        <input type="number" id="kids" [(ngModel)]="numKids" name="numKids" min="0" />
+        <input
+          type="number"
+          id="kids"
+          [(ngModel)]="numKids"
+          name="numKids"
+          min="0"
+        />
 
         <!-- From Date Field -->
         <label for="fromDate">From Date:</label>
-        <input type="date" id="fromDate" [(ngModel)]="fromDate" name="fromDate" required />
+        <input
+          type="date"
+          id="fromDate"
+          [(ngModel)]="fromDate"
+          name="fromDate"
+          required
+        />
 
         <!-- To Date Field -->
         <label for="toDate">To Date:</label>
-        <input type="date" id="toDate" [(ngModel)]="toDate" name="toDate" required />
+        <input
+          type="date"
+          id="toDate"
+          [(ngModel)]="toDate"
+          name="toDate"
+          required
+        />
 
         <!-- reCAPTCHA widget -->
-        <div class="g-recaptcha" [attr.data-sitekey]="'6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ'"></div>
+        <div
+          class="g-recaptcha"
+          [attr.data-sitekey]="'6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ'"
+        ></div>
 
         <!-- Submit Button -->
         <button type="submit" class="book-now-btn">Confirm Booking</button>

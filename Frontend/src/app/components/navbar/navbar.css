@@ -48,6 +48,7 @@
   background-color: #FFB940; /* Golden Yellow */
   color: white;
   border: none;
+  text-decoration: none;
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
