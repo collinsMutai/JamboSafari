@@ -8,13 +8,28 @@
       </div>
       <div class="card-body">
         <div class="card-image">
-          <img [src]="package.image" alt="{{ package.title }} Image" class="card-img" />
+          <img
+            [src]="package.image"
+            alt="{{ package.title }} Image"
+            class="card-img"
+          />
         </div>
         <p><strong>Includes:</strong> {{ package.includes }}</p>
         <ul>
           <li *ngFor="let detail of package.details">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-check">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon-check"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M7 12l5 5l10 -10" />
               <path d="M2 12l5 5m5 -5l5 -5" />
             </svg>
@@ -22,10 +37,141 @@
           </li>
         </ul>
         <div class="button-wrapper">
-          <button class="view-details-btn" (click)="openModal(package.title)">View Details</button>
-          <button class="book-now-btn" (click)="openModal(package.title)">Book Now</button>
+          <button class="view-details-btn" (click)="openDetailsModal(package)">
+            View Details
+          </button>
+          <button class="book-now-btn" (click)="openModal(package.title)">
+            Book Now
+          </button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Package Details -->
+<div *ngIf="selectedPackage" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ selectedPackage.title }} - Safari Package Details</h3>
+      <button class="close-btn" (click)="closeModal()">✖</button>
+    </div>
+    <div class="modal-body">
+      <!-- Hardcoded full details text -->
+      <p>{{ selectedPackage.fullDetails }}</p>
+      <p><strong>✅ What’s Included?</strong></p>
+
+      <!-- Hardcoded inclusions list -->
+      <ul>
+        <li>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon-check"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 12l5 5l10 -10" />
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg
+          >Private 4x4 Land Cruiser with pop-up roof
+        </li>
+        <li>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon-check"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 12l5 5l10 -10" />
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg
+          >All park entry fees and professional English-speaking guides
+        </li>
+        <li>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon-check"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 12l5 5l10 -10" />
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg
+          >Full-board accommodation (lodges or tents)
+        </li>
+        <li>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon-check"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 12l5 5l10 -10" />
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg
+          >Airport pickup and drop-off
+        </li>
+        <li>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon-check"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 12l5 5l10 -10" />
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg
+          >Daily bottled water and meals
+        </li>
+        <li>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon-check"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 12l5 5l10 -10" />
+            <path d="M2 12l5 5m5 -5l5 -5" /></svg
+          >Cultural and spiritual activities
+        </li>
+      </ul>
     </div>
   </div>
 </div>
@@ -76,4 +222,3 @@
     </div>
   </div>
 </div>
-

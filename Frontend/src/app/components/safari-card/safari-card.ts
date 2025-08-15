@@ -22,6 +22,7 @@ export class SafariCard {
       details: ['Daily game drives', 'Lodges & meals', 'Transfers & guides'],
       image: 'assets/images/cheetah1.jpeg',
       showDetails: false,
+      fullDetails: 'This 3-day safari includes daily game drives through Maasai Mara, Lake Nakuru, and Lake Naivasha, all with luxury lodges, meals, and expert guides.'
     },
     {
       title: '🗓️ 7-Day Classic Safari',
@@ -29,6 +30,7 @@ export class SafariCard {
       details: ['Daily game drives', 'Lodges & meals', 'Transfers & guides'],
       image: 'assets/images/giraffe1.jpeg',
       showDetails: false,
+      fullDetails: 'This 7-day safari provides an in-depth experience, including visits to Maasai Mara, Lake Nakuru, and a cultural visit to a local Maasai village.'
     },
     {
       title: '🗓️ 10-Day Deluxe Safari + Mission',
@@ -40,6 +42,7 @@ export class SafariCard {
       ],
       image: 'assets/images/lions1.jpeg',
       showDetails: false,
+      fullDetails: 'The 10-day deluxe safari includes not only breathtaking safaris but also mission activities like visiting local schools, churches, and clinics.'
     },
     {
       title: '🗓️ 14-Day Grand Safari',
@@ -47,10 +50,12 @@ export class SafariCard {
       details: ['Optional 3-day Zanzibar retreat'],
       image: 'assets/images/wilderbeast1.jpeg',
       showDetails: false,
+      fullDetails: 'This is the ultimate safari experience, covering both Kenya and Tanzania with the Mara, Serengeti, Ngorongoro, and an optional 3-day Zanzibar retreat.'
     },
   ];
 
   selectedPackageDetails: string | null = null;
+  selectedPackage: any = null; // Add this line to store selected package details
 
   // Modal form data
   name: string = '';
@@ -67,8 +72,13 @@ export class SafariCard {
     this.selectedPackageDetails = packageTitle;
   }
 
+  openDetailsModal(packageDetails: any) {
+    this.selectedPackage = packageDetails; // Store the selected package for viewing its details
+  }
+
   closeModal() {
     this.selectedPackageDetails = null;
+    this.selectedPackage = null; // Reset selected package
   }
 
   // Handle the form submission
