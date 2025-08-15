@@ -43165,7 +43165,11 @@ var environment = {
   emailJS: {
     serviceID: "service_4mi3aht",
     templateID: "template_u4bdiww",
+    contactTemplateID: "template_dffhil8",
     userID: "gho1b7zy9yL5TeKpB"
+  },
+  reCAPTCHA: {
+    siteKey: "6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ"
   }
 };
 
@@ -43578,7 +43582,7 @@ var SafariCard = class _SafariCard {
   static \u0275fac = function SafariCard_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _SafariCard)(\u0275\u0275directiveInject(DomSanitizer));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SafariCard, selectors: [["app-safari-card"]], decls: 7, vars: 3, consts: [[1, "safari-cards-container"], [1, "safari-title"], [1, "cards"], ["class", "card", 4, "ngFor", "ngForOf"], ["class", "modal-overlay", 3, "click", 4, "ngIf"], [1, "card"], [1, "card-header"], [1, "card-body"], [1, "card-image"], [1, "card-img", 3, "src", "alt"], [4, "ngFor", "ngForOf"], [1, "button-wrapper"], [1, "view-details-btn", 3, "click"], [1, "book-now-btn", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "16", "height", "16", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M7 12l5 5l10 -10"], ["d", "M2 12l5 5m5 -5l5 -5"], [1, "modal-overlay", 3, "click"], [1, "modal-content", 3, "click"], [1, "modal-header"], [1, "close-btn", 3, "click"], [1, "modal-body"], [3, "ngSubmit"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", "", 3, "ngModelChange", "ngModel"], ["for", "email"], ["type", "email", "id", "email", "name", "email", "required", "", 3, "ngModelChange", "ngModel"], ["for", "phone"], ["type", "text", "id", "phone", "name", "phone", "required", "", 3, "ngModelChange", "ngModel"], ["for", "adults"], ["type", "number", "id", "adults", "name", "numAdults", "min", "1", "required", "", 3, "ngModelChange", "ngModel"], ["for", "kids"], ["type", "number", "id", "kids", "name", "numKids", "min", "0", 3, "ngModelChange", "ngModel"], ["for", "fromDate"], ["type", "date", "id", "fromDate", "name", "fromDate", "required", "", 3, "ngModelChange", "ngModel"], ["for", "toDate"], ["type", "date", "id", "toDate", "name", "toDate", "required", "", 3, "ngModelChange", "ngModel"], [1, "g-recaptcha"], ["type", "submit", 1, "book-now-btn"]], template: function SafariCard_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SafariCard, selectors: [["app-safari-card"]], decls: 7, vars: 3, consts: [["id", "safaris", 1, "safari-cards-container"], [1, "safari-title"], [1, "cards"], ["class", "card", 4, "ngFor", "ngForOf"], ["class", "modal-overlay", 3, "click", 4, "ngIf"], [1, "card"], [1, "card-header"], [1, "card-body"], [1, "card-image"], [1, "card-img", 3, "src", "alt"], [4, "ngFor", "ngForOf"], [1, "button-wrapper"], [1, "view-details-btn", 3, "click"], [1, "book-now-btn", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "16", "height", "16", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M7 12l5 5l10 -10"], ["d", "M2 12l5 5m5 -5l5 -5"], [1, "modal-overlay", 3, "click"], [1, "modal-content", 3, "click"], [1, "modal-header"], [1, "close-btn", 3, "click"], [1, "modal-body"], [3, "ngSubmit"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", "", 3, "ngModelChange", "ngModel"], ["for", "email"], ["type", "email", "id", "email", "name", "email", "required", "", 3, "ngModelChange", "ngModel"], ["for", "phone"], ["type", "text", "id", "phone", "name", "phone", "required", "", 3, "ngModelChange", "ngModel"], ["for", "adults"], ["type", "number", "id", "adults", "name", "numAdults", "min", "1", "required", "", 3, "ngModelChange", "ngModel"], ["for", "kids"], ["type", "number", "id", "kids", "name", "numKids", "min", "0", 3, "ngModelChange", "ngModel"], ["for", "fromDate"], ["type", "date", "id", "fromDate", "name", "fromDate", "required", "", 3, "ngModelChange", "ngModel"], ["for", "toDate"], ["type", "date", "id", "toDate", "name", "toDate", "required", "", 3, "ngModelChange", "ngModel"], [1, "g-recaptcha"], ["type", "submit", 1, "book-now-btn"]], template: function SafariCard_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "div", 0)(1, "h2", 1);
       \u0275\u0275text(2, "\u{1F6CF}\uFE0F Safari Packages");
@@ -43601,7 +43605,7 @@ var SafariCard = class _SafariCard {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SafariCard, [{
     type: Component,
-    args: [{ selector: "app-safari-card", standalone: true, imports: [CommonModule, ReactiveFormsModule, FormsModule], template: `<div class="safari-cards-container">\r
+    args: [{ selector: "app-safari-card", standalone: true, imports: [CommonModule, ReactiveFormsModule, FormsModule], template: `<div class="safari-cards-container" id="safaris">\r
   <h2 class="safari-title">\u{1F6CF}\uFE0F Safari Packages</h2>\r
 \r
   <div class="cards">\r
@@ -43836,10 +43840,12 @@ var SafariCard = class _SafariCard {
 var Footer = class _Footer {
   fb;
   sanitizer;
+  renderer;
   contactForm;
-  constructor(fb, sanitizer) {
+  constructor(fb, sanitizer, renderer) {
     this.fb = fb;
     this.sanitizer = sanitizer;
+    this.renderer = renderer;
     this.contactForm = this.fb.group({
       name: ["", [Validators.required, Validators.minLength(3)]],
       email: ["", [Validators.required, Validators.email]],
@@ -43848,19 +43854,49 @@ var Footer = class _Footer {
       // Hidden field for reCAPTCHA token
     });
   }
-  // This method will trigger the reCAPTCHA validation and token generation
+  ngOnInit() {
+    this.loadRecaptchaScript();
+  }
+  // Dynamically load the reCAPTCHA script
+  loadRecaptchaScript() {
+    if (typeof grecaptcha !== "undefined") {
+      this.initializeRecaptcha();
+      return;
+    }
+    const script = this.renderer.createElement("script");
+    script.src = `https://www.google.com/recaptcha/api.js?render=${environment.reCAPTCHA.siteKey}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      this.initializeRecaptcha();
+    };
+    this.renderer.appendChild(document.head, script);
+  }
+  // Initialize reCAPTCHA after script has loaded
+  initializeRecaptcha() {
+    if (grecaptcha) {
+      grecaptcha.ready(() => {
+        grecaptcha.execute(environment.reCAPTCHA.siteKey, { action: "submit" }).then((token) => {
+          this.contactForm.patchValue({ recaptchaToken: token });
+        }).catch((error) => {
+          console.error("reCAPTCHA error:", error);
+        });
+      });
+    } else {
+      console.error("reCAPTCHA script failed to load");
+    }
+  }
+  // Handle form submission
   onSubmit() {
     if (this.contactForm.valid) {
       let formData = this.contactForm.value;
       formData.name = this.sanitizeInput(formData.name);
       formData.email = this.sanitizeInput(formData.email);
       formData.message = this.sanitizeInput(formData.message);
-      grecaptcha.execute("6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ", { action: "submit" }).then((token) => {
-        formData.recaptchaToken = token;
-        console.log("Form Submitted with reCAPTCHA Token:", formData);
-      }).catch((error) => {
-        console.error("reCAPTCHA error:", error);
-      });
+      this.sendEmail(formData);
+      this.contactForm.reset();
+    } else {
+      console.log("Form is invalid");
     }
   }
   // Helper method to sanitize input data by stripping dangerous HTML tags
@@ -43871,8 +43907,27 @@ var Footer = class _Footer {
   sanitizeInputForHTML(input2) {
     return this.sanitizer.sanitize(1, input2) || input2;
   }
+  // Method to send the email using EmailJS
+  sendEmail(formData) {
+    const templateParams = {
+      name: formData.name,
+      email: formData.email,
+      message: formData.message
+    };
+    es_default.send(
+      environment.emailJS.serviceID,
+      environment.emailJS.contactTemplateID,
+      templateParams,
+      // Form data to be sent in the email
+      environment.emailJS.userID
+    ).then((response) => {
+      console.log("Email sent successfully", response);
+    }).catch((error) => {
+      console.error("Email sending failed", error);
+    });
+  }
   static \u0275fac = function Footer_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _Footer)(\u0275\u0275directiveInject(FormBuilder), \u0275\u0275directiveInject(DomSanitizer));
+    return new (__ngFactoryType__ || _Footer)(\u0275\u0275directiveInject(FormBuilder), \u0275\u0275directiveInject(DomSanitizer), \u0275\u0275directiveInject(Renderer2));
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Footer, selectors: [["app-footer"]], decls: 47, vars: 2, consts: [["id", "contact", 1, "footer"], [1, "footer-title"], [1, "contact-container"], [1, "container"], [1, "row"], [1, "col-md-6", "contact-info"], ["href", "http://www.jambosafariafrica.com", "target", "_blank"], ["href", "mailto:info@jambosafariafrica.com"], [1, "col-md-6", "contact-form"], [3, "ngSubmit", "formGroup"], [1, "form-group"], ["for", "name"], ["type", "text", "id", "name", "formControlName", "name", "required", "", 1, "form-control"], ["for", "email"], ["type", "email", "id", "email", "formControlName", "email", "required", "", 1, "form-control"], ["for", "message"], ["id", "message", "formControlName", "message", "rows", "4", "required", "", 1, "form-control"], ["type", "hidden", "formControlName", "recaptchaToken"], ["type", "submit", 1, "btn", "btn-primary", 3, "disabled"], [1, "credits-container"], [1, "col-12", "text-center"]], template: function Footer_Template(rf, ctx) {
     if (rf & 1) {
@@ -43956,10 +44011,10 @@ var Footer = class _Footer {
       ReactiveFormsModule
       // Reactive forms module for handling the form
     ], template: '<!-- footer.component.html -->\r\n<footer class="footer" id="contact">\r\n  <h2 class="footer-title">\u{1F4DE} Contact & Booking</h2>\r\n\r\n  <!-- Contact Section -->\r\n  <div class="contact-container">\r\n    <div class="container">\r\n      <div class="row">\r\n        <!-- Left Column: Contact Info -->\r\n        <div class="col-md-6 contact-info">\r\n          <h3>Contact Info</h3>\r\n          <ul>\r\n            <li>Website: <a href="http://www.jambosafariafrica.com" target="_blank">www.jambosafariafrica.com</a></li>\r\n            <li>Email: <a href="mailto:info@jambosafariafrica.com">info@jambosafariafrica.com</a></li>\r\n            <li>Phone/WhatsApp: +254 700 214 101 (Kenya) | +1 (404) 565-9657 (USA)</li>\r\n            <li>Offices: Nairobi, Kenya | Dallas, Texas</li>\r\n          </ul>\r\n        </div>\r\n\r\n        <!-- Right Column: Contact Form -->\r\n        <div class="col-md-6 contact-form">\r\n          <h3>Send Message</h3>\r\n          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">\r\n            <div class="form-group">\r\n              <label for="name">Name</label>\r\n              <input type="text" id="name" class="form-control" formControlName="name" required />\r\n            </div>\r\n            <div class="form-group">\r\n              <label for="email">Email</label>\r\n              <input type="email" id="email" class="form-control" formControlName="email" required />\r\n            </div>\r\n            <div class="form-group">\r\n              <label for="message">Message</label>\r\n              <textarea id="message" class="form-control" formControlName="message" rows="4" required></textarea>\r\n            </div>\r\n\r\n            <!-- Hidden reCAPTCHA Token Field -->\r\n            <input type="hidden" formControlName="recaptchaToken" />\r\n\r\n            <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid">Submit</button>\r\n          </form>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Copyright Section -->\r\n  <div class="credits-container">\r\n    <div class="container">\r\n      <div class="row">\r\n        <div class="col-12 text-center">\r\n          <p>&copy; 2025 Jambo Safari Africa. All rights reserved.</p>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</footer>\r\n', styles: ["/* src/app/footer/footer.css */\n.footer {\n  color: #000;\n  padding: 80px 100px 40px 100px;\n  position: relative;\n  width: 100%;\n  clear: both;\n}\n.footer-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2c6e49;\n  margin-bottom: 40px;\n}\n.contact-container {\n  padding: 100px 0;\n  margin-bottom: 100px;\n}\n.credits-container {\n  background-color: #D8C6B3;\n  color: #4a3c31;\n  padding: 10px 0;\n  width: 100%;\n  position: absolute;\n  bottom: 0;\n  left: 0;\n}\n.footer .container {\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.footer h3 {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.footer ul {\n  list-style: none;\n  padding: 0;\n}\n.footer ul li {\n  display: flex;\n  align-items: center;\n  margin: 10px 0;\n}\n.footer ul li svg {\n  margin-right: 10px;\n  width: 24px;\n  height: 24px;\n  fill: none;\n  stroke: #ffb940;\n}\n.footer ul li a {\n  color: #000;\n  text-decoration: none;\n}\n.footer ul li a:hover {\n  text-decoration: underline;\n}\n.footer ul li span {\n  display: inline-block;\n  margin-right: 10px;\n}\n.phone-numbers {\n  margin-top: 5px;\n}\n.phone-numbers span {\n  display: block;\n  margin-bottom: 5px;\n}\n.contact-form {\n  padding-left: 15px;\n}\n.contact-form .form-group {\n  margin-bottom: 15px;\n}\n.contact-form input,\n.contact-form textarea {\n  width: 100%;\n  padding: 10px;\n  margin-top: 5px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.contact-form button {\n  margin-top: 10px;\n  background-color: #FFB940;\n  color: #fff;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 4px;\n}\n.contact-form button:hover {\n  background-color: #e09433;\n}\n.text-center {\n  text-align: center;\n  margin-top: 20px;\n  font-size: 0.9rem;\n}\n.follow-us {\n  margin-top: 30px;\n  text-align: left;\n}\n.follow-us h3 {\n  font-size: 1.5rem;\n  margin-bottom: 15px;\n}\n.social-icons {\n  list-style: none;\n  display: flex;\n  justify-content: left;\n  gap: 20px;\n}\n.social-icons li {\n  display: inline-block;\n}\n.social-icons a {\n  display: block;\n  width: 40px;\n  height: 40px;\n}\n.social-icons svg {\n  width: 100%;\n  height: 100%;\n  stroke: #ffb940;\n  fill: none;\n}\n.social-icons a:hover svg {\n  stroke: #f8a800;\n}\n@media (max-width: 768px) {\n  .footer {\n    padding: 40px 20px 20px 20px;\n  }\n  .footer-title {\n    font-size: 28px;\n  }\n  .contact-container {\n    margin-bottom: 50px;\n    padding: 0px 0px 40px 0px;\n  }\n  .contact-info,\n  .contact-form {\n    padding: 0;\n  }\n  .contact-info,\n  .contact-form {\n    width: 100%;\n  }\n  .social-icons {\n    flex-wrap: wrap;\n    gap: 15px;\n    justify-content: center;\n  }\n  .social-icons a {\n    width: 35px;\n    height: 35px;\n  }\n  .follow-us h3,\n  .footer h3 {\n    text-align: center;\n  }\n  .footer ul li {\n    flex-direction: column;\n    align-items: center;\n  }\n  .footer ul li svg {\n    margin-right: 0;\n    margin-bottom: 5px;\n  }\n  .phone-numbers span {\n    font-size: 0.9rem;\n  }\n}\n@media (max-width: 480px) {\n  .footer {\n    padding: 40px 15px 15px 15px;\n  }\n  .footer-title {\n    font-size: 24px;\n  }\n  .contact-container {\n    padding: 0px 0px 30px 0px;\n  }\n  .contact-form input,\n  .contact-form textarea {\n    padding: 8px;\n  }\n  .contact-form button {\n    padding: 8px 15px;\n  }\n  .social-icons {\n    gap: 10px;\n    justify-content: center;\n  }\n  .social-icons a {\n    width: 30px;\n    height: 30px;\n  }\n  .text-center {\n    font-size: 0.8rem;\n  }\n  .footer ul li {\n    margin: 5px 0;\n  }\n  .footer ul li svg {\n    margin-bottom: 3px;\n  }\n  .footer h3 {\n    font-size: 1.2rem;\n  }\n  .phone-numbers span {\n    font-size: 0.8rem;\n  }\n}\n/*# sourceMappingURL=footer.css.map */\n"] }]
-  }], () => [{ type: FormBuilder }, { type: DomSanitizer }], null);
+  }], () => [{ type: FormBuilder }, { type: DomSanitizer }, { type: Renderer2 }], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Footer, { className: "Footer", filePath: "src/app/footer/footer.ts", lineNumber: 18 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Footer, { className: "Footer", filePath: "src/app/footer/footer.ts", lineNumber: 25 });
 })();
 
 // src/app/components/testimonials/testimonials.ts
