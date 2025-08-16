@@ -1,0 +1,23 @@
+# Node.js modules
+node_modules/
+
+# Environment files
+.env
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# NPM package lock
+package-lock.json
+
+# IDE/Editor files (e.g., VS Code, JetBrains)
+.vscode/
+.idea/
+
+# Build output directories
+/dist
+/build
