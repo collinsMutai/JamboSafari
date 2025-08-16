@@ -1,14 +1,16 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.json",  // Extends the base configuration
   "compilerOptions": {
-    "outDir": "./out-tsc/spec",
+    "outDir": "./out-tsc/spec",  // Output directory for compiled test files
     "types": [
-      "jasmine"
+      "jasmine"  // Include Jasmine types for testing
+    ],
+    "typeRoots": [
+      "node_modules/@types",  // Default TypeScript type definitions directory
+      
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts"  // Include all TypeScript files from the src directory
   ]
 }

@@ -1,4 +1,4 @@
-import { Component, HostListener  } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { DestinationAndHighlightsComponent } from '../destination-and-highlights/destination-and-highlights';
 import { HeroCarousel } from '../hero-carousel/hero-carousel';
 import { AboutUs } from '../about-us/about-us';
@@ -23,7 +23,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./home.css'],
 })
 export class Home {
- isScrolled: boolean = false; 
+  isScrolled: boolean = false;
 
   // Listen to the scroll event
   @HostListener('window:scroll', [])

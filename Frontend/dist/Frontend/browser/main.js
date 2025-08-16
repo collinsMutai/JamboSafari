@@ -36681,7 +36681,7 @@ var DestinationAndHighlightsComponent = class _DestinationAndHighlightsComponent
       clearInterval(this.autoSlideInterval);
     }
   }
-  // Start the auto slide interval
+  // Start the autoplay interval
   startAutoSlide() {
     this.autoSlideInterval = setInterval(() => {
       this.moveToNextSlide();
@@ -36689,18 +36689,18 @@ var DestinationAndHighlightsComponent = class _DestinationAndHighlightsComponent
   }
   // Move to the next slide
   moveToNextSlide() {
-    const maxIndex = this.images.length - 1;
-    if (this.currentSlideIndex < maxIndex) {
-      this.currentSlideIndex++;
-    } else {
-      this.currentSlideIndex = 0;
+    if (this.images.length > 4) {
+      this.images.push(this.images.shift());
     }
     this.updateSlider();
   }
   // Move to the previous slide
   moveToPrevSlide() {
-    if (this.currentSlideIndex > 0) {
-      this.currentSlideIndex--;
+    if (this.images.length > 4) {
+      const lastSlide = this.images.pop();
+      if (lastSlide) {
+        this.images.unshift(lastSlide);
+      }
     }
     this.updateSlider();
   }

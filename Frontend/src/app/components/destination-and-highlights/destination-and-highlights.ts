@@ -72,41 +72,44 @@ export class DestinationAndHighlightsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Start the auto-slide functionality
+    // Start autoplay when component initializes
     this.startAutoSlide();
   }
 
   ngOnDestroy() {
-    // Clean up the interval when the component is destroyed
+    // Clear the autoplay interval when component is destroyed
     if (this.autoSlideInterval) {
       clearInterval(this.autoSlideInterval);
     }
   }
 
-  // Start the auto slide interval
+  // Start the autoplay interval
   startAutoSlide() {
     this.autoSlideInterval = setInterval(() => {
       this.moveToNextSlide();
-    }, 5000); // Slide every 5 seconds
+    }, 5000); // Autoplay every 5 seconds
   }
 
   // Move to the next slide
   moveToNextSlide() {
-    const maxIndex = this.images.length - 1;
-    if (this.currentSlideIndex < maxIndex) {
-      this.currentSlideIndex++;
-    } else {
-      // After last slide, reset to the first slide
-      this.currentSlideIndex = 0;
+    // Shift the slides and keep 4 in view
+    if (this.images.length > 4) {
+      this.images.push(this.images.shift()!); // Pop the first slide and push it to the end
     }
+
     this.updateSlider();
   }
 
   // Move to the previous slide
   moveToPrevSlide() {
-    if (this.currentSlideIndex > 0) {
-      this.currentSlideIndex--;
+    // Pop the last slide and insert it at the front
+    if (this.images.length > 4) {
+      const lastSlide = this.images.pop();
+      if (lastSlide) {
+        this.images.unshift(lastSlide); // Add it to the front
+      }
     }
+
     this.updateSlider();
   }
 
