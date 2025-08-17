@@ -1,6 +1,6 @@
 const express = require('express');
 const paymentController = require('../controllers/paymentController');
-const { validatePaymentData } = require('../middlewares/paymentValidator'); // Import the validation middleware
+const { validatePaymentData } = require('../middleware/paymentValidator'); // Import the validation middleware
 const csrf = require('csurf');
 const Transaction = require('../models/Transaction'); // Import Transaction model if needed
 

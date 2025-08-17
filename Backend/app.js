@@ -43,12 +43,75 @@ app.use(express.json());
 // Use cookie-parser before CSRF middleware
 app.use(cookieParser());  // Ensure this comes before csrfProtection
 
+// CORS Configuration (with methods and allowed headers)
+const allowedOrigins = process.env.FRONTEND_ORIGINS.split(',');
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true, // Allow cookies to be sent across origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Limit allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'], // Allowed headers
+    preflightContinue: false, // Handle preflight requests automatically
+}));
+
+// Middleware to apply security headers
+app.use(helmet());
+
+// Helmet CSP Configuration
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https://*"],
+        connectSrc: ["'self'", "https://api.example.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],  // Automatically upgrade HTTP requests to HTTPS
+    },
+}));
+
+// Helmet HSTS Configuration
+app.use(helmet.hsts({
+    maxAge: 31536000,  // One year
+    includeSubDomains: true,
+    preload: true,
+}));
+
+// Helmet Frameguard
+app.use(helmet.frameguard({ action: 'deny' }));  // Prevent clickjacking
+
+// Helmet XSS Protection
+app.use(helmet.xssFilter());  // Enable XSS protection
+
+// Helmet NoSniff
+app.use(helmet.noSniff());  // Prevent MIME sniffing
+
+// Helmet Referrer Policy
+app.use(helmet.referrerPolicy({ policy: 'strict-origin-when-cross-origin' }));  // Control referrer information
+
+// Helmet Permissions Policy
+app.use((req, res, next) => {
+    res.setHeader('Permissions-Policy', 'fullscreen=(self), geolocation=(self)');
+    next();
+});
+
+
+
+// Helmet No Cache
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+});
+
+
 // Only apply CSRF protection to routes that require it
 app.use('/api', csrfProtection, paymentRoutes); // Apply CSRF protection to payment routes
 
 // Default route (doesn't need CSRF protection)
 app.get('/', (req, res) => {
-    res.send('Pesapal Payment Integration Server');
+    res.send('Server is running...');
 });
 
 // CSRF token header middleware (After CSRF middleware setup, only for /api routes)
@@ -73,15 +136,32 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong' });
 });
 
-// SSL Configuration
-const sslOptions = {
-    key: fs.readFileSync('ssl/private.key'),
-    cert: fs.readFileSync('ssl/certificate.pem'),
-    ca: fs.readFileSync('ssl/csr.pem'),
-};
+// Redirect HTTP requests to HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+    app.use((req, res, next) => {
+        // Ensure HTTPS only for production
+        if (req.headers['x-forwarded-proto'] !== 'https') {
+            return res.redirect('https://' + req.headers.host + req.url);
+        }
+        next();
+    });
 
-// Start the HTTPS server
-const PORT = process.env.PORT || 3000;
-https.createServer(sslOptions, app).listen(PORT, () => {
-    console.log(`Server running on https://localhost:${PORT}`);
-});
+    // SSL Configuration (for HTTPS)
+    const sslOptions = {
+        key: fs.readFileSync('ssl/private.key'),
+        cert: fs.readFileSync('ssl/certificate.pem'),
+        ca: fs.readFileSync('ssl/csr.pem'),
+    };
+
+    // Start the HTTPS server (Only in production, HTTPS)
+    const PORT = process.env.PORT || 3000;
+    https.createServer(sslOptions, app).listen(PORT, () => {
+        console.log(`HTTPS server running on https://localhost:${PORT}`);
+    });
+} else {
+    // In development, run using HTTP
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`HTTP server running on http://localhost:${PORT}`);
+    });
+}
