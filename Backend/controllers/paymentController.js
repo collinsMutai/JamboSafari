@@ -1,26 +1,27 @@
 const axios = require('axios');
 const Transaction = require('../models/Transaction');
 const qs = require('querystring');
+const { verifyJWT } = require('../utils/jwtUtils');
 
-// Pesapal API credentials (from .env)
-const PESAPAL_CONSUMER_KEY = process.env.PESAPAL_CONSUMER_KEY;
-const PESAPAL_CONSUMER_SECRET = process.env.PESAPAL_CONSUMER_SECRET;
-const PESAPAL_URL = process.env.PESAPAL_URL;
+// 🔐 Environment variables
+const {
+    PESAPAL_CONSUMER_KEY,
+    PESAPAL_CONSUMER_SECRET,
+    PESAPAL_URL,
+    M_PESA_LIPA_NA_MPESA_SHORTCODE,
+    M_PESA_LIPA_NA_MPESA_SHORTCODE_SECRET,
+    M_PESA_LIPA_NA_MPESA_LIPA_URL,
+    M_PESA_OAUTH_URL,
+} = process.env;
 
-// M-Pesa API credentials (from .env)
-const M_PESA_LIPA_NA_MPESA_SHORTCODE = process.env.M_PESA_LIPA_NA_MPESA_SHORTCODE;
-const M_PESA_LIPA_NA_MPESA_SHORTCODE_SECRET = process.env.M_PESA_LIPA_NA_MPESA_SHORTCODE_SECRET;
-const M_PESA_LIPA_NA_MPESA_LIPA_URL = process.env.M_PESA_LIPA_NA_MPESA_LIPA_URL;
-const M_PESA_OAUTH_URL = process.env.M_PESA_OAUTH_URL; // Token URL for M-Pesa
-
-// Function to request an OAuth token for M-Pesa
+// 📡 Get M-Pesa OAuth token
 const getMpesOauthToken = async () => {
     try {
         const response = await axios.get(M_PESA_OAUTH_URL, {
             auth: {
                 username: M_PESA_LIPA_NA_MPESA_SHORTCODE,
-                password: M_PESA_LIPA_NA_MPESA_SHORTCODE_SECRET
-            }
+                password: M_PESA_LIPA_NA_MPESA_SHORTCODE_SECRET,
+            },
         });
         return response.data.access_token;
     } catch (error) {
@@ -28,32 +29,63 @@ const getMpesOauthToken = async () => {
     }
 };
 
-// Payment request function to initiate the payment
+// 💳 Payment request handler
 exports.requestPayment = async (req, res) => {
-    // CSRF Token validation
-    if (req.csrfToken() !== req.headers['csrf-token']) {
-        return res.status(403).json({ error: 'Invalid CSRF token' });
-    }
-
-    const { amount, description, reference, email, phone, redirectUrl, paymentMethod } = req.body;
-
-    // Create a new transaction record
-    const newTransaction = new Transaction({
-        reference,
-        amount,
-        description,
-        email,
-        phone,
-        status: 'PENDING', // Set the initial status to 'PENDING'
-        paymentMethod,
-    });
-
     try {
-        // Save the transaction to MongoDB
+        // 🔐 Validate CSRF token
+        if (req.csrfToken() !== req.headers['csrf-token']) {
+            return res.status(403).json({ error: 'Invalid CSRF token' });
+        }
+
+        // 🔐 Validate JWT
+        const authHeader = req.headers['authorization'];
+        const token = authHeader?.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({ error: 'Missing Authorization token' });
+        }
+
+        const decoded = await new Promise((resolve) => {
+            verifyJWT(token, (err, decoded) => {
+                if (err) {
+                    const msg =
+                        err.type === 'expired'
+                            ? 'Session expired'
+                            : err.type === 'invalid'
+                            ? 'Invalid token'
+                            : 'Token verification failed';
+                    console.error('JWT Error:', msg);
+                    return resolve(null);
+                }
+                return resolve(decoded);
+            });
+        });
+
+        if (!decoded || !decoded.guestId) {
+            return res.status(401).json({ error: 'Invalid or expired session token' });
+        }
+
+        const guestId = decoded.guestId;
+
+        // Extract payment data
+        const { amount, description, reference, email, phone, redirectUrl, paymentMethod } = req.body;
+
+        // Save transaction
+        const newTransaction = new Transaction({
+            reference,
+            amount,
+            description,
+            email,
+            phone,
+            guestId,
+            status: 'PENDING',
+            paymentMethod,
+        });
+
         await newTransaction.save();
 
+        // 🔁 Handle Pesapal
         if (paymentMethod === 'Pesapal') {
-            // Construct the payment payload for Pesapal
             const paymentRequest = {
                 amount,
                 description,
@@ -63,7 +95,6 @@ exports.requestPayment = async (req, res) => {
                 redirectUrl,
             };
 
-            // Send payment request to Pesapal API
             const response = await axios.post(PESAPAL_URL, paymentRequest, {
                 auth: {
                     username: PESAPAL_CONSUMER_KEY,
@@ -71,29 +102,25 @@ exports.requestPayment = async (req, res) => {
                 },
             });
 
-            // Check if the response contains the expected URL
             if (!response.data.paymentUrl) {
                 throw new Error('Payment URL not returned from Pesapal');
             }
 
-            const paymentUrl = response.data.paymentUrl;
-
-            // Send the payment URL back to the frontend for redirect
-            return res.json({ paymentUrl });
+            return res.json({ paymentUrl: response.data.paymentUrl });
         }
 
+        // 🔁 Handle M-Pesa
         if (paymentMethod === 'MPesa') {
-            // Prepare payment request for M-Pesa Lipa Na M-Pesa
             const token = await getMpesOauthToken();
 
             const lipaNaMpesaPayload = {
                 BusinessShortcode: M_PESA_LIPA_NA_MPESA_SHORTCODE,
                 LipaNaMpesaOnlineShortcode: M_PESA_LIPA_NA_MPESA_SHORTCODE,
                 LipaNaMpesaOnlineShortcodeSecret: M_PESA_LIPA_NA_MPESA_SHORTCODE_SECRET,
-                PhoneNumber: phone, // Phone number for M-Pesa
+                PhoneNumber: phone,
                 Amount: amount,
                 AccountReference: reference,
-                TransactionDesc: description
+                TransactionDesc: description,
             };
 
             const response = await axios.post(M_PESA_LIPA_NA_MPESA_LIPA_URL, qs.stringify(lipaNaMpesaPayload), {
@@ -106,96 +133,76 @@ exports.requestPayment = async (req, res) => {
                 throw new Error('M-Pesa payment initiation failed');
             }
 
-            const paymentUrl = response.data.LipaNaMpesaOnlinePaymentUrl;
-
-            // Send the payment URL to the frontend
-            return res.json({ paymentUrl });
+            return res.json({ paymentUrl: response.data.LipaNaMpesaOnlinePaymentUrl });
         }
 
         throw new Error('Unsupported payment method');
-
     } catch (error) {
         console.error('Error initiating payment:', error);
 
-        // If an error occurred while processing the payment, mark the transaction as failed
-        await newTransaction.updateOne({ status: 'FAILED' });
+        // Mark transaction as failed
+        if (req.body?.reference) {
+            await Transaction.updateOne({ reference: req.body.reference }, { status: 'FAILED' });
+        }
 
         res.status(500).json({ error: `Error initiating payment: ${error.message}` });
     }
 };
 
-// Payment callback function to handle the callback from Pesapal
+// ✅ Pesapal callback handler
 exports.paymentCallback = async (req, res) => {
-    const paymentData = req.body; // Pesapal sends data to this endpoint
+    const { reference, status } = req.body;
 
-    const { reference, status } = paymentData;
-
-    // Validate incoming callback data
     if (!reference || !status) {
         return res.status(400).json({ error: 'Invalid callback data' });
     }
 
     try {
-        // Find the transaction by reference
         const transaction = await Transaction.findOne({ reference });
 
         if (!transaction) {
             return res.status(404).json({ error: 'Transaction not found' });
         }
 
-        // Update the transaction status based on the callback
         transaction.status = status === 'SUCCESS' ? 'SUCCESS' : 'FAILED';
         await transaction.save();
 
-        // Respond with the appropriate message based on the payment status
-        if (status === 'SUCCESS') {
-            console.log(`Payment successful for reference: ${reference}`);
-            res.json({ status: 'success', message: 'Payment successful' });
-        } else {
-            console.log(`Payment failed for reference: ${reference}`);
-            res.json({ status: 'failed', message: 'Payment failed' });
-        }
-
+        console.log(`Pesapal callback: ${reference} -> ${transaction.status}`);
+        return res.json({
+            status: transaction.status.toLowerCase(),
+            message: `Payment ${transaction.status.toLowerCase()}`,
+        });
     } catch (error) {
-        console.error('Error processing payment callback:', error);
-        res.status(500).json({ error: 'Error processing payment callback' });
+        console.error('Error processing Pesapal callback:', error);
+        return res.status(500).json({ error: 'Error processing callback' });
     }
 };
 
-// Payment callback function to handle M-Pesa callback
+// ✅ M-Pesa callback handler
 exports.mpesaCallback = async (req, res) => {
-    const paymentData = req.body; // Data returned by M-Pesa
+    const { reference, status } = req.body;
 
-    const { reference, status } = paymentData; // Check response structure of M-Pesa callback
-
-    // Validate incoming callback data
     if (!reference || !status) {
         return res.status(400).json({ error: 'Invalid callback data' });
     }
 
     try {
-        // Find the transaction by reference
         const transaction = await Transaction.findOne({ reference });
 
         if (!transaction) {
             return res.status(404).json({ error: 'Transaction not found' });
         }
 
-        // Update the transaction status based on M-Pesa callback
         transaction.status = status === 'SUCCESS' ? 'SUCCESS' : 'FAILED';
         await transaction.save();
 
-        // Respond with the appropriate message based on the payment status
-        if (status === 'SUCCESS') {
-            console.log(`M-Pesa payment successful for reference: ${reference}`);
-            res.json({ status: 'success', message: 'Payment successful' });
-        } else {
-            console.log(`M-Pesa payment failed for reference: ${reference}`);
-            res.json({ status: 'failed', message: 'Payment failed' });
-        }
-
+        console.log(`M-Pesa callback: ${reference} -> ${transaction.status}`);
+        return res.json({
+            status: transaction.status.toLowerCase(),
+            message: `Payment ${transaction.status.toLowerCase()}`,
+        });
     } catch (error) {
-        console.error('Error processing M-Pesa payment callback:', error);
-        res.status(500).json({ error: 'Error processing payment callback' });
+        console.error('Error processing M-Pesa callback:', error);
+        return res.status(500).json({ error: 'Error processing callback' });
     }
 };

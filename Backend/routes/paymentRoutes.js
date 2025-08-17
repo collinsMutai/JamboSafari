@@ -9,6 +9,26 @@ const router = express.Router();
 // CSRF protection middleware
 const csrfProtection = csrf({ cookie: true });
 
+// 🔹 Route to start a guest session and issue a JWT
+router.post('/auth/guest', (req, res) => {
+    try {
+        if (!process.env.JWT_SECRET) {
+            throw new Error('JWT_SECRET is not defined in environment variables');
+        }
+
+        const guestId = uuidv4();
+        const token = createJWT({
+            guestId,
+            sessionStart: Date.now()
+        });
+
+        res.status(200).json({ token });
+    } catch (error) {
+        console.error('Error generating guest token:', error);
+        res.status(500).json({ error: 'Failed to start guest session' });
+    }
+});
+
 // Route to handle payment request with validation middleware
 router.post('/payment/request', csrfProtection, validatePaymentData, paymentController.requestPayment);
 

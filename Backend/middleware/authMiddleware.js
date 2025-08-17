@@ -1,22 +1,26 @@
 const { verifyJWT } = require('../utils/jwtUtils');
 
 const authenticateJWT = (req, res, next) => {
-    // Extract token from headers
-    const token = req.headers['authorization']?.split(' ')[1]; // Expecting "Bearer <token>"
+    const token = req.headers['authorization']?.split(' ')[1];
 
     if (!token) {
         return res.status(403).json({ error: 'No token provided' });
     }
 
-    // Verify the token
-    const decoded = verifyJWT(token);
-    if (!decoded) {
-        return res.status(401).json({ error: 'Invalid or expired token' });
-    }
+    verifyJWT(token, (err, decoded) => {
+        if (err) {
+            if (err.type === 'expired') {
+                return res.status(401).json({ error: 'Token expired' });
+            } else if (err.type === 'invalid') {
+                return res.status(401).json({ error: 'Invalid token' });
+            } else {
+                return res.status(401).json({ error: 'Token verification failed' });
+            }
+        }
 
-    // Attach the decoded token (guest session data) to the request object
-    req.guest = decoded;
-    next();
+        req.guest = decoded;
+        next();
+    });
 };
 
 module.exports = authenticateJWT;

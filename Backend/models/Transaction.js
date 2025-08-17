@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
+const encrypt = require("mongoose-encryption");
 
 const transactionSchema = new mongoose.Schema({
   reference: {
     type: String,
     required: true,
-    unique: true, // Ensure unique transaction reference
+    unique: true,
   },
   amount: {
     type: Number,
@@ -22,10 +23,11 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  guestId: { type: String, required: true },
   status: {
     type: String,
     enum: ["PENDING", "SUCCESS", "FAILED"],
-    default: "PENDING", // Default status is PENDING
+    default: "PENDING",
   },
   paymentMethod: {
     type: String,
@@ -40,6 +42,13 @@ const transactionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+// 🔐 Add field-level encryption
+const encKey = process.env.ENCRYPTION_SECRET;
+transactionSchema.plugin(encrypt, {
+  secret: encKey,
+  encryptedFields: ["email", "phone", "description"],
 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
