@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { body, validationResult } = require('express-validator');
 const Transaction = require('../models/Transaction');
 const qs = require('querystring');
 
@@ -14,36 +13,6 @@ const M_PESA_LIPA_NA_MPESA_SHORTCODE = process.env.M_PESA_LIPA_NA_MPESA_SHORTCOD
 const M_PESA_LIPA_NA_MPESA_SHORTCODE_SECRET = process.env.M_PESA_LIPA_NA_MPESA_SHORTCODE_SECRET;
 const M_PESA_LIPA_NA_MPESA_LIPA_URL = process.env.M_PESA_LIPA_NA_MPESA_LIPA_URL;
 const M_PESA_OAUTH_URL = process.env.M_PESA_OAUTH_URL; // Token URL for M-Pesa
-
-// Middleware to validate request data
-const validatePaymentData = [
-    body('amount')
-        .isNumeric().withMessage('Amount must be a numeric value')
-        .custom(value => value > 0).withMessage('Amount must be greater than zero'),
-    body('description')
-        .isLength({ min: 5 }).withMessage('Description must be at least 5 characters long'),
-    body('reference')
-        .notEmpty().withMessage('Transaction reference is required'),
-    body('email')
-        .isEmail().withMessage('Invalid email format'),
-    body('phone')
-        .isMobilePhone('en-US', { strictMode: false }).withMessage('Invalid US phone number format')
-        .isMobilePhone('en-KE', { strictMode: false }).withMessage('Invalid Kenyan phone number format'),
-    body('redirectUrl')
-        .isURL().withMessage('Invalid redirect URL')
-        .custom(value => {
-            // Fetch allowed domains from env variable and convert to an array
-            const allowedDomains = process.env.FRONTEND_ORIGINS.split(',');
-
-            const url = new URL(value);
-            if (!allowedDomains.includes(url.origin)) {
-                throw new Error('Redirect URL is not allowed');
-            }
-            return true;
-        }),
-    body('paymentMethod')
-        .isIn(['Pesapal', 'MPesa']).withMessage('Payment method must be either Pesapal or MPesa'),
-];
 
 // Function to request an OAuth token for M-Pesa
 const getMpesOauthToken = async () => {
@@ -65,12 +34,6 @@ exports.requestPayment = async (req, res) => {
     // CSRF Token validation
     if (req.csrfToken() !== req.headers['csrf-token']) {
         return res.status(403).json({ error: 'Invalid CSRF token' });
-    }
-
-    // Validate input data
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
     }
 
     const { amount, description, reference, email, phone, redirectUrl, paymentMethod } = req.body;
