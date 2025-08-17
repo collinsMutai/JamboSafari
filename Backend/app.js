@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const helmet = require('helmet'); // Import Helmet
+const csrf = require('csurf'); // Import CSRF protection
 const paymentRoutes = require('./routes/paymentRoutes'); // Import the payment routes
 
 const app = express();
@@ -23,6 +25,9 @@ const connectDB = async () => {
 // Connect to MongoDB before starting the server
 connectDB();
 
+// Set up CSRF protection middleware
+const csrfProtection = csrf({ cookie: true });
+
 // Parse the FRONTEND_ORIGINS environment variable
 const allowedOrigins = process.env.FRONTEND_ORIGINS
   ? process.env.FRONTEND_ORIGINS.split(',')
@@ -39,11 +44,38 @@ const corsOptions = {
 // Use CORS middleware with specified options
 app.use(cors(corsOptions));
 
+// Use Helmet for HTTP Security Headers
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"], // Only allow loading content from the same origin
+            scriptSrc: ["'self'", 'trusted-cdn.com'], // Allow scripts from trusted sources
+            styleSrc: ["'self'", 'trusted-cdn.com'], // Allow styles from trusted sources
+            imgSrc: ["'self'", 'trusted-image-source.com'], // Allow images from specific sources
+            connectSrc: ["'self'", 'trusted-api.com'], // Allow connections to trusted API sources
+            objectSrc: ["'none'"], // Prevent loading of any plugins (e.g., Flash)
+            frameSrc: ["'none'"], // Disallow embedding the site in an iframe
+            fontSrc: ["'self'", 'trusted-font-source.com'], // Allow fonts from specific sources
+        },
+    },
+    hsts: {
+        maxAge: 31536000, // Enforce HTTPS for 1 year
+        includeSubDomains: true, // Apply HSTS to subdomains as well
+        preload: true, // Preload the domain in the HSTS preload list (optional but recommended)
+    },
+}));
+
 // Middleware to parse incoming JSON data
 app.use(express.json());
 
+// Send CSRF token in the response headers
+app.use((req, res, next) => {
+    res.setHeader('X-CSRF-Token', req.csrfToken());
+    next();
+});
+
 // Use the payment routes with /api prefix
-app.use('/api', paymentRoutes);
+app.use('/api', csrfProtection, paymentRoutes); // Apply CSRF protection to the payment routes
 
 // Default route for testing
 app.get('/', (req, res) => {
@@ -57,6 +89,9 @@ app.use((req, res, next) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
+    if (err.code === 'EBADCSRFTOKEN') {
+        return res.status(403).json({ error: 'Invalid or missing CSRF token' });
+    }
     console.error(err.stack);
     res.status(500).json({ error: 'Something went wrong' });
 });

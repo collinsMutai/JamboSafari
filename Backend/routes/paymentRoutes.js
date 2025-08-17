@@ -1,5 +1,6 @@
 const express = require('express');
 const paymentController = require('../controllers/paymentController');
+const csrf = require('csurf');
 
 const router = express.Router();
 
@@ -23,6 +24,11 @@ router.get('/payment/transaction/:reference', async (req, res) => {
         console.error('Error fetching transaction:', error);
         res.status(500).json({ error: 'Error fetching transaction' });
     }
+});
+
+// Route to fetch CSRF token (useful for frontend)
+router.get('/csrf-token', (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
 });
 
 module.exports = router;
