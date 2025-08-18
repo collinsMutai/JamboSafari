@@ -3,6 +3,8 @@ const paymentController = require('../controllers/paymentController');
 const { validatePaymentData } = require('../middleware/paymentValidator'); // Import the validation middleware
 const csrf = require('csurf');
 const Transaction = require('../models/Transaction'); // Import Transaction model if needed
+const { createJWT, verifyJWT } = require('../utils/jwtUtils');
+const { paymentRateLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
@@ -12,22 +14,59 @@ const csrfProtection = csrf({ cookie: true });
 // 🔹 Route to start a guest session and issue a JWT
 router.post('/auth/guest', (req, res) => {
     try {
-        if (!process.env.JWT_SECRET) {
-            throw new Error('JWT_SECRET is not defined in environment variables');
-        }
+        const guestId = uuidv4(); // Generate unique guest session ID
 
-        const guestId = uuidv4();
-        const token = createJWT({
+        // 🔐 Access Token (short-lived, e.g. 1h)
+        const accessToken = createJWT({
             guestId,
-            sessionStart: Date.now()
+            sessionStart: Date.now(),
         });
 
-        res.status(200).json({ token });
+        // 🔐 Refresh Token (longer-lived, e.g. 7d)
+        const refreshToken = createJWT({
+            guestId,
+            type: 'refresh',
+        }, '7d'); // '7d' = 7 days
+
+        // 🧁 Set refresh token in HttpOnly cookie
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+        });
+
+        // 🎁 Send access token to frontend
+        res.status(200).json({ token: accessToken });
     } catch (error) {
         console.error('Error generating guest token:', error);
         res.status(500).json({ error: 'Failed to start guest session' });
     }
 });
+
+// 🔹 Route to refresh a guest token
+router.post('/auth/refresh', paymentRateLimiter, (req, res) => {
+    const token = req.cookies.refreshToken;
+
+    if (!token) {
+        return res.status(401).json({ error: 'Refresh token missing' });
+    }
+
+    verifyJWT(token, (err, decoded) => {
+        if (err || decoded.type !== 'refresh') {
+            return res.status(401).json({ error: 'Invalid or expired refresh token' });
+        }
+
+        // 🔁 Create a new short-lived access token
+        const newAccessToken = createJWT({
+            guestId: decoded.guestId,
+            sessionStart: Date.now(),
+        });
+
+        res.status(200).json({ token: newAccessToken });
+    });
+});
+
 
 // Route to handle payment request with validation middleware
 router.post('/payment/request', csrfProtection, validatePaymentData, paymentController.requestPayment);

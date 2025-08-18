@@ -1,0 +1,60 @@
+<div class="payment-container">
+  <h2>Payment Information</h2>
+  <form (ngSubmit)="onSubmitPayment()">
+    <label for="amount">Amount</label>
+    <input
+      id="amount"
+      type="number"
+      [(ngModel)]="paymentData.amount"
+      name="amount"
+      required
+    />
+
+    <label for="description">Description</label>
+    <input
+      id="description"
+      type="text"
+      [(ngModel)]="paymentData.description"
+      name="description"
+      required
+    />
+
+    <label for="reference">Reference</label>
+    <input
+      id="reference"
+      type="text"
+      [(ngModel)]="paymentData.reference"
+      name="reference"
+      required
+    />
+
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      [(ngModel)]="paymentData.email"
+      name="email"
+      required
+    />
+
+    <label for="phone">Phone</label>
+    <input
+      id="phone"
+      type="text"
+      [(ngModel)]="paymentData.phone"
+      name="phone"
+      required
+    />
+
+    <label for="redirectUrl">Redirect URL</label>
+    <input
+      id="redirectUrl"
+      type="url"
+      [(ngModel)]="paymentData.redirectUrl"
+      name="redirectUrl"
+      required
+    />
+
+    <button type="submit" [disabled]="isPaymentInProgress">Proceed to Payment</button>
+  </form>
+</div>

@@ -70,7 +70,14 @@ exports.requestPayment = async (req, res) => {
         // Extract payment data
         const { amount, description, reference, email, phone, redirectUrl, paymentMethod } = req.body;
 
-        // Save transaction
+        // Check if transaction already exists
+        const existingTransaction = await Transaction.findOne({ reference });
+
+        if (existingTransaction && existingTransaction.status === 'PENDING') {
+            return res.status(400).json({ error: 'Payment with this reference is already in progress' });
+        }
+
+        // Save new transaction with PENDING status
         const newTransaction = new Transaction({
             reference,
             amount,
@@ -140,7 +147,7 @@ exports.requestPayment = async (req, res) => {
     } catch (error) {
         console.error('Error initiating payment:', error);
 
-        // Mark transaction as failed
+        // Mark transaction as failed if payment initiation fails
         if (req.body?.reference) {
             await Transaction.updateOne({ reference: req.body.reference }, { status: 'FAILED' });
         }
@@ -148,6 +155,7 @@ exports.requestPayment = async (req, res) => {
         res.status(500).json({ error: `Error initiating payment: ${error.message}` });
     }
 };
+
 
 // ✅ Pesapal callback handler
 exports.paymentCallback = async (req, res) => {
