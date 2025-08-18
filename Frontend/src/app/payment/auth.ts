@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap, switchMap, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';  // Import throwError from 'rxjs'
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../environments/environment'; // Import environment
 
@@ -15,12 +16,34 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
+  // Fetch CSRF token from backend
+  getCsrfToken(): Observable<{ csrfToken: string }> {
+    return this.http.get<{ csrfToken: string }>(`${this.apiUrl}/csrf-token`, {
+      withCredentials: true, // Ensure cookies are sent
+    });
+  }
+
   // Create a guest session and store the token in HttpOnly cookie
   createGuestSession(): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/auth/guest`, {}, { withCredentials: true }).pipe(
-      tap((response) => {
-        // Token will be stored in HttpOnly cookie by backend
-        this.tokenSubject.next(response.token); // Set the token in BehaviorSubject
+    return this.getCsrfToken().pipe(  // Fetch CSRF token before creating session
+      switchMap((csrfResponse) => {
+        const csrfToken = csrfResponse.csrfToken;
+
+        // Now proceed to create the guest session
+        return this.http.post<{ token: string }>(`${this.apiUrl}/auth/guest`, {}, {
+          headers: { 'X-CSRF-Token': csrfToken },  // Add CSRF token to request headers
+          withCredentials: true,  // Ensure cookies are sent
+        }).pipe(
+          tap((response) => {
+            console.log('Guest session created successfully', response);
+            // Token will be stored in HttpOnly cookie by backend
+            this.tokenSubject.next(response.token); // Set the token in BehaviorSubject
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error creating guest session:', error);
+        return throwError(() => new Error('Failed to create guest session')); // Throw error if any step fails
       })
     );
   }

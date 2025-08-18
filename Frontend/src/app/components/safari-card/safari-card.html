@@ -270,3 +270,20 @@
     </div>
   </div>
 </div>
+
+<!-- Payment Decision Modal -->
+<div *ngIf="showPaymentModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Would you like to pay now?</h3>
+      <button class="close-btn" (click)="closeModal()">✖</button>
+    </div>
+    <div class="modal-body">
+      <p>Your booking has been confirmed. You can complete your payment now or later.</p>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+        <button class="book-now-btn" (click)="goToPayment()">Yes, Pay Now</button>
+        <button class="view-details-btn" (click)="closeModal()">No, Maybe Later</button>
+      </div>
+    </div>
+  </div>
+</div>

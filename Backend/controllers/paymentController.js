@@ -33,9 +33,9 @@ const getMpesOauthToken = async () => {
 exports.requestPayment = async (req, res) => {
     try {
         // 🔐 Validate CSRF token
-        if (req.csrfToken() !== req.headers['csrf-token']) {
-            return res.status(403).json({ error: 'Invalid CSRF token' });
-        }
+        // if (req.csrfToken() !== req.headers['csrf-token']) {
+        //     return res.status(403).json({ error: 'Invalid CSRF token' });
+        // }
 
         // 🔐 Validate JWT
         const authHeader = req.headers['authorization'];

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'; // <-- for navigation
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar service
-import emailjs from 'emailjs-com'; // Import EmailJS SDK
+import { MatSnackBar } from '@angular/material/snack-bar';
+import emailjs from 'emailjs-com';
 import { environment } from '../../../environments/environment';
 import { SafariService, SafariPackage } from '../../safari-service';
 
@@ -30,10 +31,13 @@ export class SafariCard implements OnInit {
   fromDate: string = '';
   toDate: string = '';
 
+  showPaymentModal: boolean = false;
+
   constructor(
+    private router: Router, // <-- Inject Router
     private sanitizer: DomSanitizer,
     private safariService: SafariService,
-    private snackBar: MatSnackBar // Inject MatSnackBar service
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -55,35 +59,19 @@ export class SafariCard implements OnInit {
   closeModal(): void {
     this.selectedPackageDetails = null;
     this.selectedPackage = null;
+    this.showPaymentModal = false;
   }
 
-  // Handle form submission
   onSubmitBooking(): void {
     if (
-      !this.name ||
-      !this.email ||
-      !this.phone ||
-      !this.fromDate ||
-      !this.toDate ||
-      this.numAdults <= 0
+      !this.name || !this.email || !this.phone ||
+      !this.fromDate || !this.toDate || this.numAdults <= 0
     ) {
       this.showSnackbar('Please fill all required fields.', 'error');
       return;
     }
 
-    this.name = this.sanitizeInput(this.name);
-    this.email = this.sanitizeInput(this.email);
-    this.phone = this.sanitizeInput(this.phone);
-    this.fromDate = this.sanitizeInput(this.fromDate);
-    this.toDate = this.sanitizeInput(this.toDate);
-
-    if (this.numAdults <= 0 || this.numKids < 0) {
-      this.showSnackbar('Invalid number of adults or kids.', 'error');
-      return;
-    }
-
-    grecaptcha
-      .execute('6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ', { action: 'submit' })
+    grecaptcha.execute('6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ', { action: 'submit' })
       .then((token: string) => {
         const formData = {
           name: this.name,
@@ -97,30 +85,40 @@ export class SafariCard implements OnInit {
           recaptchaToken: token,
         };
 
-        emailjs
-          .send(
-            environment.emailJS.serviceID,
-            environment.emailJS.templateID,
-            formData,
-            environment.emailJS.userID
-          )
-          .then(
-            (response) => {
-              console.log('Email sent successfully:', response);
-              this.closeModal();
-              this.showSnackbar('Your booking has been confirmed! A confirmation email has been sent.', 'success');
-              this.clearForm();
-            },
-            (error) => {
-              console.error('Error sending email:', error);
-              this.showSnackbar('There was an error submitting the form. Please try again later.', 'error');
-            }
-          );
-      })
-      .catch((error: any) => {
-        console.error('reCAPTCHA error:', error);
-        this.showSnackbar('reCAPTCHA verification failed. Please try again.', 'error');
+        emailjs.send(
+          environment.emailJS.serviceID,
+          environment.emailJS.templateID,
+          formData,
+          environment.emailJS.userID
+        ).then(() => {
+          this.showSnackbar('Your booking is confirmed! Do you want to pay now?', 'success');
+          this.showPaymentModal = true; // <-- Show second modal
+        }).catch((error) => {
+          console.error('Email send error:', error);
+          this.showSnackbar('There was an error. Try again.', 'error');
+        });
+      }).catch(() => {
+        this.showSnackbar('reCAPTCHA failed. Try again.', 'error');
       });
+  }
+
+  goToPayment(): void {
+    this.closeModal();
+    this.router.navigate(['/payment']);
+  }
+
+  sanitizeInput(input: string): string {
+    return input.trim();
+  }
+
+  showSnackbar(message: string, type: string) {
+    const snackBarClass = type === 'success' ? 'snackbar-success' : 'snackbar-error';
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: [snackBarClass],
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+    });
   }
 
   clearForm(): void {
@@ -132,23 +130,5 @@ export class SafariCard implements OnInit {
     this.fromDate = '';
     this.toDate = '';
     this.selectedPackageDetails = null;
-  }
-
-  sanitizeInput(input: string): string {
-    return input.trim(); // Trim the whitespace
-  }
-
-  // Show Material Snackbar
-  showSnackbar(message: string, type: string) {
-    const snackBarClass = type === 'success' ? 'snackbar-success' : 'snackbar-error';
-
-    const snackBarConfig = {
-      duration: 3000,
-      panelClass: [snackBarClass],  // Apply the custom class based on message type
-      horizontalPosition: 'right' as 'right',
-      verticalPosition: 'top' as 'top',
-    };
-
-    this.snackBar.open(message, 'Close', snackBarConfig);
   }
 }

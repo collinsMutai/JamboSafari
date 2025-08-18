@@ -4,13 +4,14 @@ import { AuthService } from '../auth'; // Import AuthService
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-payment',
   standalone: true,
   templateUrl: './payment.html',
   styleUrls: ['./payment.css'],
-  imports: [CommonModule, FormsModule], // Import FormsModule here for template-driven forms
+  imports: [CommonModule, FormsModule, HttpClientModule], // Import FormsModule here for template-driven forms
 })
 export class PaymentComponent implements OnInit {
   paymentData = {
