@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router'; // Import Router
+import { Router, RouterLink } from '@angular/router'; // Import Router
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, RouterLink]
 })
 export class NavbarComponent {
   isModalOpen = false;  // Modal state
@@ -37,5 +37,10 @@ export class NavbarComponent {
     }
     // If using Angular Router (optional): navigate to the target route
     // this.router.navigate([linkTarget]);
+  }
+
+   navigateToSafaris() {
+    // Navigate to the home page and scroll to #safaris
+    this.router.navigate(['/'], { fragment: 'safaris' });
   }
 }
