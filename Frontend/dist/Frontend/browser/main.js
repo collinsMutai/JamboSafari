@@ -2739,6 +2739,81 @@ function tap(observerOrNext, error, complete) {
 }
 
 // node_modules/@angular/core/fesm2022/untracked.mjs
+function createLinkedSignal(sourceFn, computationFn, equalityFn) {
+  const node = Object.create(LINKED_SIGNAL_NODE);
+  node.source = sourceFn;
+  node.computation = computationFn;
+  if (equalityFn != void 0) {
+    node.equal = equalityFn;
+  }
+  const linkedSignalGetter = () => {
+    producerUpdateValueVersion(node);
+    producerAccessed(node);
+    if (node.value === ERRORED) {
+      throw node.error;
+    }
+    return node.value;
+  };
+  const getter = linkedSignalGetter;
+  getter[SIGNAL] = node;
+  if (typeof ngDevMode !== "undefined" && ngDevMode) {
+    const debugName = node.debugName ? " (" + node.debugName + ")" : "";
+    getter.toString = () => `[LinkedSignal${debugName}: ${node.value}]`;
+  }
+  runPostProducerCreatedFn(node);
+  return getter;
+}
+function linkedSignalSetFn(node, newValue) {
+  producerUpdateValueVersion(node);
+  signalSetFn(node, newValue);
+  producerMarkClean(node);
+}
+function linkedSignalUpdateFn(node, updater) {
+  producerUpdateValueVersion(node);
+  signalUpdateFn(node, updater);
+  producerMarkClean(node);
+}
+var LINKED_SIGNAL_NODE = /* @__PURE__ */ (() => {
+  return __spreadProps(__spreadValues({}, REACTIVE_NODE), {
+    value: UNSET,
+    dirty: true,
+    error: null,
+    equal: defaultEquals,
+    kind: "linkedSignal",
+    producerMustRecompute(node) {
+      return node.value === UNSET || node.value === COMPUTING;
+    },
+    producerRecomputeValue(node) {
+      if (node.value === COMPUTING) {
+        throw new Error(typeof ngDevMode !== "undefined" && ngDevMode ? "Detected cycle in computations." : "");
+      }
+      const oldValue = node.value;
+      node.value = COMPUTING;
+      const prevConsumer = consumerBeforeComputation(node);
+      let newValue;
+      try {
+        const newSourceValue = node.source();
+        const prev = oldValue === UNSET || oldValue === ERRORED ? void 0 : {
+          source: node.sourceValue,
+          value: oldValue
+        };
+        newValue = node.computation(newSourceValue, prev);
+        node.sourceValue = newSourceValue;
+      } catch (err) {
+        newValue = ERRORED;
+        node.error = err;
+      } finally {
+        consumerAfterComputation(node, prevConsumer);
+      }
+      if (oldValue !== UNSET && newValue !== ERRORED && node.equal(oldValue, newValue)) {
+        node.value = oldValue;
+        return;
+      }
+      node.value = newValue;
+      node.version++;
+    }
+  });
+})();
 function untracked(nonReactiveReadsFn) {
   const prevConsumer = setActiveConsumer(null);
   try {
@@ -22424,6 +22499,266 @@ function createRootEffect(fn, scheduler, notifier) {
   );
   return node;
 }
+var identityFn = (v) => v;
+function linkedSignal(optionsOrComputation, options) {
+  if (typeof optionsOrComputation === "function") {
+    const getter = createLinkedSignal(optionsOrComputation, identityFn, options?.equal);
+    return upgradeLinkedSignalGetter(getter);
+  } else {
+    const getter = createLinkedSignal(optionsOrComputation.source, optionsOrComputation.computation, optionsOrComputation.equal);
+    return upgradeLinkedSignalGetter(getter);
+  }
+}
+function upgradeLinkedSignalGetter(getter) {
+  if (ngDevMode) {
+    getter.toString = () => `[LinkedSignal: ${getter()}]`;
+  }
+  const node = getter[SIGNAL];
+  const upgradedGetter = getter;
+  upgradedGetter.set = (newValue) => linkedSignalSetFn(node, newValue);
+  upgradedGetter.update = (updateFn) => linkedSignalUpdateFn(node, updateFn);
+  upgradedGetter.asReadonly = signalAsReadonlyFn.bind(getter);
+  return upgradedGetter;
+}
+var RESOURCE_VALUE_THROWS_ERRORS_DEFAULT = true;
+var BaseWritableResource = class {
+  value;
+  constructor(value) {
+    this.value = value;
+    this.value.set = this.set.bind(this);
+    this.value.update = this.update.bind(this);
+    this.value.asReadonly = signalAsReadonlyFn;
+  }
+  isError = computed(() => this.status() === "error");
+  update(updateFn) {
+    this.set(updateFn(untracked2(this.value)));
+  }
+  isLoading = computed(() => this.status() === "loading" || this.status() === "reloading");
+  // Use a computed here to avoid triggering reactive consumers if the value changes while staying
+  // either defined or undefined.
+  isValueDefined = computed(() => {
+    if (this.isError()) {
+      return false;
+    }
+    return this.value() !== void 0;
+  });
+  hasValue() {
+    return this.isValueDefined();
+  }
+  asReadonly() {
+    return this;
+  }
+};
+var ResourceImpl = class extends BaseWritableResource {
+  loaderFn;
+  equal;
+  pendingTasks;
+  /**
+   * The current state of the resource. Status, value, and error are derived from this.
+   */
+  state;
+  /**
+   * Combines the current request with a reload counter which allows the resource to be reloaded on
+   * imperative command.
+   */
+  extRequest;
+  effectRef;
+  pendingController;
+  resolvePendingTask = void 0;
+  destroyed = false;
+  unregisterOnDestroy;
+  constructor(request, loaderFn, defaultValue, equal, injector, throwErrorsFromValue = RESOURCE_VALUE_THROWS_ERRORS_DEFAULT) {
+    super(
+      // Feed a computed signal for the value to `BaseWritableResource`, which will upgrade it to a
+      // `WritableSignal` that delegates to `ResourceImpl.set`.
+      computed(() => {
+        const streamValue = this.state().stream?.();
+        if (!streamValue) {
+          return defaultValue;
+        }
+        if (this.state().status === "loading" && this.error()) {
+          return defaultValue;
+        }
+        if (!isResolved(streamValue)) {
+          if (throwErrorsFromValue) {
+            throw new ResourceValueError(this.error());
+          } else {
+            return defaultValue;
+          }
+        }
+        return streamValue.value;
+      }, { equal })
+    );
+    this.loaderFn = loaderFn;
+    this.equal = equal;
+    this.extRequest = linkedSignal({
+      source: request,
+      computation: (request2) => ({ request: request2, reload: 0 })
+    });
+    this.state = linkedSignal({
+      // Whenever the request changes,
+      source: this.extRequest,
+      // Compute the state of the resource given a change in status.
+      computation: (extRequest, previous) => {
+        const status = extRequest.request === void 0 ? "idle" : "loading";
+        if (!previous) {
+          return {
+            extRequest,
+            status,
+            previousStatus: "idle",
+            stream: void 0
+          };
+        } else {
+          return {
+            extRequest,
+            status,
+            previousStatus: projectStatusOfState(previous.value),
+            // If the request hasn't changed, keep the previous stream.
+            stream: previous.value.extRequest.request === extRequest.request ? previous.value.stream : void 0
+          };
+        }
+      }
+    });
+    this.effectRef = effect(this.loadEffect.bind(this), {
+      injector,
+      manualCleanup: true
+    });
+    this.pendingTasks = injector.get(PendingTasks);
+    this.unregisterOnDestroy = injector.get(DestroyRef).onDestroy(() => this.destroy());
+  }
+  status = computed(() => projectStatusOfState(this.state()));
+  error = computed(() => {
+    const stream = this.state().stream?.();
+    return stream && !isResolved(stream) ? stream.error : void 0;
+  });
+  /**
+   * Called either directly via `WritableResource.set` or via `.value.set()`.
+   */
+  set(value) {
+    if (this.destroyed) {
+      return;
+    }
+    const error = untracked2(this.error);
+    const state = untracked2(this.state);
+    if (!error) {
+      const current = untracked2(this.value);
+      if (state.status === "local" && (this.equal ? this.equal(current, value) : current === value)) {
+        return;
+      }
+    }
+    this.state.set({
+      extRequest: state.extRequest,
+      status: "local",
+      previousStatus: "local",
+      stream: signal({ value })
+    });
+    this.abortInProgressLoad();
+  }
+  reload() {
+    const { status } = untracked2(this.state);
+    if (status === "idle" || status === "loading") {
+      return false;
+    }
+    this.extRequest.update(({ request, reload }) => ({ request, reload: reload + 1 }));
+    return true;
+  }
+  destroy() {
+    this.destroyed = true;
+    this.unregisterOnDestroy();
+    this.effectRef.destroy();
+    this.abortInProgressLoad();
+    this.state.set({
+      extRequest: { request: void 0, reload: 0 },
+      status: "idle",
+      previousStatus: "idle",
+      stream: void 0
+    });
+  }
+  loadEffect() {
+    return __async(this, null, function* () {
+      const extRequest = this.extRequest();
+      const { status: currentStatus, previousStatus } = untracked2(this.state);
+      if (extRequest.request === void 0) {
+        return;
+      } else if (currentStatus !== "loading") {
+        return;
+      }
+      this.abortInProgressLoad();
+      let resolvePendingTask = this.resolvePendingTask = this.pendingTasks.add();
+      const { signal: abortSignal } = this.pendingController = new AbortController();
+      try {
+        const stream = yield untracked2(() => {
+          return this.loaderFn({
+            params: extRequest.request,
+            // TODO(alxhub): cleanup after g3 removal of `request` alias.
+            request: extRequest.request,
+            abortSignal,
+            previous: {
+              status: previousStatus
+            }
+          });
+        });
+        if (abortSignal.aborted || untracked2(this.extRequest) !== extRequest) {
+          return;
+        }
+        this.state.set({
+          extRequest,
+          status: "resolved",
+          previousStatus: "resolved",
+          stream
+        });
+      } catch (err) {
+        if (abortSignal.aborted || untracked2(this.extRequest) !== extRequest) {
+          return;
+        }
+        this.state.set({
+          extRequest,
+          status: "resolved",
+          previousStatus: "error",
+          stream: signal({ error: encapsulateResourceError(err) })
+        });
+      } finally {
+        resolvePendingTask?.();
+        resolvePendingTask = void 0;
+      }
+    });
+  }
+  abortInProgressLoad() {
+    untracked2(() => this.pendingController?.abort());
+    this.pendingController = void 0;
+    this.resolvePendingTask?.();
+    this.resolvePendingTask = void 0;
+  }
+};
+function projectStatusOfState(state) {
+  switch (state.status) {
+    case "loading":
+      return state.extRequest.reload === 0 ? "loading" : "reloading";
+    case "resolved":
+      return isResolved(state.stream()) ? "resolved" : "error";
+    default:
+      return state.status;
+  }
+}
+function isResolved(state) {
+  return state.error === void 0;
+}
+function encapsulateResourceError(error) {
+  if (error instanceof Error) {
+    return error;
+  }
+  return new ResourceWrappedError(error);
+}
+var ResourceValueError = class extends Error {
+  constructor(error) {
+    super(ngDevMode ? `Resource is currently in an error state (see Error.cause for details): ${error.message}` : error.message, { cause: error });
+  }
+};
+var ResourceWrappedError = class extends Error {
+  constructor(error) {
+    super(ngDevMode ? `Resource returned an error that's not an Error instance: ${String(error)}. Check this error's .cause for the actual error.` : String(error), { cause: error });
+  }
+};
 
 // node_modules/@angular/core/fesm2022/core.mjs
 var REQUIRED_UNSET_VALUE = /* @__PURE__ */ Symbol("InputSignalNode#UNSET");
@@ -30224,6 +30559,2447 @@ var BrowserModule = class _BrowserModule {
   }], () => [], null);
 })();
 
+// node_modules/@angular/common/fesm2022/module.mjs
+var HttpHandler = class {
+};
+var HttpBackend = class {
+};
+var HttpHeaders = class _HttpHeaders {
+  /**
+   * Internal map of lowercase header names to values.
+   */
+  headers;
+  /**
+   * Internal map of lowercased header names to the normalized
+   * form of the name (the form seen first).
+   */
+  normalizedNames = /* @__PURE__ */ new Map();
+  /**
+   * Complete the lazy initialization of this object (needed before reading).
+   */
+  lazyInit;
+  /**
+   * Queued updates to be materialized the next initialization.
+   */
+  lazyUpdate = null;
+  /**  Constructs a new HTTP header object with the given values.*/
+  constructor(headers) {
+    if (!headers) {
+      this.headers = /* @__PURE__ */ new Map();
+    } else if (typeof headers === "string") {
+      this.lazyInit = () => {
+        this.headers = /* @__PURE__ */ new Map();
+        headers.split("\n").forEach((line) => {
+          const index = line.indexOf(":");
+          if (index > 0) {
+            const name = line.slice(0, index);
+            const value = line.slice(index + 1).trim();
+            this.addHeaderEntry(name, value);
+          }
+        });
+      };
+    } else if (typeof Headers !== "undefined" && headers instanceof Headers) {
+      this.headers = /* @__PURE__ */ new Map();
+      headers.forEach((value, name) => {
+        this.addHeaderEntry(name, value);
+      });
+    } else {
+      this.lazyInit = () => {
+        if (typeof ngDevMode === "undefined" || ngDevMode) {
+          assertValidHeaders(headers);
+        }
+        this.headers = /* @__PURE__ */ new Map();
+        Object.entries(headers).forEach(([name, values]) => {
+          this.setHeaderEntries(name, values);
+        });
+      };
+    }
+  }
+  /**
+   * Checks for existence of a given header.
+   *
+   * @param name The header name to check for existence.
+   *
+   * @returns True if the header exists, false otherwise.
+   */
+  has(name) {
+    this.init();
+    return this.headers.has(name.toLowerCase());
+  }
+  /**
+   * Retrieves the first value of a given header.
+   *
+   * @param name The header name.
+   *
+   * @returns The value string if the header exists, null otherwise
+   */
+  get(name) {
+    this.init();
+    const values = this.headers.get(name.toLowerCase());
+    return values && values.length > 0 ? values[0] : null;
+  }
+  /**
+   * Retrieves the names of the headers.
+   *
+   * @returns A list of header names.
+   */
+  keys() {
+    this.init();
+    return Array.from(this.normalizedNames.values());
+  }
+  /**
+   * Retrieves a list of values for a given header.
+   *
+   * @param name The header name from which to retrieve values.
+   *
+   * @returns A string of values if the header exists, null otherwise.
+   */
+  getAll(name) {
+    this.init();
+    return this.headers.get(name.toLowerCase()) || null;
+  }
+  /**
+   * Appends a new value to the existing set of values for a header
+   * and returns them in a clone of the original instance.
+   *
+   * @param name The header name for which to append the values.
+   * @param value The value to append.
+   *
+   * @returns A clone of the HTTP headers object with the value appended to the given header.
+   */
+  append(name, value) {
+    return this.clone({
+      name,
+      value,
+      op: "a"
+    });
+  }
+  /**
+   * Sets or modifies a value for a given header in a clone of the original instance.
+   * If the header already exists, its value is replaced with the given value
+   * in the returned object.
+   *
+   * @param name The header name.
+   * @param value The value or values to set or override for the given header.
+   *
+   * @returns A clone of the HTTP headers object with the newly set header value.
+   */
+  set(name, value) {
+    return this.clone({
+      name,
+      value,
+      op: "s"
+    });
+  }
+  /**
+   * Deletes values for a given header in a clone of the original instance.
+   *
+   * @param name The header name.
+   * @param value The value or values to delete for the given header.
+   *
+   * @returns A clone of the HTTP headers object with the given value deleted.
+   */
+  delete(name, value) {
+    return this.clone({
+      name,
+      value,
+      op: "d"
+    });
+  }
+  maybeSetNormalizedName(name, lcName) {
+    if (!this.normalizedNames.has(lcName)) {
+      this.normalizedNames.set(lcName, name);
+    }
+  }
+  init() {
+    if (!!this.lazyInit) {
+      if (this.lazyInit instanceof _HttpHeaders) {
+        this.copyFrom(this.lazyInit);
+      } else {
+        this.lazyInit();
+      }
+      this.lazyInit = null;
+      if (!!this.lazyUpdate) {
+        this.lazyUpdate.forEach((update) => this.applyUpdate(update));
+        this.lazyUpdate = null;
+      }
+    }
+  }
+  copyFrom(other) {
+    other.init();
+    Array.from(other.headers.keys()).forEach((key) => {
+      this.headers.set(key, other.headers.get(key));
+      this.normalizedNames.set(key, other.normalizedNames.get(key));
+    });
+  }
+  clone(update) {
+    const clone = new _HttpHeaders();
+    clone.lazyInit = !!this.lazyInit && this.lazyInit instanceof _HttpHeaders ? this.lazyInit : this;
+    clone.lazyUpdate = (this.lazyUpdate || []).concat([update]);
+    return clone;
+  }
+  applyUpdate(update) {
+    const key = update.name.toLowerCase();
+    switch (update.op) {
+      case "a":
+      case "s":
+        let value = update.value;
+        if (typeof value === "string") {
+          value = [value];
+        }
+        if (value.length === 0) {
+          return;
+        }
+        this.maybeSetNormalizedName(update.name, key);
+        const base = (update.op === "a" ? this.headers.get(key) : void 0) || [];
+        base.push(...value);
+        this.headers.set(key, base);
+        break;
+      case "d":
+        const toDelete = update.value;
+        if (!toDelete) {
+          this.headers.delete(key);
+          this.normalizedNames.delete(key);
+        } else {
+          let existing = this.headers.get(key);
+          if (!existing) {
+            return;
+          }
+          existing = existing.filter((value2) => toDelete.indexOf(value2) === -1);
+          if (existing.length === 0) {
+            this.headers.delete(key);
+            this.normalizedNames.delete(key);
+          } else {
+            this.headers.set(key, existing);
+          }
+        }
+        break;
+    }
+  }
+  addHeaderEntry(name, value) {
+    const key = name.toLowerCase();
+    this.maybeSetNormalizedName(name, key);
+    if (this.headers.has(key)) {
+      this.headers.get(key).push(value);
+    } else {
+      this.headers.set(key, [value]);
+    }
+  }
+  setHeaderEntries(name, values) {
+    const headerValues = (Array.isArray(values) ? values : [values]).map((value) => value.toString());
+    const key = name.toLowerCase();
+    this.headers.set(key, headerValues);
+    this.maybeSetNormalizedName(name, key);
+  }
+  /**
+   * @internal
+   */
+  forEach(fn) {
+    this.init();
+    Array.from(this.normalizedNames.keys()).forEach((key) => fn(this.normalizedNames.get(key), this.headers.get(key)));
+  }
+};
+function assertValidHeaders(headers) {
+  for (const [key, value] of Object.entries(headers)) {
+    if (!(typeof value === "string" || typeof value === "number") && !Array.isArray(value)) {
+      throw new Error(`Unexpected value of the \`${key}\` header provided. Expecting either a string, a number or an array, but got: \`${value}\`.`);
+    }
+  }
+}
+var HttpUrlEncodingCodec = class {
+  /**
+   * Encodes a key name for a URL parameter or query-string.
+   * @param key The key name.
+   * @returns The encoded key name.
+   */
+  encodeKey(key) {
+    return standardEncoding(key);
+  }
+  /**
+   * Encodes the value of a URL parameter or query-string.
+   * @param value The value.
+   * @returns The encoded value.
+   */
+  encodeValue(value) {
+    return standardEncoding(value);
+  }
+  /**
+   * Decodes an encoded URL parameter or query-string key.
+   * @param key The encoded key name.
+   * @returns The decoded key name.
+   */
+  decodeKey(key) {
+    return decodeURIComponent(key);
+  }
+  /**
+   * Decodes an encoded URL parameter or query-string value.
+   * @param value The encoded value.
+   * @returns The decoded value.
+   */
+  decodeValue(value) {
+    return decodeURIComponent(value);
+  }
+};
+function paramParser(rawParams, codec) {
+  const map2 = /* @__PURE__ */ new Map();
+  if (rawParams.length > 0) {
+    const params = rawParams.replace(/^\?/, "").split("&");
+    params.forEach((param) => {
+      const eqIdx = param.indexOf("=");
+      const [key, val] = eqIdx == -1 ? [codec.decodeKey(param), ""] : [codec.decodeKey(param.slice(0, eqIdx)), codec.decodeValue(param.slice(eqIdx + 1))];
+      const list = map2.get(key) || [];
+      list.push(val);
+      map2.set(key, list);
+    });
+  }
+  return map2;
+}
+var STANDARD_ENCODING_REGEX = /%(\d[a-f0-9])/gi;
+var STANDARD_ENCODING_REPLACEMENTS = {
+  "40": "@",
+  "3A": ":",
+  "24": "$",
+  "2C": ",",
+  "3B": ";",
+  "3D": "=",
+  "3F": "?",
+  "2F": "/"
+};
+function standardEncoding(v) {
+  return encodeURIComponent(v).replace(STANDARD_ENCODING_REGEX, (s, t) => STANDARD_ENCODING_REPLACEMENTS[t] ?? s);
+}
+function valueToString(value) {
+  return `${value}`;
+}
+var HttpParams = class _HttpParams {
+  map;
+  encoder;
+  updates = null;
+  cloneFrom = null;
+  constructor(options = {}) {
+    this.encoder = options.encoder || new HttpUrlEncodingCodec();
+    if (options.fromString) {
+      if (options.fromObject) {
+        throw new RuntimeError(2805, ngDevMode && "Cannot specify both fromString and fromObject.");
+      }
+      this.map = paramParser(options.fromString, this.encoder);
+    } else if (!!options.fromObject) {
+      this.map = /* @__PURE__ */ new Map();
+      Object.keys(options.fromObject).forEach((key) => {
+        const value = options.fromObject[key];
+        const values = Array.isArray(value) ? value.map(valueToString) : [valueToString(value)];
+        this.map.set(key, values);
+      });
+    } else {
+      this.map = null;
+    }
+  }
+  /**
+   * Reports whether the body includes one or more values for a given parameter.
+   * @param param The parameter name.
+   * @returns True if the parameter has one or more values,
+   * false if it has no value or is not present.
+   */
+  has(param) {
+    this.init();
+    return this.map.has(param);
+  }
+  /**
+   * Retrieves the first value for a parameter.
+   * @param param The parameter name.
+   * @returns The first value of the given parameter,
+   * or `null` if the parameter is not present.
+   */
+  get(param) {
+    this.init();
+    const res = this.map.get(param);
+    return !!res ? res[0] : null;
+  }
+  /**
+   * Retrieves all values for a  parameter.
+   * @param param The parameter name.
+   * @returns All values in a string array,
+   * or `null` if the parameter not present.
+   */
+  getAll(param) {
+    this.init();
+    return this.map.get(param) || null;
+  }
+  /**
+   * Retrieves all the parameters for this body.
+   * @returns The parameter names in a string array.
+   */
+  keys() {
+    this.init();
+    return Array.from(this.map.keys());
+  }
+  /**
+   * Appends a new value to existing values for a parameter.
+   * @param param The parameter name.
+   * @param value The new value to add.
+   * @return A new body with the appended value.
+   */
+  append(param, value) {
+    return this.clone({
+      param,
+      value,
+      op: "a"
+    });
+  }
+  /**
+   * Constructs a new body with appended values for the given parameter name.
+   * @param params parameters and values
+   * @return A new body with the new value.
+   */
+  appendAll(params) {
+    const updates = [];
+    Object.keys(params).forEach((param) => {
+      const value = params[param];
+      if (Array.isArray(value)) {
+        value.forEach((_value) => {
+          updates.push({
+            param,
+            value: _value,
+            op: "a"
+          });
+        });
+      } else {
+        updates.push({
+          param,
+          value,
+          op: "a"
+        });
+      }
+    });
+    return this.clone(updates);
+  }
+  /**
+   * Replaces the value for a parameter.
+   * @param param The parameter name.
+   * @param value The new value.
+   * @return A new body with the new value.
+   */
+  set(param, value) {
+    return this.clone({
+      param,
+      value,
+      op: "s"
+    });
+  }
+  /**
+   * Removes a given value or all values from a parameter.
+   * @param param The parameter name.
+   * @param value The value to remove, if provided.
+   * @return A new body with the given value removed, or with all values
+   * removed if no value is specified.
+   */
+  delete(param, value) {
+    return this.clone({
+      param,
+      value,
+      op: "d"
+    });
+  }
+  /**
+   * Serializes the body to an encoded string, where key-value pairs (separated by `=`) are
+   * separated by `&`s.
+   */
+  toString() {
+    this.init();
+    return this.keys().map((key) => {
+      const eKey = this.encoder.encodeKey(key);
+      return this.map.get(key).map((value) => eKey + "=" + this.encoder.encodeValue(value)).join("&");
+    }).filter((param) => param !== "").join("&");
+  }
+  clone(update) {
+    const clone = new _HttpParams({
+      encoder: this.encoder
+    });
+    clone.cloneFrom = this.cloneFrom || this;
+    clone.updates = (this.updates || []).concat(update);
+    return clone;
+  }
+  init() {
+    if (this.map === null) {
+      this.map = /* @__PURE__ */ new Map();
+    }
+    if (this.cloneFrom !== null) {
+      this.cloneFrom.init();
+      this.cloneFrom.keys().forEach((key) => this.map.set(key, this.cloneFrom.map.get(key)));
+      this.updates.forEach((update) => {
+        switch (update.op) {
+          case "a":
+          case "s":
+            const base = (update.op === "a" ? this.map.get(update.param) : void 0) || [];
+            base.push(valueToString(update.value));
+            this.map.set(update.param, base);
+            break;
+          case "d":
+            if (update.value !== void 0) {
+              let base2 = this.map.get(update.param) || [];
+              const idx = base2.indexOf(valueToString(update.value));
+              if (idx !== -1) {
+                base2.splice(idx, 1);
+              }
+              if (base2.length > 0) {
+                this.map.set(update.param, base2);
+              } else {
+                this.map.delete(update.param);
+              }
+            } else {
+              this.map.delete(update.param);
+              break;
+            }
+        }
+      });
+      this.cloneFrom = this.updates = null;
+    }
+  }
+};
+var HttpContext = class {
+  map = /* @__PURE__ */ new Map();
+  /**
+   * Store a value in the context. If a value is already present it will be overwritten.
+   *
+   * @param token The reference to an instance of `HttpContextToken`.
+   * @param value The value to store.
+   *
+   * @returns A reference to itself for easy chaining.
+   */
+  set(token, value) {
+    this.map.set(token, value);
+    return this;
+  }
+  /**
+   * Retrieve the value associated with the given token.
+   *
+   * @param token The reference to an instance of `HttpContextToken`.
+   *
+   * @returns The stored value or default if one is defined.
+   */
+  get(token) {
+    if (!this.map.has(token)) {
+      this.map.set(token, token.defaultValue());
+    }
+    return this.map.get(token);
+  }
+  /**
+   * Delete the value associated with the given token.
+   *
+   * @param token The reference to an instance of `HttpContextToken`.
+   *
+   * @returns A reference to itself for easy chaining.
+   */
+  delete(token) {
+    this.map.delete(token);
+    return this;
+  }
+  /**
+   * Checks for existence of a given token.
+   *
+   * @param token The reference to an instance of `HttpContextToken`.
+   *
+   * @returns True if the token exists, false otherwise.
+   */
+  has(token) {
+    return this.map.has(token);
+  }
+  /**
+   * @returns a list of tokens currently stored in the context.
+   */
+  keys() {
+    return this.map.keys();
+  }
+};
+function mightHaveBody(method) {
+  switch (method) {
+    case "DELETE":
+    case "GET":
+    case "HEAD":
+    case "OPTIONS":
+    case "JSONP":
+      return false;
+    default:
+      return true;
+  }
+}
+function isArrayBuffer(value) {
+  return typeof ArrayBuffer !== "undefined" && value instanceof ArrayBuffer;
+}
+function isBlob(value) {
+  return typeof Blob !== "undefined" && value instanceof Blob;
+}
+function isFormData(value) {
+  return typeof FormData !== "undefined" && value instanceof FormData;
+}
+function isUrlSearchParams(value) {
+  return typeof URLSearchParams !== "undefined" && value instanceof URLSearchParams;
+}
+var CONTENT_TYPE_HEADER = "Content-Type";
+var ACCEPT_HEADER = "Accept";
+var X_REQUEST_URL_HEADER = "X-Request-URL";
+var TEXT_CONTENT_TYPE = "text/plain";
+var JSON_CONTENT_TYPE = "application/json";
+var ACCEPT_HEADER_VALUE = `${JSON_CONTENT_TYPE}, ${TEXT_CONTENT_TYPE}, */*`;
+var HttpRequest = class _HttpRequest {
+  url;
+  /**
+   * The request body, or `null` if one isn't set.
+   *
+   * Bodies are not enforced to be immutable, as they can include a reference to any
+   * user-defined data type. However, interceptors should take care to preserve
+   * idempotence by treating them as such.
+   */
+  body = null;
+  /**
+   * Outgoing headers for this request.
+   */
+  headers;
+  /**
+   * Shared and mutable context that can be used by interceptors
+   */
+  context;
+  /**
+   * Whether this request should be made in a way that exposes progress events.
+   *
+   * Progress events are expensive (change detection runs on each event) and so
+   * they should only be requested if the consumer intends to monitor them.
+   *
+   * Note: The `FetchBackend` doesn't support progress report on uploads.
+   */
+  reportProgress = false;
+  /**
+   * Whether this request should be sent with outgoing credentials (cookies).
+   */
+  withCredentials = false;
+  /**
+   *  The credentials mode of the request, which determines how cookies and HTTP authentication are handled.
+   *  This can affect whether cookies are sent with the request, and how authentication is handled.
+   */
+  credentials;
+  /**
+   * When using the fetch implementation and set to `true`, the browser will not abort the associated request if the page that initiated it is unloaded before the request is complete.
+   */
+  keepalive = false;
+  /**
+   * Controls how the request will interact with the browser's HTTP cache.
+   * This affects whether a response is retrieved from the cache, how it is stored, or if it bypasses the cache altogether.
+   */
+  cache;
+  /**
+   * Indicates the relative priority of the request. This may be used by the browser to decide the order in which requests are dispatched and resources fetched.
+   */
+  priority;
+  /**
+   * The mode of the request, which determines how the request will interact with the browser's security model.
+   * This can affect things like CORS (Cross-Origin Resource Sharing) and same-origin policies.
+   */
+  mode;
+  /**
+   * The redirect mode of the request, which determines how redirects are handled.
+   * This can affect whether the request follows redirects automatically, or if it fails when a redirect occurs.
+   */
+  redirect;
+  /**
+   * The expected response type of the server.
+   *
+   * This is used to parse the response appropriately before returning it to
+   * the requestee.
+   */
+  responseType = "json";
+  /**
+   * The outgoing HTTP request method.
+   */
+  method;
+  /**
+   * Outgoing URL parameters.
+   *
+   * To pass a string representation of HTTP parameters in the URL-query-string format,
+   * the `HttpParamsOptions`' `fromString` may be used. For example:
+   *
+   * ```ts
+   * new HttpParams({fromString: 'angular=awesome'})
+   * ```
+   */
+  params;
+  /**
+   * The outgoing URL with all URL parameters set.
+   */
+  urlWithParams;
+  /**
+   * The HttpTransferCache option for the request
+   */
+  transferCache;
+  /**
+   * The timeout for the backend HTTP request in ms.
+   */
+  timeout;
+  constructor(method, url, third, fourth) {
+    this.url = url;
+    this.method = method.toUpperCase();
+    let options;
+    if (mightHaveBody(this.method) || !!fourth) {
+      this.body = third !== void 0 ? third : null;
+      options = fourth;
+    } else {
+      options = third;
+    }
+    if (options) {
+      this.reportProgress = !!options.reportProgress;
+      this.withCredentials = !!options.withCredentials;
+      this.keepalive = !!options.keepalive;
+      if (!!options.responseType) {
+        this.responseType = options.responseType;
+      }
+      if (options.headers) {
+        this.headers = options.headers;
+      }
+      if (options.context) {
+        this.context = options.context;
+      }
+      if (options.params) {
+        this.params = options.params;
+      }
+      if (options.priority) {
+        this.priority = options.priority;
+      }
+      if (options.cache) {
+        this.cache = options.cache;
+      }
+      if (options.credentials) {
+        this.credentials = options.credentials;
+      }
+      if (typeof options.timeout === "number") {
+        if (options.timeout < 1 || !Number.isInteger(options.timeout)) {
+          throw new Error(ngDevMode ? "`timeout` must be a positive integer value" : "");
+        }
+        this.timeout = options.timeout;
+      }
+      if (options.mode) {
+        this.mode = options.mode;
+      }
+      if (options.redirect) {
+        this.redirect = options.redirect;
+      }
+      this.transferCache = options.transferCache;
+    }
+    this.headers ??= new HttpHeaders();
+    this.context ??= new HttpContext();
+    if (!this.params) {
+      this.params = new HttpParams();
+      this.urlWithParams = url;
+    } else {
+      const params = this.params.toString();
+      if (params.length === 0) {
+        this.urlWithParams = url;
+      } else {
+        const qIdx = url.indexOf("?");
+        const sep = qIdx === -1 ? "?" : qIdx < url.length - 1 ? "&" : "";
+        this.urlWithParams = url + sep + params;
+      }
+    }
+  }
+  /**
+   * Transform the free-form body into a serialized format suitable for
+   * transmission to the server.
+   */
+  serializeBody() {
+    if (this.body === null) {
+      return null;
+    }
+    if (typeof this.body === "string" || isArrayBuffer(this.body) || isBlob(this.body) || isFormData(this.body) || isUrlSearchParams(this.body)) {
+      return this.body;
+    }
+    if (this.body instanceof HttpParams) {
+      return this.body.toString();
+    }
+    if (typeof this.body === "object" || typeof this.body === "boolean" || Array.isArray(this.body)) {
+      return JSON.stringify(this.body);
+    }
+    return this.body.toString();
+  }
+  /**
+   * Examine the body and attempt to infer an appropriate MIME type
+   * for it.
+   *
+   * If no such type can be inferred, this method will return `null`.
+   */
+  detectContentTypeHeader() {
+    if (this.body === null) {
+      return null;
+    }
+    if (isFormData(this.body)) {
+      return null;
+    }
+    if (isBlob(this.body)) {
+      return this.body.type || null;
+    }
+    if (isArrayBuffer(this.body)) {
+      return null;
+    }
+    if (typeof this.body === "string") {
+      return TEXT_CONTENT_TYPE;
+    }
+    if (this.body instanceof HttpParams) {
+      return "application/x-www-form-urlencoded;charset=UTF-8";
+    }
+    if (typeof this.body === "object" || typeof this.body === "number" || typeof this.body === "boolean") {
+      return JSON_CONTENT_TYPE;
+    }
+    return null;
+  }
+  clone(update = {}) {
+    const method = update.method || this.method;
+    const url = update.url || this.url;
+    const responseType = update.responseType || this.responseType;
+    const keepalive = update.keepalive ?? this.keepalive;
+    const priority = update.priority || this.priority;
+    const cache = update.cache || this.cache;
+    const mode = update.mode || this.mode;
+    const redirect = update.redirect || this.redirect;
+    const credentials = update.credentials || this.credentials;
+    const transferCache = update.transferCache ?? this.transferCache;
+    const timeout = update.timeout ?? this.timeout;
+    const body = update.body !== void 0 ? update.body : this.body;
+    const withCredentials = update.withCredentials ?? this.withCredentials;
+    const reportProgress = update.reportProgress ?? this.reportProgress;
+    let headers = update.headers || this.headers;
+    let params = update.params || this.params;
+    const context2 = update.context ?? this.context;
+    if (update.setHeaders !== void 0) {
+      headers = Object.keys(update.setHeaders).reduce((headers2, name) => headers2.set(name, update.setHeaders[name]), headers);
+    }
+    if (update.setParams) {
+      params = Object.keys(update.setParams).reduce((params2, param) => params2.set(param, update.setParams[param]), params);
+    }
+    return new _HttpRequest(method, url, body, {
+      params,
+      headers,
+      context: context2,
+      reportProgress,
+      responseType,
+      withCredentials,
+      transferCache,
+      keepalive,
+      cache,
+      priority,
+      timeout,
+      mode,
+      redirect,
+      credentials
+    });
+  }
+};
+var HttpEventType;
+(function(HttpEventType2) {
+  HttpEventType2[HttpEventType2["Sent"] = 0] = "Sent";
+  HttpEventType2[HttpEventType2["UploadProgress"] = 1] = "UploadProgress";
+  HttpEventType2[HttpEventType2["ResponseHeader"] = 2] = "ResponseHeader";
+  HttpEventType2[HttpEventType2["DownloadProgress"] = 3] = "DownloadProgress";
+  HttpEventType2[HttpEventType2["Response"] = 4] = "Response";
+  HttpEventType2[HttpEventType2["User"] = 5] = "User";
+})(HttpEventType || (HttpEventType = {}));
+var HttpResponseBase = class {
+  /**
+   * All response headers.
+   */
+  headers;
+  /**
+   * Response status code.
+   */
+  status;
+  /**
+   * Textual description of response status code, defaults to OK.
+   *
+   * Do not depend on this.
+   */
+  statusText;
+  /**
+   * URL of the resource retrieved, or null if not available.
+   */
+  url;
+  /**
+   * Whether the status code falls in the 2xx range.
+   */
+  ok;
+  /**
+   * Type of the response, narrowed to either the full response or the header.
+   */
+  type;
+  /**
+   * Super-constructor for all responses.
+   *
+   * The single parameter accepted is an initialization hash. Any properties
+   * of the response passed there will override the default values.
+   */
+  constructor(init2, defaultStatus = 200, defaultStatusText = "OK") {
+    this.headers = init2.headers || new HttpHeaders();
+    this.status = init2.status !== void 0 ? init2.status : defaultStatus;
+    this.statusText = init2.statusText || defaultStatusText;
+    this.url = init2.url || null;
+    this.ok = this.status >= 200 && this.status < 300;
+  }
+};
+var HttpHeaderResponse = class _HttpHeaderResponse extends HttpResponseBase {
+  /**
+   * Create a new `HttpHeaderResponse` with the given parameters.
+   */
+  constructor(init2 = {}) {
+    super(init2);
+  }
+  type = HttpEventType.ResponseHeader;
+  /**
+   * Copy this `HttpHeaderResponse`, overriding its contents with the
+   * given parameter hash.
+   */
+  clone(update = {}) {
+    return new _HttpHeaderResponse({
+      headers: update.headers || this.headers,
+      status: update.status !== void 0 ? update.status : this.status,
+      statusText: update.statusText || this.statusText,
+      url: update.url || this.url || void 0
+    });
+  }
+};
+var HttpResponse = class _HttpResponse extends HttpResponseBase {
+  /**
+   * The response body, or `null` if one was not returned.
+   */
+  body;
+  /**
+   * Construct a new `HttpResponse`.
+   */
+  constructor(init2 = {}) {
+    super(init2);
+    this.body = init2.body !== void 0 ? init2.body : null;
+  }
+  type = HttpEventType.Response;
+  clone(update = {}) {
+    return new _HttpResponse({
+      body: update.body !== void 0 ? update.body : this.body,
+      headers: update.headers || this.headers,
+      status: update.status !== void 0 ? update.status : this.status,
+      statusText: update.statusText || this.statusText,
+      url: update.url || this.url || void 0
+    });
+  }
+};
+var HttpErrorResponse = class extends HttpResponseBase {
+  name = "HttpErrorResponse";
+  message;
+  error;
+  /**
+   * Errors are never okay, even when the status code is in the 2xx success range.
+   */
+  ok = false;
+  constructor(init2) {
+    super(init2, 0, "Unknown Error");
+    if (this.status >= 200 && this.status < 300) {
+      this.message = `Http failure during parsing for ${init2.url || "(unknown url)"}`;
+    } else {
+      this.message = `Http failure response for ${init2.url || "(unknown url)"}: ${init2.status} ${init2.statusText}`;
+    }
+    this.error = init2.error || null;
+  }
+};
+var HTTP_STATUS_CODE_OK = 200;
+var HTTP_STATUS_CODE_NO_CONTENT = 204;
+var HttpStatusCode;
+(function(HttpStatusCode2) {
+  HttpStatusCode2[HttpStatusCode2["Continue"] = 100] = "Continue";
+  HttpStatusCode2[HttpStatusCode2["SwitchingProtocols"] = 101] = "SwitchingProtocols";
+  HttpStatusCode2[HttpStatusCode2["Processing"] = 102] = "Processing";
+  HttpStatusCode2[HttpStatusCode2["EarlyHints"] = 103] = "EarlyHints";
+  HttpStatusCode2[HttpStatusCode2["Ok"] = 200] = "Ok";
+  HttpStatusCode2[HttpStatusCode2["Created"] = 201] = "Created";
+  HttpStatusCode2[HttpStatusCode2["Accepted"] = 202] = "Accepted";
+  HttpStatusCode2[HttpStatusCode2["NonAuthoritativeInformation"] = 203] = "NonAuthoritativeInformation";
+  HttpStatusCode2[HttpStatusCode2["NoContent"] = 204] = "NoContent";
+  HttpStatusCode2[HttpStatusCode2["ResetContent"] = 205] = "ResetContent";
+  HttpStatusCode2[HttpStatusCode2["PartialContent"] = 206] = "PartialContent";
+  HttpStatusCode2[HttpStatusCode2["MultiStatus"] = 207] = "MultiStatus";
+  HttpStatusCode2[HttpStatusCode2["AlreadyReported"] = 208] = "AlreadyReported";
+  HttpStatusCode2[HttpStatusCode2["ImUsed"] = 226] = "ImUsed";
+  HttpStatusCode2[HttpStatusCode2["MultipleChoices"] = 300] = "MultipleChoices";
+  HttpStatusCode2[HttpStatusCode2["MovedPermanently"] = 301] = "MovedPermanently";
+  HttpStatusCode2[HttpStatusCode2["Found"] = 302] = "Found";
+  HttpStatusCode2[HttpStatusCode2["SeeOther"] = 303] = "SeeOther";
+  HttpStatusCode2[HttpStatusCode2["NotModified"] = 304] = "NotModified";
+  HttpStatusCode2[HttpStatusCode2["UseProxy"] = 305] = "UseProxy";
+  HttpStatusCode2[HttpStatusCode2["Unused"] = 306] = "Unused";
+  HttpStatusCode2[HttpStatusCode2["TemporaryRedirect"] = 307] = "TemporaryRedirect";
+  HttpStatusCode2[HttpStatusCode2["PermanentRedirect"] = 308] = "PermanentRedirect";
+  HttpStatusCode2[HttpStatusCode2["BadRequest"] = 400] = "BadRequest";
+  HttpStatusCode2[HttpStatusCode2["Unauthorized"] = 401] = "Unauthorized";
+  HttpStatusCode2[HttpStatusCode2["PaymentRequired"] = 402] = "PaymentRequired";
+  HttpStatusCode2[HttpStatusCode2["Forbidden"] = 403] = "Forbidden";
+  HttpStatusCode2[HttpStatusCode2["NotFound"] = 404] = "NotFound";
+  HttpStatusCode2[HttpStatusCode2["MethodNotAllowed"] = 405] = "MethodNotAllowed";
+  HttpStatusCode2[HttpStatusCode2["NotAcceptable"] = 406] = "NotAcceptable";
+  HttpStatusCode2[HttpStatusCode2["ProxyAuthenticationRequired"] = 407] = "ProxyAuthenticationRequired";
+  HttpStatusCode2[HttpStatusCode2["RequestTimeout"] = 408] = "RequestTimeout";
+  HttpStatusCode2[HttpStatusCode2["Conflict"] = 409] = "Conflict";
+  HttpStatusCode2[HttpStatusCode2["Gone"] = 410] = "Gone";
+  HttpStatusCode2[HttpStatusCode2["LengthRequired"] = 411] = "LengthRequired";
+  HttpStatusCode2[HttpStatusCode2["PreconditionFailed"] = 412] = "PreconditionFailed";
+  HttpStatusCode2[HttpStatusCode2["PayloadTooLarge"] = 413] = "PayloadTooLarge";
+  HttpStatusCode2[HttpStatusCode2["UriTooLong"] = 414] = "UriTooLong";
+  HttpStatusCode2[HttpStatusCode2["UnsupportedMediaType"] = 415] = "UnsupportedMediaType";
+  HttpStatusCode2[HttpStatusCode2["RangeNotSatisfiable"] = 416] = "RangeNotSatisfiable";
+  HttpStatusCode2[HttpStatusCode2["ExpectationFailed"] = 417] = "ExpectationFailed";
+  HttpStatusCode2[HttpStatusCode2["ImATeapot"] = 418] = "ImATeapot";
+  HttpStatusCode2[HttpStatusCode2["MisdirectedRequest"] = 421] = "MisdirectedRequest";
+  HttpStatusCode2[HttpStatusCode2["UnprocessableEntity"] = 422] = "UnprocessableEntity";
+  HttpStatusCode2[HttpStatusCode2["Locked"] = 423] = "Locked";
+  HttpStatusCode2[HttpStatusCode2["FailedDependency"] = 424] = "FailedDependency";
+  HttpStatusCode2[HttpStatusCode2["TooEarly"] = 425] = "TooEarly";
+  HttpStatusCode2[HttpStatusCode2["UpgradeRequired"] = 426] = "UpgradeRequired";
+  HttpStatusCode2[HttpStatusCode2["PreconditionRequired"] = 428] = "PreconditionRequired";
+  HttpStatusCode2[HttpStatusCode2["TooManyRequests"] = 429] = "TooManyRequests";
+  HttpStatusCode2[HttpStatusCode2["RequestHeaderFieldsTooLarge"] = 431] = "RequestHeaderFieldsTooLarge";
+  HttpStatusCode2[HttpStatusCode2["UnavailableForLegalReasons"] = 451] = "UnavailableForLegalReasons";
+  HttpStatusCode2[HttpStatusCode2["InternalServerError"] = 500] = "InternalServerError";
+  HttpStatusCode2[HttpStatusCode2["NotImplemented"] = 501] = "NotImplemented";
+  HttpStatusCode2[HttpStatusCode2["BadGateway"] = 502] = "BadGateway";
+  HttpStatusCode2[HttpStatusCode2["ServiceUnavailable"] = 503] = "ServiceUnavailable";
+  HttpStatusCode2[HttpStatusCode2["GatewayTimeout"] = 504] = "GatewayTimeout";
+  HttpStatusCode2[HttpStatusCode2["HttpVersionNotSupported"] = 505] = "HttpVersionNotSupported";
+  HttpStatusCode2[HttpStatusCode2["VariantAlsoNegotiates"] = 506] = "VariantAlsoNegotiates";
+  HttpStatusCode2[HttpStatusCode2["InsufficientStorage"] = 507] = "InsufficientStorage";
+  HttpStatusCode2[HttpStatusCode2["LoopDetected"] = 508] = "LoopDetected";
+  HttpStatusCode2[HttpStatusCode2["NotExtended"] = 510] = "NotExtended";
+  HttpStatusCode2[HttpStatusCode2["NetworkAuthenticationRequired"] = 511] = "NetworkAuthenticationRequired";
+})(HttpStatusCode || (HttpStatusCode = {}));
+function addBody(options, body) {
+  return {
+    body,
+    headers: options.headers,
+    context: options.context,
+    observe: options.observe,
+    params: options.params,
+    reportProgress: options.reportProgress,
+    responseType: options.responseType,
+    withCredentials: options.withCredentials,
+    transferCache: options.transferCache,
+    keepalive: options.keepalive,
+    priority: options.priority,
+    cache: options.cache,
+    mode: options.mode,
+    redirect: options.redirect
+  };
+}
+var HttpClient = class _HttpClient {
+  handler;
+  constructor(handler) {
+    this.handler = handler;
+  }
+  /**
+   * Constructs an observable for a generic HTTP request that, when subscribed,
+   * fires the request through the chain of registered interceptors and on to the
+   * server.
+   *
+   * You can pass an `HttpRequest` directly as the only parameter. In this case,
+   * the call returns an observable of the raw `HttpEvent` stream.
+   *
+   * Alternatively you can pass an HTTP method as the first parameter,
+   * a URL string as the second, and an options hash containing the request body as the third.
+   * See `addBody()`. In this case, the specified `responseType` and `observe` options determine the
+   * type of returned observable.
+   *   * The `responseType` value determines how a successful response body is parsed.
+   *   * If `responseType` is the default `json`, you can pass a type interface for the resulting
+   * object as a type parameter to the call.
+   *
+   * The `observe` value determines the return type, according to what you are interested in
+   * observing.
+   *   * An `observe` value of events returns an observable of the raw `HttpEvent` stream, including
+   * progress events by default.
+   *   * An `observe` value of response returns an observable of `HttpResponse<T>`,
+   * where the `T` parameter depends on the `responseType` and any optionally provided type
+   * parameter.
+   *   * An `observe` value of body returns an observable of `<T>` with the same `T` body type.
+   *
+   */
+  request(first2, url, options = {}) {
+    let req;
+    if (first2 instanceof HttpRequest) {
+      req = first2;
+    } else {
+      let headers = void 0;
+      if (options.headers instanceof HttpHeaders) {
+        headers = options.headers;
+      } else {
+        headers = new HttpHeaders(options.headers);
+      }
+      let params = void 0;
+      if (!!options.params) {
+        if (options.params instanceof HttpParams) {
+          params = options.params;
+        } else {
+          params = new HttpParams({
+            fromObject: options.params
+          });
+        }
+      }
+      req = new HttpRequest(first2, url, options.body !== void 0 ? options.body : null, {
+        headers,
+        context: options.context,
+        params,
+        reportProgress: options.reportProgress,
+        // By default, JSON is assumed to be returned for all calls.
+        responseType: options.responseType || "json",
+        withCredentials: options.withCredentials,
+        transferCache: options.transferCache,
+        keepalive: options.keepalive,
+        priority: options.priority,
+        cache: options.cache,
+        mode: options.mode,
+        redirect: options.redirect,
+        credentials: options.credentials
+      });
+    }
+    const events$ = of(req).pipe(concatMap((req2) => this.handler.handle(req2)));
+    if (first2 instanceof HttpRequest || options.observe === "events") {
+      return events$;
+    }
+    const res$ = events$.pipe(filter((event) => event instanceof HttpResponse));
+    switch (options.observe || "body") {
+      case "body":
+        switch (req.responseType) {
+          case "arraybuffer":
+            return res$.pipe(map((res) => {
+              if (res.body !== null && !(res.body instanceof ArrayBuffer)) {
+                throw new RuntimeError(2806, ngDevMode && "Response is not an ArrayBuffer.");
+              }
+              return res.body;
+            }));
+          case "blob":
+            return res$.pipe(map((res) => {
+              if (res.body !== null && !(res.body instanceof Blob)) {
+                throw new RuntimeError(2807, ngDevMode && "Response is not a Blob.");
+              }
+              return res.body;
+            }));
+          case "text":
+            return res$.pipe(map((res) => {
+              if (res.body !== null && typeof res.body !== "string") {
+                throw new RuntimeError(2808, ngDevMode && "Response is not a string.");
+              }
+              return res.body;
+            }));
+          case "json":
+          default:
+            return res$.pipe(map((res) => res.body));
+        }
+      case "response":
+        return res$;
+      default:
+        throw new RuntimeError(2809, ngDevMode && `Unreachable: unhandled observe type ${options.observe}}`);
+    }
+  }
+  /**
+   * Constructs an observable that, when subscribed, causes the configured
+   * `DELETE` request to execute on the server. See the individual overloads for
+   * details on the return type.
+   *
+   * @param url     The endpoint URL.
+   * @param options The HTTP options to send with the request.
+   *
+   */
+  delete(url, options = {}) {
+    return this.request("DELETE", url, options);
+  }
+  /**
+   * Constructs an observable that, when subscribed, causes the configured
+   * `GET` request to execute on the server. See the individual overloads for
+   * details on the return type.
+   */
+  get(url, options = {}) {
+    return this.request("GET", url, options);
+  }
+  /**
+   * Constructs an observable that, when subscribed, causes the configured
+   * `HEAD` request to execute on the server. The `HEAD` method returns
+   * meta information about the resource without transferring the
+   * resource itself. See the individual overloads for
+   * details on the return type.
+   */
+  head(url, options = {}) {
+    return this.request("HEAD", url, options);
+  }
+  /**
+   * Constructs an `Observable` that, when subscribed, causes a request with the special method
+   * `JSONP` to be dispatched via the interceptor pipeline.
+   * The [JSONP pattern](https://en.wikipedia.org/wiki/JSONP) works around limitations of certain
+   * API endpoints that don't support newer,
+   * and preferable [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) protocol.
+   * JSONP treats the endpoint API as a JavaScript file and tricks the browser to process the
+   * requests even if the API endpoint is not located on the same domain (origin) as the client-side
+   * application making the request.
+   * The endpoint API must support JSONP callback for JSONP requests to work.
+   * The resource API returns the JSON response wrapped in a callback function.
+   * You can pass the callback function name as one of the query parameters.
+   * Note that JSONP requests can only be used with `GET` requests.
+   *
+   * @param url The resource URL.
+   * @param callbackParam The callback function name.
+   *
+   */
+  jsonp(url, callbackParam) {
+    return this.request("JSONP", url, {
+      params: new HttpParams().append(callbackParam, "JSONP_CALLBACK"),
+      observe: "body",
+      responseType: "json"
+    });
+  }
+  /**
+   * Constructs an `Observable` that, when subscribed, causes the configured
+   * `OPTIONS` request to execute on the server. This method allows the client
+   * to determine the supported HTTP methods and other capabilities of an endpoint,
+   * without implying a resource action. See the individual overloads for
+   * details on the return type.
+   */
+  options(url, options = {}) {
+    return this.request("OPTIONS", url, options);
+  }
+  /**
+   * Constructs an observable that, when subscribed, causes the configured
+   * `PATCH` request to execute on the server. See the individual overloads for
+   * details on the return type.
+   */
+  patch(url, body, options = {}) {
+    return this.request("PATCH", url, addBody(options, body));
+  }
+  /**
+   * Constructs an observable that, when subscribed, causes the configured
+   * `POST` request to execute on the server. The server responds with the location of
+   * the replaced resource. See the individual overloads for
+   * details on the return type.
+   */
+  post(url, body, options = {}) {
+    return this.request("POST", url, addBody(options, body));
+  }
+  /**
+   * Constructs an observable that, when subscribed, causes the configured
+   * `PUT` request to execute on the server. The `PUT` method replaces an existing resource
+   * with a new set of values.
+   * See the individual overloads for details on the return type.
+   */
+  put(url, body, options = {}) {
+    return this.request("PUT", url, addBody(options, body));
+  }
+  static \u0275fac = function HttpClient_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HttpClient)(\u0275\u0275inject(HttpHandler));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _HttpClient,
+    factory: _HttpClient.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HttpClient, [{
+    type: Injectable
+  }], () => [{
+    type: HttpHandler
+  }], null);
+})();
+var XSSI_PREFIX$1 = /^\)\]\}',?\n/;
+function getResponseUrl$1(response) {
+  if (response.url) {
+    return response.url;
+  }
+  const xRequestUrl = X_REQUEST_URL_HEADER.toLocaleLowerCase();
+  return response.headers.get(xRequestUrl);
+}
+var FETCH_BACKEND = new InjectionToken(typeof ngDevMode === "undefined" || ngDevMode ? "FETCH_BACKEND" : "");
+var FetchBackend = class _FetchBackend {
+  // We use an arrow function to always reference the current global implementation of `fetch`.
+  // This is helpful for cases when the global `fetch` implementation is modified by external code,
+  // see https://github.com/angular/angular/issues/57527.
+  fetchImpl = inject2(FetchFactory, {
+    optional: true
+  })?.fetch ?? ((...args) => globalThis.fetch(...args));
+  ngZone = inject2(NgZone);
+  destroyRef = inject2(DestroyRef);
+  destroyed = false;
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.destroyed = true;
+    });
+  }
+  handle(request) {
+    return new Observable((observer) => {
+      const aborter = new AbortController();
+      this.doRequest(request, aborter.signal, observer).then(noop3, (error) => observer.error(new HttpErrorResponse({
+        error
+      })));
+      let timeoutId;
+      if (request.timeout) {
+        timeoutId = this.ngZone.runOutsideAngular(() => setTimeout(() => {
+          if (!aborter.signal.aborted) {
+            aborter.abort(new DOMException("signal timed out", "TimeoutError"));
+          }
+        }, request.timeout));
+      }
+      return () => {
+        if (timeoutId !== void 0) {
+          clearTimeout(timeoutId);
+        }
+        aborter.abort();
+      };
+    });
+  }
+  doRequest(request, signal2, observer) {
+    return __async(this, null, function* () {
+      const init2 = this.createRequestInit(request);
+      let response;
+      try {
+        const fetchPromise = this.ngZone.runOutsideAngular(() => this.fetchImpl(request.urlWithParams, __spreadValues({
+          signal: signal2
+        }, init2)));
+        silenceSuperfluousUnhandledPromiseRejection(fetchPromise);
+        observer.next({
+          type: HttpEventType.Sent
+        });
+        response = yield fetchPromise;
+      } catch (error) {
+        observer.error(new HttpErrorResponse({
+          error,
+          status: error.status ?? 0,
+          statusText: error.statusText,
+          url: request.urlWithParams,
+          headers: error.headers
+        }));
+        return;
+      }
+      const headers = new HttpHeaders(response.headers);
+      const statusText = response.statusText;
+      const url = getResponseUrl$1(response) ?? request.urlWithParams;
+      let status = response.status;
+      let body = null;
+      if (request.reportProgress) {
+        observer.next(new HttpHeaderResponse({
+          headers,
+          status,
+          statusText,
+          url
+        }));
+      }
+      if (response.body) {
+        const contentLength = response.headers.get("content-length");
+        const chunks = [];
+        const reader = response.body.getReader();
+        let receivedLength = 0;
+        let decoder;
+        let partialText;
+        const reqZone = typeof Zone !== "undefined" && Zone.current;
+        let canceled = false;
+        yield this.ngZone.runOutsideAngular(() => __async(this, null, function* () {
+          while (true) {
+            if (this.destroyed) {
+              yield reader.cancel();
+              canceled = true;
+              break;
+            }
+            const {
+              done,
+              value
+            } = yield reader.read();
+            if (done) {
+              break;
+            }
+            chunks.push(value);
+            receivedLength += value.length;
+            if (request.reportProgress) {
+              partialText = request.responseType === "text" ? (partialText ?? "") + (decoder ??= new TextDecoder()).decode(value, {
+                stream: true
+              }) : void 0;
+              const reportProgress = () => observer.next({
+                type: HttpEventType.DownloadProgress,
+                total: contentLength ? +contentLength : void 0,
+                loaded: receivedLength,
+                partialText
+              });
+              reqZone ? reqZone.run(reportProgress) : reportProgress();
+            }
+          }
+        }));
+        if (canceled) {
+          observer.complete();
+          return;
+        }
+        const chunksAll = this.concatChunks(chunks, receivedLength);
+        try {
+          const contentType = response.headers.get(CONTENT_TYPE_HEADER) ?? "";
+          body = this.parseBody(request, chunksAll, contentType, status);
+        } catch (error) {
+          observer.error(new HttpErrorResponse({
+            error,
+            headers: new HttpHeaders(response.headers),
+            status: response.status,
+            statusText: response.statusText,
+            url: getResponseUrl$1(response) ?? request.urlWithParams
+          }));
+          return;
+        }
+      }
+      if (status === 0) {
+        status = body ? HTTP_STATUS_CODE_OK : 0;
+      }
+      const ok = status >= 200 && status < 300;
+      if (ok) {
+        observer.next(new HttpResponse({
+          body,
+          headers,
+          status,
+          statusText,
+          url
+        }));
+        observer.complete();
+      } else {
+        observer.error(new HttpErrorResponse({
+          error: body,
+          headers,
+          status,
+          statusText,
+          url
+        }));
+      }
+    });
+  }
+  parseBody(request, binContent, contentType, status) {
+    switch (request.responseType) {
+      case "json":
+        const text = new TextDecoder().decode(binContent).replace(XSSI_PREFIX$1, "");
+        if (text === "") {
+          return null;
+        }
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          if (status < 200 || status >= 300) {
+            return text;
+          }
+          throw e;
+        }
+      case "text":
+        return new TextDecoder().decode(binContent);
+      case "blob":
+        return new Blob([binContent], {
+          type: contentType
+        });
+      case "arraybuffer":
+        return binContent.buffer;
+    }
+  }
+  createRequestInit(req) {
+    const headers = {};
+    let credentials;
+    credentials = req.credentials;
+    if (req.withCredentials) {
+      (typeof ngDevMode === "undefined" || ngDevMode) && warningOptionsMessage(req);
+      credentials = "include";
+    }
+    req.headers.forEach((name, values) => headers[name] = values.join(","));
+    if (!req.headers.has(ACCEPT_HEADER)) {
+      headers[ACCEPT_HEADER] = ACCEPT_HEADER_VALUE;
+    }
+    if (!req.headers.has(CONTENT_TYPE_HEADER)) {
+      const detectedType = req.detectContentTypeHeader();
+      if (detectedType !== null) {
+        headers[CONTENT_TYPE_HEADER] = detectedType;
+      }
+    }
+    return {
+      body: req.serializeBody(),
+      method: req.method,
+      headers,
+      credentials,
+      keepalive: req.keepalive,
+      cache: req.cache,
+      priority: req.priority,
+      mode: req.mode,
+      redirect: req.redirect
+    };
+  }
+  concatChunks(chunks, totalLength) {
+    const chunksAll = new Uint8Array(totalLength);
+    let position = 0;
+    for (const chunk of chunks) {
+      chunksAll.set(chunk, position);
+      position += chunk.length;
+    }
+    return chunksAll;
+  }
+  static \u0275fac = function FetchBackend_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _FetchBackend)();
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _FetchBackend,
+    factory: _FetchBackend.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(FetchBackend, [{
+    type: Injectable
+  }], () => [], null);
+})();
+var FetchFactory = class {
+};
+function noop3() {
+}
+function warningOptionsMessage(req) {
+  if (req.credentials && req.withCredentials) {
+    console.warn(formatRuntimeError(2819, `Angular detected that a \`HttpClient\` request has both \`withCredentials: true\` and \`credentials: '${req.credentials}'\` options. The \`withCredentials\` option is overriding the explicit \`credentials\` setting to 'include'. Consider removing \`withCredentials\` and using \`credentials: '${req.credentials}'\` directly for clarity.`));
+  }
+}
+function silenceSuperfluousUnhandledPromiseRejection(promise) {
+  promise.then(noop3, noop3);
+}
+function interceptorChainEndFn(req, finalHandlerFn) {
+  return finalHandlerFn(req);
+}
+function adaptLegacyInterceptorToChain(chainTailFn, interceptor) {
+  return (initialRequest, finalHandlerFn) => interceptor.intercept(initialRequest, {
+    handle: (downstreamRequest) => chainTailFn(downstreamRequest, finalHandlerFn)
+  });
+}
+function chainedInterceptorFn(chainTailFn, interceptorFn, injector) {
+  return (initialRequest, finalHandlerFn) => runInInjectionContext(injector, () => interceptorFn(initialRequest, (downstreamRequest) => chainTailFn(downstreamRequest, finalHandlerFn)));
+}
+var HTTP_INTERCEPTORS = new InjectionToken(ngDevMode ? "HTTP_INTERCEPTORS" : "");
+var HTTP_INTERCEPTOR_FNS = new InjectionToken(ngDevMode ? "HTTP_INTERCEPTOR_FNS" : "");
+var HTTP_ROOT_INTERCEPTOR_FNS = new InjectionToken(ngDevMode ? "HTTP_ROOT_INTERCEPTOR_FNS" : "");
+var REQUESTS_CONTRIBUTE_TO_STABILITY = new InjectionToken(ngDevMode ? "REQUESTS_CONTRIBUTE_TO_STABILITY" : "", {
+  providedIn: "root",
+  factory: () => true
+});
+function legacyInterceptorFnFactory() {
+  let chain = null;
+  return (req, handler) => {
+    if (chain === null) {
+      const interceptors = inject2(HTTP_INTERCEPTORS, {
+        optional: true
+      }) ?? [];
+      chain = interceptors.reduceRight(adaptLegacyInterceptorToChain, interceptorChainEndFn);
+    }
+    const pendingTasks = inject2(PendingTasks);
+    const contributeToStability = inject2(REQUESTS_CONTRIBUTE_TO_STABILITY);
+    if (contributeToStability) {
+      const removeTask = pendingTasks.add();
+      return chain(req, handler).pipe(finalize(removeTask));
+    } else {
+      return chain(req, handler);
+    }
+  };
+}
+var fetchBackendWarningDisplayed = false;
+var HttpInterceptorHandler = class _HttpInterceptorHandler extends HttpHandler {
+  backend;
+  injector;
+  chain = null;
+  pendingTasks = inject2(PendingTasks);
+  contributeToStability = inject2(REQUESTS_CONTRIBUTE_TO_STABILITY);
+  constructor(backend, injector) {
+    super();
+    this.backend = backend;
+    this.injector = injector;
+    if ((typeof ngDevMode === "undefined" || ngDevMode) && !fetchBackendWarningDisplayed) {
+      const isTestingBackend = this.backend.isTestingBackend;
+      if (false) {
+        fetchBackendWarningDisplayed = true;
+        injector.get(Console).warn(formatRuntimeError(2801, "Angular detected that `HttpClient` is not configured to use `fetch` APIs. It's strongly recommended to enable `fetch` for applications that use Server-Side Rendering for better performance and compatibility. To enable `fetch`, add the `withFetch()` to the `provideHttpClient()` call at the root of the application."));
+      }
+    }
+  }
+  handle(initialRequest) {
+    if (this.chain === null) {
+      const dedupedInterceptorFns = Array.from(/* @__PURE__ */ new Set([...this.injector.get(HTTP_INTERCEPTOR_FNS), ...this.injector.get(HTTP_ROOT_INTERCEPTOR_FNS, [])]));
+      this.chain = dedupedInterceptorFns.reduceRight((nextSequencedFn, interceptorFn) => chainedInterceptorFn(nextSequencedFn, interceptorFn, this.injector), interceptorChainEndFn);
+    }
+    if (this.contributeToStability) {
+      const removeTask = this.pendingTasks.add();
+      return this.chain(initialRequest, (downstreamRequest) => this.backend.handle(downstreamRequest)).pipe(finalize(removeTask));
+    } else {
+      return this.chain(initialRequest, (downstreamRequest) => this.backend.handle(downstreamRequest));
+    }
+  }
+  static \u0275fac = function HttpInterceptorHandler_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HttpInterceptorHandler)(\u0275\u0275inject(HttpBackend), \u0275\u0275inject(EnvironmentInjector));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _HttpInterceptorHandler,
+    factory: _HttpInterceptorHandler.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HttpInterceptorHandler, [{
+    type: Injectable
+  }], () => [{
+    type: HttpBackend
+  }, {
+    type: EnvironmentInjector
+  }], null);
+})();
+var nextRequestId = 0;
+var foreignDocument;
+var JSONP_ERR_NO_CALLBACK = "JSONP injected script did not invoke callback.";
+var JSONP_ERR_WRONG_METHOD = "JSONP requests must use JSONP request method.";
+var JSONP_ERR_WRONG_RESPONSE_TYPE = "JSONP requests must use Json response type.";
+var JSONP_ERR_HEADERS_NOT_SUPPORTED = "JSONP requests do not support headers.";
+var JsonpCallbackContext = class {
+};
+function jsonpCallbackContext() {
+  if (typeof window === "object") {
+    return window;
+  }
+  return {};
+}
+var JsonpClientBackend = class _JsonpClientBackend {
+  callbackMap;
+  document;
+  /**
+   * A resolved promise that can be used to schedule microtasks in the event handlers.
+   */
+  resolvedPromise = Promise.resolve();
+  constructor(callbackMap, document2) {
+    this.callbackMap = callbackMap;
+    this.document = document2;
+  }
+  /**
+   * Get the name of the next callback method, by incrementing the global `nextRequestId`.
+   */
+  nextCallback() {
+    return `ng_jsonp_callback_${nextRequestId++}`;
+  }
+  /**
+   * Processes a JSONP request and returns an event stream of the results.
+   * @param req The request object.
+   * @returns An observable of the response events.
+   *
+   */
+  handle(req) {
+    if (req.method !== "JSONP") {
+      throw new RuntimeError(2810, ngDevMode && JSONP_ERR_WRONG_METHOD);
+    } else if (req.responseType !== "json") {
+      throw new RuntimeError(2811, ngDevMode && JSONP_ERR_WRONG_RESPONSE_TYPE);
+    }
+    if (req.headers.keys().length > 0) {
+      throw new RuntimeError(2812, ngDevMode && JSONP_ERR_HEADERS_NOT_SUPPORTED);
+    }
+    return new Observable((observer) => {
+      const callback = this.nextCallback();
+      const url = req.urlWithParams.replace(/=JSONP_CALLBACK(&|$)/, `=${callback}$1`);
+      const node = this.document.createElement("script");
+      node.src = url;
+      let body = null;
+      let finished = false;
+      this.callbackMap[callback] = (data) => {
+        delete this.callbackMap[callback];
+        body = data;
+        finished = true;
+      };
+      const cleanup = () => {
+        node.removeEventListener("load", onLoad);
+        node.removeEventListener("error", onError);
+        node.remove();
+        delete this.callbackMap[callback];
+      };
+      const onLoad = () => {
+        this.resolvedPromise.then(() => {
+          cleanup();
+          if (!finished) {
+            observer.error(new HttpErrorResponse({
+              url,
+              status: 0,
+              statusText: "JSONP Error",
+              error: new Error(JSONP_ERR_NO_CALLBACK)
+            }));
+            return;
+          }
+          observer.next(new HttpResponse({
+            body,
+            status: HTTP_STATUS_CODE_OK,
+            statusText: "OK",
+            url
+          }));
+          observer.complete();
+        });
+      };
+      const onError = (error) => {
+        cleanup();
+        observer.error(new HttpErrorResponse({
+          error,
+          status: 0,
+          statusText: "JSONP Error",
+          url
+        }));
+      };
+      node.addEventListener("load", onLoad);
+      node.addEventListener("error", onError);
+      this.document.body.appendChild(node);
+      observer.next({
+        type: HttpEventType.Sent
+      });
+      return () => {
+        if (!finished) {
+          this.removeListeners(node);
+        }
+        cleanup();
+      };
+    });
+  }
+  removeListeners(script) {
+    foreignDocument ??= this.document.implementation.createHTMLDocument();
+    foreignDocument.adoptNode(script);
+  }
+  static \u0275fac = function JsonpClientBackend_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _JsonpClientBackend)(\u0275\u0275inject(JsonpCallbackContext), \u0275\u0275inject(DOCUMENT));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _JsonpClientBackend,
+    factory: _JsonpClientBackend.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(JsonpClientBackend, [{
+    type: Injectable
+  }], () => [{
+    type: JsonpCallbackContext
+  }, {
+    type: void 0,
+    decorators: [{
+      type: Inject,
+      args: [DOCUMENT]
+    }]
+  }], null);
+})();
+function jsonpInterceptorFn(req, next) {
+  if (req.method === "JSONP") {
+    return inject2(JsonpClientBackend).handle(req);
+  }
+  return next(req);
+}
+var JsonpInterceptor = class _JsonpInterceptor {
+  injector;
+  constructor(injector) {
+    this.injector = injector;
+  }
+  /**
+   * Identifies and handles a given JSONP request.
+   * @param initialRequest The outgoing request object to handle.
+   * @param next The next interceptor in the chain, or the backend
+   * if no interceptors remain in the chain.
+   * @returns An observable of the event stream.
+   */
+  intercept(initialRequest, next) {
+    return runInInjectionContext(this.injector, () => jsonpInterceptorFn(initialRequest, (downstreamRequest) => next.handle(downstreamRequest)));
+  }
+  static \u0275fac = function JsonpInterceptor_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _JsonpInterceptor)(\u0275\u0275inject(EnvironmentInjector));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _JsonpInterceptor,
+    factory: _JsonpInterceptor.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(JsonpInterceptor, [{
+    type: Injectable
+  }], () => [{
+    type: EnvironmentInjector
+  }], null);
+})();
+var XSSI_PREFIX = /^\)\]\}',?\n/;
+var X_REQUEST_URL_REGEXP = RegExp(`^${X_REQUEST_URL_HEADER}:`, "m");
+function getResponseUrl(xhr) {
+  if ("responseURL" in xhr && xhr.responseURL) {
+    return xhr.responseURL;
+  }
+  if (X_REQUEST_URL_REGEXP.test(xhr.getAllResponseHeaders())) {
+    return xhr.getResponseHeader(X_REQUEST_URL_HEADER);
+  }
+  return null;
+}
+function validateXhrCompatibility(req) {
+  const unsupportedOptions = [{
+    property: "keepalive",
+    errorCode: 2813
+    /* RuntimeErrorCode.KEEPALIVE_NOT_SUPPORTED_WITH_XHR */
+  }, {
+    property: "cache",
+    errorCode: 2814
+    /* RuntimeErrorCode.CACHE_NOT_SUPPORTED_WITH_XHR */
+  }, {
+    property: "priority",
+    errorCode: 2815
+    /* RuntimeErrorCode.PRIORITY_NOT_SUPPORTED_WITH_XHR */
+  }, {
+    property: "mode",
+    errorCode: 2816
+    /* RuntimeErrorCode.MODE_NOT_SUPPORTED_WITH_XHR */
+  }, {
+    property: "redirect",
+    errorCode: 2817
+    /* RuntimeErrorCode.REDIRECT_NOT_SUPPORTED_WITH_XHR */
+  }, {
+    property: "credentials",
+    errorCode: 2818
+    /* RuntimeErrorCode.CREDENTIALS_NOT_SUPPORTED_WITH_XHR */
+  }];
+  for (const {
+    property,
+    errorCode
+  } of unsupportedOptions) {
+    if (req[property]) {
+      console.warn(formatRuntimeError(errorCode, `Angular detected that a \`HttpClient\` request with the \`${property}\` option was sent using XHR, which does not support it. To use the \`${property}\` option, enable Fetch API support by passing \`withFetch()\` as an argument to \`provideHttpClient()\`.`));
+    }
+  }
+}
+var HttpXhrBackend = class _HttpXhrBackend {
+  xhrFactory;
+  constructor(xhrFactory) {
+    this.xhrFactory = xhrFactory;
+  }
+  /**
+   * Processes a request and returns a stream of response events.
+   * @param req The request object.
+   * @returns An observable of the response events.
+   */
+  handle(req) {
+    if (req.method === "JSONP") {
+      throw new RuntimeError(-2800, (typeof ngDevMode === "undefined" || ngDevMode) && `Cannot make a JSONP request without JSONP support. To fix the problem, either add the \`withJsonpSupport()\` call (if \`provideHttpClient()\` is used) or import the \`HttpClientJsonpModule\` in the root NgModule.`);
+    }
+    ngDevMode && validateXhrCompatibility(req);
+    const xhrFactory = this.xhrFactory;
+    const source = (
+      // Note that `ɵloadImpl` is never defined in client bundles and can be
+      // safely dropped whenever we're running in the browser.
+      // This branching is redundant.
+      // The `ngServerMode` guard also enables tree-shaking of the `from()`
+      // function from the common bundle, as it's only used in server code.
+      false ? from(xhrFactory.\u0275loadImpl()) : of(null)
+    );
+    return source.pipe(switchMap(() => {
+      return new Observable((observer) => {
+        const xhr = xhrFactory.build();
+        xhr.open(req.method, req.urlWithParams);
+        if (req.withCredentials) {
+          xhr.withCredentials = true;
+        }
+        req.headers.forEach((name, values) => xhr.setRequestHeader(name, values.join(",")));
+        if (!req.headers.has(ACCEPT_HEADER)) {
+          xhr.setRequestHeader(ACCEPT_HEADER, ACCEPT_HEADER_VALUE);
+        }
+        if (!req.headers.has(CONTENT_TYPE_HEADER)) {
+          const detectedType = req.detectContentTypeHeader();
+          if (detectedType !== null) {
+            xhr.setRequestHeader(CONTENT_TYPE_HEADER, detectedType);
+          }
+        }
+        if (req.timeout) {
+          xhr.timeout = req.timeout;
+        }
+        if (req.responseType) {
+          const responseType = req.responseType.toLowerCase();
+          xhr.responseType = responseType !== "json" ? responseType : "text";
+        }
+        const reqBody = req.serializeBody();
+        let headerResponse = null;
+        const partialFromXhr = () => {
+          if (headerResponse !== null) {
+            return headerResponse;
+          }
+          const statusText = xhr.statusText || "OK";
+          const headers = new HttpHeaders(xhr.getAllResponseHeaders());
+          const url = getResponseUrl(xhr) || req.url;
+          headerResponse = new HttpHeaderResponse({
+            headers,
+            status: xhr.status,
+            statusText,
+            url
+          });
+          return headerResponse;
+        };
+        const onLoad = () => {
+          let {
+            headers,
+            status,
+            statusText,
+            url
+          } = partialFromXhr();
+          let body = null;
+          if (status !== HTTP_STATUS_CODE_NO_CONTENT) {
+            body = typeof xhr.response === "undefined" ? xhr.responseText : xhr.response;
+          }
+          if (status === 0) {
+            status = !!body ? HTTP_STATUS_CODE_OK : 0;
+          }
+          let ok = status >= 200 && status < 300;
+          if (req.responseType === "json" && typeof body === "string") {
+            const originalBody = body;
+            body = body.replace(XSSI_PREFIX, "");
+            try {
+              body = body !== "" ? JSON.parse(body) : null;
+            } catch (error) {
+              body = originalBody;
+              if (ok) {
+                ok = false;
+                body = {
+                  error,
+                  text: body
+                };
+              }
+            }
+          }
+          if (ok) {
+            observer.next(new HttpResponse({
+              body,
+              headers,
+              status,
+              statusText,
+              url: url || void 0
+            }));
+            observer.complete();
+          } else {
+            observer.error(new HttpErrorResponse({
+              // The error in this case is the response body (error from the server).
+              error: body,
+              headers,
+              status,
+              statusText,
+              url: url || void 0
+            }));
+          }
+        };
+        const onError = (error) => {
+          const {
+            url
+          } = partialFromXhr();
+          const res = new HttpErrorResponse({
+            error,
+            status: xhr.status || 0,
+            statusText: xhr.statusText || "Unknown Error",
+            url: url || void 0
+          });
+          observer.error(res);
+        };
+        let onTimeout = onError;
+        if (req.timeout) {
+          onTimeout = (_) => {
+            const {
+              url
+            } = partialFromXhr();
+            const res = new HttpErrorResponse({
+              error: new DOMException("Request timed out", "TimeoutError"),
+              status: xhr.status || 0,
+              statusText: xhr.statusText || "Request timeout",
+              url: url || void 0
+            });
+            observer.error(res);
+          };
+        }
+        let sentHeaders = false;
+        const onDownProgress = (event) => {
+          if (!sentHeaders) {
+            observer.next(partialFromXhr());
+            sentHeaders = true;
+          }
+          let progressEvent = {
+            type: HttpEventType.DownloadProgress,
+            loaded: event.loaded
+          };
+          if (event.lengthComputable) {
+            progressEvent.total = event.total;
+          }
+          if (req.responseType === "text" && !!xhr.responseText) {
+            progressEvent.partialText = xhr.responseText;
+          }
+          observer.next(progressEvent);
+        };
+        const onUpProgress = (event) => {
+          let progress = {
+            type: HttpEventType.UploadProgress,
+            loaded: event.loaded
+          };
+          if (event.lengthComputable) {
+            progress.total = event.total;
+          }
+          observer.next(progress);
+        };
+        xhr.addEventListener("load", onLoad);
+        xhr.addEventListener("error", onError);
+        xhr.addEventListener("timeout", onTimeout);
+        xhr.addEventListener("abort", onError);
+        if (req.reportProgress) {
+          xhr.addEventListener("progress", onDownProgress);
+          if (reqBody !== null && xhr.upload) {
+            xhr.upload.addEventListener("progress", onUpProgress);
+          }
+        }
+        xhr.send(reqBody);
+        observer.next({
+          type: HttpEventType.Sent
+        });
+        return () => {
+          xhr.removeEventListener("error", onError);
+          xhr.removeEventListener("abort", onError);
+          xhr.removeEventListener("load", onLoad);
+          xhr.removeEventListener("timeout", onTimeout);
+          if (req.reportProgress) {
+            xhr.removeEventListener("progress", onDownProgress);
+            if (reqBody !== null && xhr.upload) {
+              xhr.upload.removeEventListener("progress", onUpProgress);
+            }
+          }
+          if (xhr.readyState !== xhr.DONE) {
+            xhr.abort();
+          }
+        };
+      });
+    }));
+  }
+  static \u0275fac = function HttpXhrBackend_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HttpXhrBackend)(\u0275\u0275inject(XhrFactory));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _HttpXhrBackend,
+    factory: _HttpXhrBackend.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HttpXhrBackend, [{
+    type: Injectable
+  }], () => [{
+    type: XhrFactory
+  }], null);
+})();
+var XSRF_ENABLED = new InjectionToken(ngDevMode ? "XSRF_ENABLED" : "");
+var XSRF_DEFAULT_COOKIE_NAME = "XSRF-TOKEN";
+var XSRF_COOKIE_NAME = new InjectionToken(ngDevMode ? "XSRF_COOKIE_NAME" : "", {
+  providedIn: "root",
+  factory: () => XSRF_DEFAULT_COOKIE_NAME
+});
+var XSRF_DEFAULT_HEADER_NAME = "X-XSRF-TOKEN";
+var XSRF_HEADER_NAME = new InjectionToken(ngDevMode ? "XSRF_HEADER_NAME" : "", {
+  providedIn: "root",
+  factory: () => XSRF_DEFAULT_HEADER_NAME
+});
+var HttpXsrfTokenExtractor = class {
+};
+var HttpXsrfCookieExtractor = class _HttpXsrfCookieExtractor {
+  doc;
+  cookieName;
+  lastCookieString = "";
+  lastToken = null;
+  /**
+   * @internal for testing
+   */
+  parseCount = 0;
+  constructor(doc, cookieName) {
+    this.doc = doc;
+    this.cookieName = cookieName;
+  }
+  getToken() {
+    if (false) {
+      return null;
+    }
+    const cookieString = this.doc.cookie || "";
+    if (cookieString !== this.lastCookieString) {
+      this.parseCount++;
+      this.lastToken = parseCookieValue(cookieString, this.cookieName);
+      this.lastCookieString = cookieString;
+    }
+    return this.lastToken;
+  }
+  static \u0275fac = function HttpXsrfCookieExtractor_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HttpXsrfCookieExtractor)(\u0275\u0275inject(DOCUMENT), \u0275\u0275inject(XSRF_COOKIE_NAME));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _HttpXsrfCookieExtractor,
+    factory: _HttpXsrfCookieExtractor.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HttpXsrfCookieExtractor, [{
+    type: Injectable
+  }], () => [{
+    type: void 0,
+    decorators: [{
+      type: Inject,
+      args: [DOCUMENT]
+    }]
+  }, {
+    type: void 0,
+    decorators: [{
+      type: Inject,
+      args: [XSRF_COOKIE_NAME]
+    }]
+  }], null);
+})();
+function xsrfInterceptorFn(req, next) {
+  const lcUrl = req.url.toLowerCase();
+  if (!inject2(XSRF_ENABLED) || req.method === "GET" || req.method === "HEAD" || lcUrl.startsWith("http://") || lcUrl.startsWith("https://")) {
+    return next(req);
+  }
+  const token = inject2(HttpXsrfTokenExtractor).getToken();
+  const headerName = inject2(XSRF_HEADER_NAME);
+  if (token != null && !req.headers.has(headerName)) {
+    req = req.clone({
+      headers: req.headers.set(headerName, token)
+    });
+  }
+  return next(req);
+}
+var HttpXsrfInterceptor = class _HttpXsrfInterceptor {
+  injector;
+  constructor(injector) {
+    this.injector = injector;
+  }
+  intercept(initialRequest, next) {
+    return runInInjectionContext(this.injector, () => xsrfInterceptorFn(initialRequest, (downstreamRequest) => next.handle(downstreamRequest)));
+  }
+  static \u0275fac = function HttpXsrfInterceptor_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HttpXsrfInterceptor)(\u0275\u0275inject(EnvironmentInjector));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _HttpXsrfInterceptor,
+    factory: _HttpXsrfInterceptor.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HttpXsrfInterceptor, [{
+    type: Injectable
+  }], () => [{
+    type: EnvironmentInjector
+  }], null);
+})();
+var HttpFeatureKind;
+(function(HttpFeatureKind2) {
+  HttpFeatureKind2[HttpFeatureKind2["Interceptors"] = 0] = "Interceptors";
+  HttpFeatureKind2[HttpFeatureKind2["LegacyInterceptors"] = 1] = "LegacyInterceptors";
+  HttpFeatureKind2[HttpFeatureKind2["CustomXsrfConfiguration"] = 2] = "CustomXsrfConfiguration";
+  HttpFeatureKind2[HttpFeatureKind2["NoXsrfProtection"] = 3] = "NoXsrfProtection";
+  HttpFeatureKind2[HttpFeatureKind2["JsonpSupport"] = 4] = "JsonpSupport";
+  HttpFeatureKind2[HttpFeatureKind2["RequestsMadeViaParent"] = 5] = "RequestsMadeViaParent";
+  HttpFeatureKind2[HttpFeatureKind2["Fetch"] = 6] = "Fetch";
+})(HttpFeatureKind || (HttpFeatureKind = {}));
+function makeHttpFeature(kind, providers) {
+  return {
+    \u0275kind: kind,
+    \u0275providers: providers
+  };
+}
+function provideHttpClient(...features) {
+  if (ngDevMode) {
+    const featureKinds = new Set(features.map((f) => f.\u0275kind));
+    if (featureKinds.has(HttpFeatureKind.NoXsrfProtection) && featureKinds.has(HttpFeatureKind.CustomXsrfConfiguration)) {
+      throw new Error(ngDevMode ? `Configuration error: found both withXsrfConfiguration() and withNoXsrfProtection() in the same call to provideHttpClient(), which is a contradiction.` : "");
+    }
+  }
+  const providers = [HttpClient, HttpXhrBackend, HttpInterceptorHandler, {
+    provide: HttpHandler,
+    useExisting: HttpInterceptorHandler
+  }, {
+    provide: HttpBackend,
+    useFactory: () => {
+      return inject2(FETCH_BACKEND, {
+        optional: true
+      }) ?? inject2(HttpXhrBackend);
+    }
+  }, {
+    provide: HTTP_INTERCEPTOR_FNS,
+    useValue: xsrfInterceptorFn,
+    multi: true
+  }, {
+    provide: XSRF_ENABLED,
+    useValue: true
+  }, {
+    provide: HttpXsrfTokenExtractor,
+    useClass: HttpXsrfCookieExtractor
+  }];
+  for (const feature of features) {
+    providers.push(...feature.\u0275providers);
+  }
+  return makeEnvironmentProviders(providers);
+}
+var LEGACY_INTERCEPTOR_FN = new InjectionToken(ngDevMode ? "LEGACY_INTERCEPTOR_FN" : "");
+function withInterceptorsFromDi() {
+  return makeHttpFeature(HttpFeatureKind.LegacyInterceptors, [{
+    provide: LEGACY_INTERCEPTOR_FN,
+    useFactory: legacyInterceptorFnFactory
+  }, {
+    provide: HTTP_INTERCEPTOR_FNS,
+    useExisting: LEGACY_INTERCEPTOR_FN,
+    multi: true
+  }]);
+}
+function withXsrfConfiguration({
+  cookieName,
+  headerName
+}) {
+  const providers = [];
+  if (cookieName !== void 0) {
+    providers.push({
+      provide: XSRF_COOKIE_NAME,
+      useValue: cookieName
+    });
+  }
+  if (headerName !== void 0) {
+    providers.push({
+      provide: XSRF_HEADER_NAME,
+      useValue: headerName
+    });
+  }
+  return makeHttpFeature(HttpFeatureKind.CustomXsrfConfiguration, providers);
+}
+function withNoXsrfProtection() {
+  return makeHttpFeature(HttpFeatureKind.NoXsrfProtection, [{
+    provide: XSRF_ENABLED,
+    useValue: false
+  }]);
+}
+function withJsonpSupport() {
+  return makeHttpFeature(HttpFeatureKind.JsonpSupport, [JsonpClientBackend, {
+    provide: JsonpCallbackContext,
+    useFactory: jsonpCallbackContext
+  }, {
+    provide: HTTP_INTERCEPTOR_FNS,
+    useValue: jsonpInterceptorFn,
+    multi: true
+  }]);
+}
+var HttpClientXsrfModule = class _HttpClientXsrfModule {
+  /**
+   * Disable the default XSRF protection.
+   */
+  static disable() {
+    return {
+      ngModule: _HttpClientXsrfModule,
+      providers: [withNoXsrfProtection().\u0275providers]
+    };
+  }
+  /**
+   * Configure XSRF protection.
+   * @param options An object that can specify either or both
+   * cookie name or header name.
+   * - Cookie name default is `XSRF-TOKEN`.
+   * - Header name default is `X-XSRF-TOKEN`.
+   *
+   */
+  static withOptions(options = {}) {
+    return {
+      ngModule: _HttpClientXsrfModule,
+      providers: withXsrfConfiguration(options).\u0275providers
+    };
+  }
+  static \u0275fac = function HttpClientXsrfModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HttpClientXsrfModule)();
+  };
+  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+    type: _HttpClientXsrfModule
+  });
+  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+    providers: [HttpXsrfInterceptor, {
+      provide: HTTP_INTERCEPTORS,
+      useExisting: HttpXsrfInterceptor,
+      multi: true
+    }, {
+      provide: HttpXsrfTokenExtractor,
+      useClass: HttpXsrfCookieExtractor
+    }, withXsrfConfiguration({
+      cookieName: XSRF_DEFAULT_COOKIE_NAME,
+      headerName: XSRF_DEFAULT_HEADER_NAME
+    }).\u0275providers, {
+      provide: XSRF_ENABLED,
+      useValue: true
+    }]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HttpClientXsrfModule, [{
+    type: NgModule,
+    args: [{
+      providers: [HttpXsrfInterceptor, {
+        provide: HTTP_INTERCEPTORS,
+        useExisting: HttpXsrfInterceptor,
+        multi: true
+      }, {
+        provide: HttpXsrfTokenExtractor,
+        useClass: HttpXsrfCookieExtractor
+      }, withXsrfConfiguration({
+        cookieName: XSRF_DEFAULT_COOKIE_NAME,
+        headerName: XSRF_DEFAULT_HEADER_NAME
+      }).\u0275providers, {
+        provide: XSRF_ENABLED,
+        useValue: true
+      }]
+    }]
+  }], null, null);
+})();
+var HttpClientModule = class _HttpClientModule {
+  static \u0275fac = function HttpClientModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HttpClientModule)();
+  };
+  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+    type: _HttpClientModule
+  });
+  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+    providers: [provideHttpClient(withInterceptorsFromDi())]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HttpClientModule, [{
+    type: NgModule,
+    args: [{
+      /**
+       * Configures the dependency injector where it is imported
+       * with supporting services for HTTP communications.
+       */
+      providers: [provideHttpClient(withInterceptorsFromDi())]
+    }]
+  }], null, null);
+})();
+var HttpClientJsonpModule = class _HttpClientJsonpModule {
+  static \u0275fac = function HttpClientJsonpModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HttpClientJsonpModule)();
+  };
+  static \u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+    type: _HttpClientJsonpModule
+  });
+  static \u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+    providers: [withJsonpSupport().\u0275providers]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HttpClientJsonpModule, [{
+    type: NgModule,
+    args: [{
+      providers: [withJsonpSupport().\u0275providers]
+    }]
+  }], null, null);
+})();
+
+// node_modules/@angular/common/fesm2022/http.mjs
+var httpResource = (() => {
+  const jsonFn = makeHttpResourceFn("json");
+  jsonFn.arrayBuffer = makeHttpResourceFn("arraybuffer");
+  jsonFn.blob = makeHttpResourceFn("blob");
+  jsonFn.text = makeHttpResourceFn("text");
+  return jsonFn;
+})();
+function makeHttpResourceFn(responseType) {
+  return function httpResource2(request, options) {
+    if (ngDevMode && !options?.injector) {
+      assertInInjectionContext(httpResource2);
+    }
+    const injector = options?.injector ?? inject2(Injector);
+    return new HttpResourceImpl(injector, () => normalizeRequest(request, responseType), options?.defaultValue, options?.parse, options?.equal);
+  };
+}
+function normalizeRequest(request, responseType) {
+  let unwrappedRequest = typeof request === "function" ? request() : request;
+  if (unwrappedRequest === void 0) {
+    return void 0;
+  } else if (typeof unwrappedRequest === "string") {
+    unwrappedRequest = { url: unwrappedRequest };
+  }
+  const headers = unwrappedRequest.headers instanceof HttpHeaders ? unwrappedRequest.headers : new HttpHeaders(unwrappedRequest.headers);
+  const params = unwrappedRequest.params instanceof HttpParams ? unwrappedRequest.params : new HttpParams({ fromObject: unwrappedRequest.params });
+  return new HttpRequest(unwrappedRequest.method ?? "GET", unwrappedRequest.url, unwrappedRequest.body ?? null, {
+    headers,
+    params,
+    reportProgress: unwrappedRequest.reportProgress,
+    withCredentials: unwrappedRequest.withCredentials,
+    keepalive: unwrappedRequest.keepalive,
+    cache: unwrappedRequest.cache,
+    priority: unwrappedRequest.priority,
+    mode: unwrappedRequest.mode,
+    redirect: unwrappedRequest.redirect,
+    responseType,
+    context: unwrappedRequest.context,
+    transferCache: unwrappedRequest.transferCache,
+    credentials: unwrappedRequest.credentials,
+    timeout: unwrappedRequest.timeout
+  });
+}
+var HttpResourceImpl = class extends ResourceImpl {
+  client;
+  _headers = linkedSignal({
+    source: this.extRequest,
+    computation: () => void 0
+  });
+  _progress = linkedSignal({
+    source: this.extRequest,
+    computation: () => void 0
+  });
+  _statusCode = linkedSignal({
+    source: this.extRequest,
+    computation: () => void 0
+  });
+  headers = computed(() => this.status() === "resolved" || this.status() === "error" ? this._headers() : void 0, ...ngDevMode ? [{ debugName: "headers" }] : []);
+  progress = this._progress.asReadonly();
+  statusCode = this._statusCode.asReadonly();
+  constructor(injector, request, defaultValue, parse, equal) {
+    super(request, ({ params: request2, abortSignal }) => {
+      let sub;
+      const onAbort = () => sub.unsubscribe();
+      abortSignal.addEventListener("abort", onAbort);
+      const stream = signal({ value: void 0 }, ...ngDevMode ? [{ debugName: "stream" }] : []);
+      let resolve;
+      const promise = new Promise((r) => resolve = r);
+      const send2 = (value) => {
+        stream.set(value);
+        resolve?.(stream);
+        resolve = void 0;
+      };
+      sub = this.client.request(request2).subscribe({
+        next: (event) => {
+          switch (event.type) {
+            case HttpEventType.Response:
+              this._headers.set(event.headers);
+              this._statusCode.set(event.status);
+              try {
+                send2({ value: parse ? parse(event.body) : event.body });
+              } catch (error) {
+                send2({ error: encapsulateResourceError(error) });
+              }
+              break;
+            case HttpEventType.DownloadProgress:
+              this._progress.set(event);
+              break;
+          }
+        },
+        error: (error) => {
+          if (error instanceof HttpErrorResponse) {
+            this._headers.set(error.headers);
+            this._statusCode.set(error.status);
+          }
+          send2({ error });
+          abortSignal.removeEventListener("abort", onAbort);
+        },
+        complete: () => {
+          if (resolve) {
+            send2({
+              error: new RuntimeError(991, ngDevMode && "Resource completed before producing a value")
+            });
+          }
+          abortSignal.removeEventListener("abort", onAbort);
+        }
+      });
+      return promise;
+    }, defaultValue, equal, injector);
+    this.client = injector.get(HttpClient);
+  }
+  set(value) {
+    super.set(value);
+    this._headers.set(void 0);
+    this._progress.set(void 0);
+    this._statusCode.set(void 0);
+  }
+};
+var HTTP_TRANSFER_CACHE_ORIGIN_MAP = new InjectionToken(ngDevMode ? "HTTP_TRANSFER_CACHE_ORIGIN_MAP" : "");
+var CACHE_OPTIONS = new InjectionToken(ngDevMode ? "HTTP_TRANSFER_STATE_CACHE_OPTIONS" : "");
+
 // node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs
 var Meta = class _Meta {
   _doc;
@@ -36746,12 +39522,12 @@ var DestinationAndHighlightsComponent = class _DestinationAndHighlightsComponent
       \u0275\u0275advance(15);
       \u0275\u0275property("ngForOf", ctx.images);
     }
-  }, dependencies: [CommonModule, NgForOf], styles: ["\n\n.carousel-container[_ngcontent-%COMP%] {\n  padding: 40px 100px;\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  overflow: hidden;\n}\n.title-container[_ngcontent-%COMP%] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 36px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 15px;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.3s forwards;\n}\n.button-container[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 20px;\n  z-index: 1;\n  width: 100%;\n  padding: 0 20px;\n}\nbutton[_ngcontent-%COMP%] {\n  color: #FFB940;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  transition: background-color 0.3s ease;\n}\nbutton[_ngcontent-%COMP%]:hover {\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbutton[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n}\n.slider-container[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  width: 100%;\n}\n.slider-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  transition: transform 0.3s ease;\n}\n.destination-slide[_ngcontent-%COMP%] {\n  flex: 0 0 calc(25% - 16px);\n  margin-right: 16px;\n  box-sizing: border-box;\n}\n.destination-card[_ngcontent-%COMP%] {\n  height: 300px;\n  width: 100%;\n  margin: 0 auto;\n  overflow: hidden;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  position: relative;\n  opacity: 1;\n  transition: transform 0.3s ease;\n  transform: translateY(0);\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n.destination-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-10px);\n}\n.destination-image[_ngcontent-%COMP%] {\n  position: relative;\n  height: 100%;\n  overflow: hidden;\n}\n.destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n.image-country[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  font-size: 16px;\n  color: white;\n  font-weight: bold;\n  opacity: 1;\n}\n.image-title[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: 10px;\n  left: 10px;\n  color: white;\n  padding: 10px;\n  opacity: 1;\n}\n.image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 18px;\n  font-weight: 600;\n}\n.image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  font-weight: normal;\n  margin-top: 5px;\n}\n@keyframes _ngcontent-%COMP%_fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 1024px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 100px 40px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    height: 250px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 18px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 16px;\n    font-weight: 400;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 30px;\n  }\n}\n@media (max-width: 768px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 60px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 220px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 26px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 20px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 100%;\n    margin-right: 0;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 200px;\n  }\n  .slider-container[_ngcontent-%COMP%] {\n    padding: 0 5px;\n  }\n  .button-container[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 22px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 19px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n@media (max-width: 375px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 30px 15px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    height: 180px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 19px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 15px;\n  }\n  .destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n    object-fit: cover;\n    object-position: center;\n  }\n}\n/*# sourceMappingURL=destination-and-highlights.css.map */"] });
+  }, dependencies: [CommonModule, NgForOf], styles: ["\n\n.carousel-container[_ngcontent-%COMP%] {\n  padding: 40px 100px;\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  overflow: hidden;\n}\n.title-container[_ngcontent-%COMP%] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 36px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 15px;\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out 0.3s forwards;\n}\n.button-container[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 20px;\n  z-index: 1;\n  width: 100%;\n  padding: 0 20px;\n}\nbutton[_ngcontent-%COMP%] {\n  color: #FFB940;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  transition: background-color 0.3s ease;\n}\nbutton[_ngcontent-%COMP%]:hover {\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbutton[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n}\n.slider-container[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  width: 100%;\n}\n.slider-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  transition: transform 0.3s ease;\n}\n.destination-slide[_ngcontent-%COMP%] {\n  flex: 0 0 calc(25% - 16px);\n  margin-right: 16px;\n  box-sizing: border-box;\n}\n.destination-card[_ngcontent-%COMP%] {\n  height: 300px;\n  width: 100%;\n  margin: 0 auto;\n  overflow: hidden;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  position: relative;\n  opacity: 1;\n  transition: transform 0.3s ease;\n  transform: translateY(0);\n  animation: _ngcontent-%COMP%_fadeInUp 1s ease-out forwards;\n}\n.destination-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-10px);\n}\n.destination-image[_ngcontent-%COMP%] {\n  position: relative;\n  height: 100%;\n  overflow: hidden;\n}\n.destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n.image-country[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  font-size: 16px;\n  color: white;\n  font-weight: bold;\n  opacity: 1;\n}\n.image-title[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: 10px;\n  left: 10px;\n  color: white;\n  padding: 10px;\n  opacity: 1;\n}\n.image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 18px;\n  font-weight: 600;\n}\n.image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  font-weight: normal;\n  margin-top: 5px;\n}\n@keyframes _ngcontent-%COMP%_fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 1024px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 100px 40px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    height: 250px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 18px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 16px;\n    font-weight: 400;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 30px;\n  }\n}\n@media (max-width: 768px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 60px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 220px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 26px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 40px 20px;\n  }\n  .destination-slide[_ngcontent-%COMP%] {\n    flex: 0 0 100%;\n    margin-right: 0;\n  }\n  .destination-card[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n  .slider-container[_ngcontent-%COMP%] {\n    padding: 0 5px;\n  }\n  .button-container[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n  .title-container[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n    font-size: 22px;\n  }\n  .image-country[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 19px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 16px;\n  }\n  .destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n@media (max-width: 375px) {\n  .carousel-container[_ngcontent-%COMP%] {\n    padding: 30px 15px;\n  }\n  .image-title[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n    font-size: 19px;\n  }\n  .image-title[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n    font-size: 15px;\n  }\n  .destination-image[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n    object-fit: cover;\n    object-position: center;\n  }\n}\n/*# sourceMappingURL=destination-and-highlights.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DestinationAndHighlightsComponent, [{
     type: Component,
-    args: [{ selector: "app-destination-and-highlights", imports: [CommonModule], standalone: true, template: '<div class="carousel-container" id="destinations">\r\n  <div class="title-container">\r\n    <h2>\u{1F418} Destinations & Highlights</h2>\r\n  </div>\r\n\r\n  <div class="button-container">\r\n    <!-- Previous Button -->\r\n    <button class="prev" (click)="moveToPrevSlide()">\r\n      <svg\r\n        xmlns="http://www.w3.org/2000/svg"\r\n        width="24"\r\n        height="24"\r\n        viewBox="0 0 24 24"\r\n        fill="currentColor"\r\n      >\r\n        <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n        <path\r\n          d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"\r\n        />\r\n      </svg>\r\n    </button>\r\n\r\n    <!-- Next Button -->\r\n    <button class="next" (click)="moveToNextSlide()">\r\n      <svg\r\n        xmlns="http://www.w3.org/2000/svg"\r\n        width="24"\r\n        height="24"\r\n        viewBox="0 0 24 24"\r\n        fill="currentColor"\r\n      >\r\n        <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n        <path\r\n          d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"\r\n        />\r\n      </svg>\r\n    </button>\r\n  </div>\r\n\r\n  <div class="slider-container">\r\n    <div class="slider-wrapper">\r\n      <div\r\n        *ngFor="let image of images; let i = index"\r\n        class="destination-slide"\r\n      >\r\n        <div class="destination-card">\r\n          <div class="destination-image">\r\n            <img [src]="image.image" [alt]="image.alt" />\r\n            <div class="image-country">{{ image.country }}</div>\r\n            <div class="image-title">\r\n              <h3>{{ image.title }}</h3>\r\n              <p>{{ image.description }}</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/destination-and-highlights/destination-and-highlights.css */\n.carousel-container {\n  padding: 40px 100px;\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  overflow: hidden;\n}\n.title-container {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.title-container h2 {\n  font-size: 36px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 15px;\n  animation: fadeInUp 1s ease-out 0.3s forwards;\n}\n.button-container {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 20px;\n  z-index: 1;\n  width: 100%;\n  padding: 0 20px;\n}\nbutton {\n  color: #FFB940;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  transition: background-color 0.3s ease;\n}\nbutton:hover {\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbutton svg {\n  width: 24px;\n  height: 24px;\n}\n.slider-container {\n  position: relative;\n  overflow: hidden;\n  width: 100%;\n}\n.slider-wrapper {\n  display: flex;\n  transition: transform 0.3s ease;\n}\n.destination-slide {\n  flex: 0 0 calc(25% - 16px);\n  margin-right: 16px;\n  box-sizing: border-box;\n}\n.destination-card {\n  height: 300px;\n  width: 100%;\n  margin: 0 auto;\n  overflow: hidden;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  position: relative;\n  opacity: 1;\n  transition: transform 0.3s ease;\n  transform: translateY(0);\n  animation: fadeInUp 1s ease-out forwards;\n}\n.destination-card:hover {\n  transform: translateY(-10px);\n}\n.destination-image {\n  position: relative;\n  height: 100%;\n  overflow: hidden;\n}\n.destination-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n.image-country {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  font-size: 16px;\n  color: white;\n  font-weight: bold;\n  opacity: 1;\n}\n.image-title {\n  position: absolute;\n  bottom: 10px;\n  left: 10px;\n  color: white;\n  padding: 10px;\n  opacity: 1;\n}\n.image-title h3 {\n  font-size: 18px;\n  font-weight: 600;\n}\n.image-title p {\n  font-size: 16px;\n  font-weight: normal;\n  margin-top: 5px;\n}\n@keyframes fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 1024px) {\n  .carousel-container {\n    padding: 100px 40px;\n  }\n  .destination-slide {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card {\n    height: 250px;\n  }\n  .image-country {\n    font-size: 14px;\n  }\n  .image-title h3 {\n    font-size: 18px;\n  }\n  .image-title p {\n    font-size: 16px;\n    font-weight: 400;\n  }\n  .title-container h2 {\n    font-size: 30px;\n  }\n}\n@media (max-width: 768px) {\n  .carousel-container {\n    padding: 40px 60px;\n  }\n  .destination-slide {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card {\n    width: 100%;\n    height: 220px;\n  }\n  .image-country {\n    font-size: 14px;\n  }\n  .image-title h3 {\n    font-size: 16px;\n  }\n  .image-title p {\n    font-size: 12px;\n  }\n  .title-container h2 {\n    font-size: 26px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-container {\n    padding: 40px 20px;\n  }\n  .destination-slide {\n    flex: 0 0 100%;\n    margin-right: 0;\n  }\n  .destination-card {\n    width: 100%;\n    height: 200px;\n  }\n  .slider-container {\n    padding: 0 5px;\n  }\n  .button-container {\n    margin-top: 10px;\n  }\n  .title-container h2 {\n    font-size: 22px;\n  }\n  .image-country {\n    font-size: 12px;\n  }\n  .image-title h3 {\n    font-size: 19px;\n  }\n  .image-title p {\n    font-size: 16px;\n  }\n  .destination-image img {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n@media (max-width: 375px) {\n  .carousel-container {\n    padding: 30px 15px;\n  }\n  .destination-card {\n    height: 180px;\n  }\n  .image-title h3 {\n    font-size: 19px;\n  }\n  .image-title p {\n    font-size: 15px;\n  }\n  .destination-image img {\n    object-fit: cover;\n    object-position: center;\n  }\n}\n/*# sourceMappingURL=destination-and-highlights.css.map */\n"] }]
+    args: [{ selector: "app-destination-and-highlights", imports: [CommonModule], standalone: true, template: '<div class="carousel-container" id="destinations">\r\n  <div class="title-container">\r\n    <h2>\u{1F418} Destinations & Highlights</h2>\r\n  </div>\r\n\r\n  <div class="button-container">\r\n    <!-- Previous Button -->\r\n    <button class="prev" (click)="moveToPrevSlide()">\r\n      <svg\r\n        xmlns="http://www.w3.org/2000/svg"\r\n        width="24"\r\n        height="24"\r\n        viewBox="0 0 24 24"\r\n        fill="currentColor"\r\n      >\r\n        <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n        <path\r\n          d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-5.293 6.293a1 1 0 0 0 -1.414 0l-3 3l-.083 .094a1 1 0 0 0 .083 1.32l3 3l.094 .083a1 1 0 0 0 1.32 -.083l.083 -.094a1 1 0 0 0 -.083 -1.32l-2.292 -2.293l2.292 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z"\r\n        />\r\n      </svg>\r\n    </button>\r\n\r\n    <!-- Next Button -->\r\n    <button class="next" (click)="moveToNextSlide()">\r\n      <svg\r\n        xmlns="http://www.w3.org/2000/svg"\r\n        width="24"\r\n        height="24"\r\n        viewBox="0 0 24 24"\r\n        fill="currentColor"\r\n      >\r\n        <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r\n        <path\r\n          d="M19 2a3 3 0 0 1 3 3v14a3 3 0 0 1 -3 3h-14a3 3 0 0 1 -3 -3v-14a3 3 0 0 1 3 -3zm-7.387 6.21a1 1 0 0 0 -1.32 .083l-.083 .094a1 1 0 0 0 .083 1.32l2.292 2.293l-2.292 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l3 -3l.083 -.094a1 1 0 0 0 -.083 -1.32l-3 -3z"\r\n        />\r\n      </svg>\r\n    </button>\r\n  </div>\r\n\r\n  <div class="slider-container">\r\n    <div class="slider-wrapper">\r\n      <div\r\n        *ngFor="let image of images; let i = index"\r\n        class="destination-slide"\r\n      >\r\n        <div class="destination-card">\r\n          <div class="destination-image">\r\n            <img [src]="image.image" [alt]="image.alt" />\r\n            <div class="image-country">{{ image.country }}</div>\r\n            <div class="image-title">\r\n              <h3>{{ image.title }}</h3>\r\n              <p>{{ image.description }}</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/destination-and-highlights/destination-and-highlights.css */\n.carousel-container {\n  padding: 40px 100px;\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  overflow: hidden;\n}\n.title-container {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.title-container h2 {\n  font-size: 36px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 15px;\n  animation: fadeInUp 1s ease-out 0.3s forwards;\n}\n.button-container {\n  display: flex;\n  justify-content: flex-end;\n  margin-top: 20px;\n  z-index: 1;\n  width: 100%;\n  padding: 0 20px;\n}\nbutton {\n  color: #FFB940;\n  border: none;\n  padding: 10px;\n  cursor: pointer;\n  transition: background-color 0.3s ease;\n}\nbutton:hover {\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbutton svg {\n  width: 24px;\n  height: 24px;\n}\n.slider-container {\n  position: relative;\n  overflow: hidden;\n  width: 100%;\n}\n.slider-wrapper {\n  display: flex;\n  transition: transform 0.3s ease;\n}\n.destination-slide {\n  flex: 0 0 calc(25% - 16px);\n  margin-right: 16px;\n  box-sizing: border-box;\n}\n.destination-card {\n  height: 300px;\n  width: 100%;\n  margin: 0 auto;\n  overflow: hidden;\n  border-radius: 8px;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n  position: relative;\n  opacity: 1;\n  transition: transform 0.3s ease;\n  transform: translateY(0);\n  animation: fadeInUp 1s ease-out forwards;\n}\n.destination-card:hover {\n  transform: translateY(-10px);\n}\n.destination-image {\n  position: relative;\n  height: 100%;\n  overflow: hidden;\n}\n.destination-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n.image-country {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  font-size: 16px;\n  color: white;\n  font-weight: bold;\n  opacity: 1;\n}\n.image-title {\n  position: absolute;\n  bottom: 10px;\n  left: 10px;\n  color: white;\n  padding: 10px;\n  opacity: 1;\n}\n.image-title h3 {\n  font-size: 18px;\n  font-weight: 600;\n}\n.image-title p {\n  font-size: 16px;\n  font-weight: normal;\n  margin-top: 5px;\n}\n@keyframes fadeInUp {\n  0% {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 1024px) {\n  .carousel-container {\n    padding: 100px 40px;\n  }\n  .destination-slide {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card {\n    height: 250px;\n  }\n  .image-country {\n    font-size: 14px;\n  }\n  .image-title h3 {\n    font-size: 18px;\n  }\n  .image-title p {\n    font-size: 16px;\n    font-weight: 400;\n  }\n  .title-container h2 {\n    font-size: 30px;\n  }\n}\n@media (max-width: 768px) {\n  .carousel-container {\n    padding: 40px 60px;\n  }\n  .destination-slide {\n    flex: 0 0 calc(33.33% - 12px);\n    margin-right: 12px;\n  }\n  .destination-card {\n    width: 100%;\n    height: 220px;\n  }\n  .image-country {\n    font-size: 14px;\n  }\n  .image-title h3 {\n    font-size: 16px;\n  }\n  .image-title p {\n    font-size: 12px;\n  }\n  .title-container h2 {\n    font-size: 26px;\n  }\n}\n@media (max-width: 480px) {\n  .carousel-container {\n    padding: 40px 20px;\n  }\n  .destination-slide {\n    flex: 0 0 100%;\n    margin-right: 0;\n  }\n  .destination-card {\n    width: 100%;\n  }\n  .slider-container {\n    padding: 0 5px;\n  }\n  .button-container {\n    margin-top: 10px;\n  }\n  .title-container h2 {\n    font-size: 22px;\n  }\n  .image-country {\n    font-size: 12px;\n  }\n  .image-title h3 {\n    font-size: 19px;\n  }\n  .image-title p {\n    font-size: 16px;\n  }\n  .destination-image img {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n@media (max-width: 375px) {\n  .carousel-container {\n    padding: 30px 15px;\n  }\n  .image-title h3 {\n    font-size: 19px;\n  }\n  .image-title p {\n    font-size: 15px;\n  }\n  .destination-image img {\n    object-fit: cover;\n    object-position: center;\n  }\n}\n/*# sourceMappingURL=destination-and-highlights.css.map */\n"] }]
   }], () => [{ type: Renderer2 }, { type: ElementRef }, { type: ChangeDetectorRef }], null);
 })();
 (() => {
@@ -39717,14 +42493,14 @@ function setUpControl(control, dir, callSetDisabledState = setDisabledStateDefau
   setUpDisabledChangeHandler(control, dir);
 }
 function cleanUpControl(control, dir, validateControlPresenceOnChange = true) {
-  const noop3 = () => {
+  const noop4 = () => {
     if (validateControlPresenceOnChange && (typeof ngDevMode === "undefined" || ngDevMode)) {
       _noControlError(dir);
     }
   };
   if (dir.valueAccessor) {
-    dir.valueAccessor.registerOnChange(noop3);
-    dir.valueAccessor.registerOnTouched(noop3);
+    dir.valueAccessor.registerOnChange(noop4);
+    dir.valueAccessor.registerOnTouched(noop4);
   }
   cleanUpValidators(control, dir);
   if (control) {
@@ -39790,10 +42566,10 @@ function cleanUpValidators(control, dir) {
       }
     }
   }
-  const noop3 = () => {
+  const noop4 = () => {
   };
-  registerOnValidatorChange(dir._rawValidators, noop3);
-  registerOnValidatorChange(dir._rawAsyncValidators, noop3);
+  registerOnValidatorChange(dir._rawValidators, noop4);
+  registerOnValidatorChange(dir._rawAsyncValidators, noop4);
   return isControlUpdated;
 }
 function setUpViewChangePipeline(control, dir) {
@@ -43976,7 +46752,8 @@ var environment = {
   },
   reCAPTCHA: {
     siteKey: "6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ"
-  }
+  },
+  apiUrl: "http://localhost:3000/api"
 };
 
 // src/app/safari-service.ts
@@ -54260,7 +57037,54 @@ function SafariCard_div_6_Template(rf, ctx) {
     \u0275\u0275attribute("data-sitekey", "6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ");
   }
 }
+function SafariCard_div_7_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r7 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 18);
+    \u0275\u0275listener("click", function SafariCard_div_7_Template_div_click_0_listener() {
+      \u0275\u0275restoreView(_r7);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275elementStart(1, "div", 19);
+    \u0275\u0275listener("click", function SafariCard_div_7_Template_div_click_1_listener($event) {
+      \u0275\u0275restoreView(_r7);
+      return \u0275\u0275resetView($event.stopPropagation());
+    });
+    \u0275\u0275elementStart(2, "div", 20)(3, "h3");
+    \u0275\u0275text(4, "Would you like to pay now?");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "button", 21);
+    \u0275\u0275listener("click", function SafariCard_div_7_Template_button_click_5_listener() {
+      \u0275\u0275restoreView(_r7);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275text(6, "\u2716");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "div", 22)(8, "p");
+    \u0275\u0275text(9, "Your booking has been confirmed. You can complete your payment now or later.");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "div", 40)(11, "button", 13);
+    \u0275\u0275listener("click", function SafariCard_div_7_Template_button_click_11_listener() {
+      \u0275\u0275restoreView(_r7);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.goToPayment());
+    });
+    \u0275\u0275text(12, "Yes, Pay Now");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "button", 12);
+    \u0275\u0275listener("click", function SafariCard_div_7_Template_button_click_13_listener() {
+      \u0275\u0275restoreView(_r7);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.closeModal());
+    });
+    \u0275\u0275text(14, "No, Maybe Later");
+    \u0275\u0275elementEnd()()()()();
+  }
+}
 var SafariCard = class _SafariCard {
+  router;
   sanitizer;
   safariService;
   snackBar;
@@ -54270,11 +57094,13 @@ var SafariCard = class _SafariCard {
   name = "";
   email = "";
   phone = "";
-  numAdults = 1;
+  numAdults = 0;
   numKids = 0;
   fromDate = "";
   toDate = "";
-  constructor(sanitizer, safariService, snackBar) {
+  showPaymentModal = false;
+  constructor(router, sanitizer, safariService, snackBar) {
+    this.router = router;
     this.sanitizer = sanitizer;
     this.safariService = safariService;
     this.snackBar = snackBar;
@@ -54295,20 +57121,11 @@ var SafariCard = class _SafariCard {
   closeModal() {
     this.selectedPackageDetails = null;
     this.selectedPackage = null;
+    this.showPaymentModal = false;
   }
-  // Handle form submission
   onSubmitBooking() {
     if (!this.name || !this.email || !this.phone || !this.fromDate || !this.toDate || this.numAdults <= 0) {
       this.showSnackbar("Please fill all required fields.", "error");
-      return;
-    }
-    this.name = this.sanitizeInput(this.name);
-    this.email = this.sanitizeInput(this.email);
-    this.phone = this.sanitizeInput(this.phone);
-    this.fromDate = this.sanitizeInput(this.fromDate);
-    this.toDate = this.sanitizeInput(this.toDate);
-    if (this.numAdults <= 0 || this.numKids < 0) {
-      this.showSnackbar("Invalid number of adults or kids.", "error");
       return;
     }
     grecaptcha.execute("6LeCsKYrAAAAAAjUr_cM1jdd9dG8XhtYSvRmfOeJ", { action: "submit" }).then((token) => {
@@ -54323,18 +57140,32 @@ var SafariCard = class _SafariCard {
         packageTitle: this.selectedPackageDetails,
         recaptchaToken: token
       };
-      es_default.send(environment.emailJS.serviceID, environment.emailJS.templateID, formData, environment.emailJS.userID).then((response) => {
-        console.log("Email sent successfully:", response);
+      es_default.send(environment.emailJS.serviceID, environment.emailJS.templateID, formData, environment.emailJS.userID).then(() => {
+        this.showSnackbar("Your booking is confirmed!", "success");
         this.closeModal();
-        this.showSnackbar("Your booking has been confirmed! A confirmation email has been sent.", "success");
         this.clearForm();
-      }, (error) => {
-        console.error("Error sending email:", error);
-        this.showSnackbar("There was an error submitting the form. Please try again later.", "error");
+      }).catch((error) => {
+        console.error("Email send error:", error);
+        this.showSnackbar("There was an error. Try again.", "error");
       });
-    }).catch((error) => {
-      console.error("reCAPTCHA error:", error);
-      this.showSnackbar("reCAPTCHA verification failed. Please try again.", "error");
+    }).catch(() => {
+      this.showSnackbar("reCAPTCHA failed. Try again.", "error");
+    });
+  }
+  goToPayment() {
+    this.closeModal();
+    this.router.navigate(["/payment"]);
+  }
+  sanitizeInput(input2) {
+    return input2.trim();
+  }
+  showSnackbar(message, type) {
+    const snackBarClass = type === "success" ? "snackbar-success" : "snackbar-error";
+    this.snackBar.open(message, "Close", {
+      duration: 3e3,
+      panelClass: [snackBarClass],
+      horizontalPosition: "right",
+      verticalPosition: "top"
     });
   }
   clearForm() {
@@ -54347,25 +57178,10 @@ var SafariCard = class _SafariCard {
     this.toDate = "";
     this.selectedPackageDetails = null;
   }
-  sanitizeInput(input2) {
-    return input2.trim();
-  }
-  // Show Material Snackbar
-  showSnackbar(message, type) {
-    const snackBarClass = type === "success" ? "snackbar-success" : "snackbar-error";
-    const snackBarConfig = {
-      duration: 3e3,
-      panelClass: [snackBarClass],
-      // Apply the custom class based on message type
-      horizontalPosition: "right",
-      verticalPosition: "top"
-    };
-    this.snackBar.open(message, "Close", snackBarConfig);
-  }
   static \u0275fac = function SafariCard_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _SafariCard)(\u0275\u0275directiveInject(DomSanitizer), \u0275\u0275directiveInject(SafariService), \u0275\u0275directiveInject(MatSnackBar));
+    return new (__ngFactoryType__ || _SafariCard)(\u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(DomSanitizer), \u0275\u0275directiveInject(SafariService), \u0275\u0275directiveInject(MatSnackBar));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SafariCard, selectors: [["app-safari-card"]], features: [\u0275\u0275ProvidersFeature([SafariService])], decls: 7, vars: 3, consts: [["id", "safaris", 1, "safari-cards-container"], [1, "safari-title"], [1, "cards"], ["class", "card", 4, "ngFor", "ngForOf"], ["class", "modal-overlay", 3, "click", 4, "ngIf"], [1, "card"], [1, "card-header"], [1, "card-body"], [1, "card-image"], [1, "card-img", 3, "src", "alt"], [4, "ngFor", "ngForOf"], [1, "button-wrapper"], [1, "view-details-btn", 3, "click"], [1, "book-now-btn", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "16", "height", "16", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M7 12l5 5l10 -10"], ["d", "M2 12l5 5m5 -5l5 -5"], [1, "modal-overlay", 3, "click"], [1, "modal-content", 3, "click"], [1, "modal-header"], [1, "close-btn", 3, "click"], [1, "modal-body"], [3, "ngSubmit"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", "", 3, "ngModelChange", "ngModel"], ["for", "email"], ["type", "email", "id", "email", "name", "email", "required", "", 3, "ngModelChange", "ngModel"], ["for", "phone"], ["type", "text", "id", "phone", "name", "phone", "required", "", 3, "ngModelChange", "ngModel"], ["for", "adults"], ["type", "number", "id", "adults", "name", "numAdults", "min", "1", "required", "", 3, "ngModelChange", "ngModel"], ["for", "kids"], ["type", "number", "id", "kids", "name", "numKids", "min", "0", 3, "ngModelChange", "ngModel"], ["for", "fromDate"], ["type", "date", "id", "fromDate", "name", "fromDate", "required", "", 3, "ngModelChange", "ngModel"], ["for", "toDate"], ["type", "date", "id", "toDate", "name", "toDate", "required", "", 3, "ngModelChange", "ngModel"], [1, "g-recaptcha"], ["type", "submit", 1, "book-now-btn"]], template: function SafariCard_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SafariCard, selectors: [["app-safari-card"]], features: [\u0275\u0275ProvidersFeature([SafariService])], decls: 8, vars: 4, consts: [["id", "safaris", 1, "safari-cards-container"], [1, "safari-title"], [1, "cards"], ["class", "card", 4, "ngFor", "ngForOf"], ["class", "modal-overlay", 3, "click", 4, "ngIf"], [1, "card"], [1, "card-header"], [1, "card-body"], [1, "card-image"], [1, "card-img", 3, "src", "alt"], [4, "ngFor", "ngForOf"], [1, "button-wrapper"], [1, "view-details-btn", 3, "click"], [1, "book-now-btn", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "16", "height", "16", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon-check"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M7 12l5 5l10 -10"], ["d", "M2 12l5 5m5 -5l5 -5"], [1, "modal-overlay", 3, "click"], [1, "modal-content", 3, "click"], [1, "modal-header"], [1, "close-btn", 3, "click"], [1, "modal-body"], [3, "ngSubmit"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", "", 3, "ngModelChange", "ngModel"], ["for", "email"], ["type", "email", "id", "email", "name", "email", "required", "", 3, "ngModelChange", "ngModel"], ["for", "phone"], ["type", "text", "id", "phone", "name", "phone", "required", "", 3, "ngModelChange", "ngModel"], ["for", "adults"], ["type", "number", "id", "adults", "name", "numAdults", "min", "1", "required", "", 3, "ngModelChange", "ngModel"], ["for", "kids"], ["type", "number", "id", "kids", "name", "numKids", "min", "0", 3, "ngModelChange", "ngModel"], ["for", "fromDate"], ["type", "date", "id", "fromDate", "name", "fromDate", "required", "", 3, "ngModelChange", "ngModel"], ["for", "toDate"], ["type", "date", "id", "toDate", "name", "toDate", "required", "", 3, "ngModelChange", "ngModel"], [1, "g-recaptcha"], ["type", "submit", 1, "book-now-btn"], [2, "display", "flex", "gap", "10px", "justify-content", "center", "margin-top", "20px"]], template: function SafariCard_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "div", 0)(1, "h2", 1);
       \u0275\u0275text(2, "\u{1F6CF}\uFE0F Safari Packages");
@@ -54373,7 +57189,7 @@ var SafariCard = class _SafariCard {
       \u0275\u0275elementStart(3, "div", 2);
       \u0275\u0275template(4, SafariCard_div_4_Template, 18, 6, "div", 3);
       \u0275\u0275elementEnd()();
-      \u0275\u0275template(5, SafariCard_div_5_Template, 50, 2, "div", 4)(6, SafariCard_div_6_Template, 33, 9, "div", 4);
+      \u0275\u0275template(5, SafariCard_div_5_Template, 50, 2, "div", 4)(6, SafariCard_div_6_Template, 33, 9, "div", 4)(7, SafariCard_div_7_Template, 15, 0, "div", 4);
     }
     if (rf & 2) {
       \u0275\u0275advance(4);
@@ -54382,6 +57198,8 @@ var SafariCard = class _SafariCard {
       \u0275\u0275property("ngIf", ctx.selectedPackage);
       \u0275\u0275advance();
       \u0275\u0275property("ngIf", ctx.selectedPackageDetails);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", ctx.showPaymentModal);
     }
   }, dependencies: [CommonModule, NgForOf, NgIf, ReactiveFormsModule, \u0275NgNoValidate, DefaultValueAccessor, NumberValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinValidator, FormsModule, NgModel, NgForm], styles: ["\n\n.safari-title[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container[_ngcontent-%COMP%] {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card[_ngcontent-%COMP%] {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image[_ngcontent-%COMP%] {\n  margin-bottom: 20px;\n}\n.card-img[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body[_ngcontent-%COMP%] {\n  padding: 10px;\n}\n.card-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay[_ngcontent-%COMP%] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 9999;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n  z-index: 10000;\n}\n.modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn[_ngcontent-%COMP%] {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body[_ngcontent-%COMP%] {\n  max-height: 500px;\n  overflow-y: scroll;\n  padding-right: 10px;\n  scrollbar-width: thin;\n  scrollbar-color: transparent transparent;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: transparent;\n}\n.modal-body[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.modal-body[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%] {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body[_ngcontent-%COMP%]   li[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.modal-body[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.modal-body[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  font-size: 16px;\n  margin-bottom: 5px;\n}\n.modal-body[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.modal-body[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 10px;\n  font-size: 16px;\n  border-radius: 5px;\n  cursor: pointer;\n  margin-top: 20px;\n}\n.modal-body[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:disabled {\n  background-color: #ccc;\n  cursor: not-allowed;\n}\n@media (max-width: 768px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 28px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container[_ngcontent-%COMP%] {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .safari-title[_ngcontent-%COMP%] {\n    font-size: 24px;\n  }\n  .view-details-btn[_ngcontent-%COMP%], \n   .book-now-btn[_ngcontent-%COMP%] {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */"] });
 };
@@ -54660,11 +57478,28 @@ var SafariCard = class _SafariCard {
     </div>\r
   </div>\r
 </div>\r
+\r
+<!-- Payment Decision Modal -->\r
+<div *ngIf="showPaymentModal" class="modal-overlay" (click)="closeModal()">\r
+  <div class="modal-content" (click)="$event.stopPropagation()">\r
+    <div class="modal-header">\r
+      <h3>Would you like to pay now?</h3>\r
+      <button class="close-btn" (click)="closeModal()">\u2716</button>\r
+    </div>\r
+    <div class="modal-body">\r
+      <p>Your booking has been confirmed. You can complete your payment now or later.</p>\r
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">\r
+        <button class="book-now-btn" (click)="goToPayment()">Yes, Pay Now</button>\r
+        <button class="view-details-btn" (click)="closeModal()">No, Maybe Later</button>\r
+      </div>\r
+    </div>\r
+  </div>\r
+</div>\r
 `, styles: ["/* src/app/components/safari-card/safari-card.css */\n.safari-title {\n  text-align: center;\n  font-size: 36px;\n  color: #2C6E49;\n  margin-bottom: 40px;\n  font-weight: 600;\n}\n.safari-cards-container {\n  padding: 80px 100px 40px 100px;\n  background-color: #f9f9f9;\n}\n.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  margin-top: 20px;\n}\n.card {\n  background-color: #fff;\n  padding: 0;\n  border-radius: 10px;\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n  text-align: center;\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-start;\n  min-height: 300px;\n}\n.card-header {\n  font-size: 20px;\n  font-weight: 600;\n  color: #2C6E49;\n  margin-bottom: 20px;\n}\n.card-image {\n  margin-bottom: 20px;\n}\n.card-img {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  border-radius: 10px;\n}\n.card-body {\n  padding: 10px;\n}\n.card-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.card-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.card-body ul li {\n  font-size: 14px;\n  color: #333;\n  margin-bottom: 5px;\n  display: flex;\n  align-items: center;\n  text-align: left;\n}\n.card-body ul li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.button-wrapper {\n  display: flex;\n  flex-direction: row;\n  gap: 10px;\n  justify-content: center;\n  margin-top: 20px;\n}\n.view-details-btn {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 8px 20px;\n  font-size: 14px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 9999;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 80%;\n  max-width: 600px;\n  position: relative;\n  z-index: 10000;\n}\n.modal-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n.close-btn {\n  background-color: #FF7043;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.modal-body {\n  max-height: 500px;\n  overflow-y: scroll;\n  padding-right: 10px;\n  scrollbar-width: thin;\n  scrollbar-color: transparent transparent;\n}\n.modal-body::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n}\n.modal-body::-webkit-scrollbar-thumb {\n  background: transparent;\n}\n.modal-body::-webkit-scrollbar-track {\n  background: transparent;\n}\n.modal-body ul {\n  list-style-type: none;\n  padding-left: 0;\n  margin-top: 0;\n}\n.modal-body li {\n  display: flex;\n  align-items: center;\n  margin-bottom: 10px;\n  text-align: left;\n}\n.modal-body p {\n  font-size: 16px;\n  color: #555;\n  margin-bottom: 10px;\n  font-weight: 600;\n  text-align: left;\n  margin-top: 0;\n}\n.modal-body li svg {\n  margin-right: 10px;\n  fill: #4CAF50;\n  height: 16px;\n  width: 16px;\n  vertical-align: middle;\n}\n.modal-body form {\n  display: flex;\n  flex-direction: column;\n}\n.modal-body label {\n  font-size: 16px;\n  margin-bottom: 5px;\n}\n.modal-body input {\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 14px;\n}\n.modal-body button {\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  padding: 10px;\n  font-size: 16px;\n  border-radius: 5px;\n  cursor: pointer;\n  margin-top: 20px;\n}\n.modal-body button:disabled {\n  background-color: #ccc;\n  cursor: not-allowed;\n}\n@media (max-width: 768px) {\n  .safari-cards-container {\n    padding: 60px 50px 20px 50px;\n  }\n  .cards {\n    grid-template-columns: repeat(2, 1fr);\n  }\n  .safari-title {\n    font-size: 28px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 12px;\n  }\n}\n@media (max-width: 480px) {\n  .safari-cards-container {\n    padding: 40px 20px 20px 20px;\n  }\n  .cards {\n    grid-template-columns: 1fr;\n  }\n  .safari-title {\n    font-size: 24px;\n  }\n  .view-details-btn,\n  .book-now-btn {\n    font-size: 14px;\n  }\n}\n/*# sourceMappingURL=safari-card.css.map */\n"] }]
-  }], () => [{ type: DomSanitizer }, { type: SafariService }, { type: MatSnackBar }], null);
+  }], () => [{ type: Router }, { type: DomSanitizer }, { type: SafariService }, { type: MatSnackBar }], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SafariCard, { className: "SafariCard", filePath: "src/app/components/safari-card/safari-card.ts", lineNumber: 20 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SafariCard, { className: "SafariCard", filePath: "src/app/components/safari-card/safari-card.ts", lineNumber: 21 });
 })();
 
 // src/app/footer/footer.ts
@@ -54974,6 +57809,17 @@ function Home_button_0_Template(rf, ctx) {
   }
 }
 var Home = class _Home {
+  route;
+  constructor(route) {
+    this.route = route;
+  }
+  ngOnInit() {
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment) {
+        this.scrollToFragment(fragment);
+      }
+    });
+  }
   isScrolled = false;
   // Listen to the scroll event
   onWindowScroll() {
@@ -54983,8 +57829,14 @@ var Home = class _Home {
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+  scrollToFragment(fragment) {
+    const element = document.getElementById(fragment);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  }
   static \u0275fac = function Home_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _Home)();
+    return new (__ngFactoryType__ || _Home)(\u0275\u0275directiveInject(ActivatedRoute));
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Home, selectors: [["app-home"]], hostBindings: function Home_HostBindings(rf, ctx) {
     if (rf & 1) {
@@ -55023,18 +57875,411 @@ var Home = class _Home {
       Footer,
       TestimonialsComponent
     ], template: '<!-- Scroll to Top Button -->\r\n<button *ngIf="isScrolled" class="scroll-to-top" (click)="scrollToTop()">\r\n  <!-- SVG Icon for the Arrow -->\r\n  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up">\r\n    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n    <path d="M12 5l0 14" />\r\n    <path d="M18 11l-6 -6" />\r\n    <path d="M6 11l6 -6" />\r\n  </svg>\r\n</button>\r\n\r\n<!-- Content sections of the home page -->\r\n<app-hero-carousel></app-hero-carousel>\r\n<app-about-us></app-about-us>\r\n<app-destination-and-highlights></app-destination-and-highlights>\r\n<app-safari-card></app-safari-card>\r\n<app-testimonials></app-testimonials>\r\n<app-footer></app-footer>\r\n', styles: ["/* src/app/components/home/home.css */\n.scroll-to-top {\n  position: fixed;\n  bottom: 20px;\n  right: 20px;\n  width: 50px;\n  height: 50px;\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  border-radius: 10px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n  z-index: 9999;\n}\n.scroll-to-top svg {\n  width: 24px;\n  height: 24px;\n  stroke: white;\n  transition: stroke 0.3s ease;\n}\n.scroll-to-top:hover {\n  background-color: #FFD76D;\n}\n.scroll-to-top:hover svg {\n  stroke: #2C6E49;\n}\n.scroll-to-top:focus {\n  outline: none;\n}\n/*# sourceMappingURL=home.css.map */\n"] }]
-  }], null, { onWindowScroll: [{
+  }], () => [{ type: ActivatedRoute }], { onWindowScroll: [{
     type: HostListener,
     args: ["window:scroll", []]
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Home, { className: "Home", filePath: "src/app/components/home/home.ts", lineNumber: 25 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Home, { className: "Home", filePath: "src/app/components/home/home.ts", lineNumber: 26 });
+})();
+
+// src/app/payment/payment.ts
+var PaymentService = class _PaymentService {
+  http;
+  apiUrl = environment.apiUrl;
+  // Backend API URL from environment
+  constructor(http) {
+    this.http = http;
+  }
+  // Get CSRF Token from the backend
+  getCsrfToken() {
+    return this.http.get(`${this.apiUrl}/csrf-token`, {
+      withCredentials: true
+      // Ensure cookies are sent
+    });
+  }
+  // Request payment from the backend
+  requestPayment(paymentData, csrfToken, guestToken) {
+    const headers = new HttpHeaders({
+      "X-CSRF-TOKEN": csrfToken,
+      // Add CSRF token to the headers
+      "Authorization": `Bearer ${guestToken}`
+      // Include the guest token for authorization
+    });
+    return this.http.post(
+      `${this.apiUrl}/payment/request`,
+      paymentData,
+      { headers, withCredentials: true }
+      // Ensure cookies are sent with the request
+    );
+  }
+  static \u0275fac = function PaymentService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _PaymentService)(\u0275\u0275inject(HttpClient));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _PaymentService, factory: _PaymentService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PaymentService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{ type: HttpClient }], null);
+})();
+
+// node_modules/jwt-decode/build/esm/index.js
+var InvalidTokenError = class extends Error {
+};
+InvalidTokenError.prototype.name = "InvalidTokenError";
+function b64DecodeUnicode(str) {
+  return decodeURIComponent(atob(str).replace(/(.)/g, (m, p) => {
+    let code = p.charCodeAt(0).toString(16).toUpperCase();
+    if (code.length < 2) {
+      code = "0" + code;
+    }
+    return "%" + code;
+  }));
+}
+function base64UrlDecode(str) {
+  let output = str.replace(/-/g, "+").replace(/_/g, "/");
+  switch (output.length % 4) {
+    case 0:
+      break;
+    case 2:
+      output += "==";
+      break;
+    case 3:
+      output += "=";
+      break;
+    default:
+      throw new Error("base64 string is not of the correct length");
+  }
+  try {
+    return b64DecodeUnicode(output);
+  } catch (err) {
+    return atob(output);
+  }
+}
+function jwtDecode(token, options) {
+  if (typeof token !== "string") {
+    throw new InvalidTokenError("Invalid token specified: must be a string");
+  }
+  options || (options = {});
+  const pos = options.header === true ? 0 : 1;
+  const part = token.split(".")[pos];
+  if (typeof part !== "string") {
+    throw new InvalidTokenError(`Invalid token specified: missing part #${pos + 1}`);
+  }
+  let decoded;
+  try {
+    decoded = base64UrlDecode(part);
+  } catch (e) {
+    throw new InvalidTokenError(`Invalid token specified: invalid base64 for part #${pos + 1} (${e.message})`);
+  }
+  try {
+    return JSON.parse(decoded);
+  } catch (e) {
+    throw new InvalidTokenError(`Invalid token specified: invalid json for part #${pos + 1} (${e.message})`);
+  }
+}
+
+// src/app/payment/auth.ts
+var AuthService = class _AuthService {
+  http;
+  apiUrl = environment.apiUrl;
+  // Use apiUrl from environment
+  tokenSubject = new BehaviorSubject(null);
+  token$ = this.tokenSubject.asObservable();
+  constructor(http) {
+    this.http = http;
+  }
+  // Fetch CSRF token from backend
+  getCsrfToken() {
+    return this.http.get(`${this.apiUrl}/csrf-token`, {
+      withCredentials: true
+      // Ensure cookies are sent
+    });
+  }
+  // Create a guest session and store the token in HttpOnly cookie
+  createGuestSession() {
+    return this.getCsrfToken().pipe(
+      // Fetch CSRF token before creating session
+      switchMap((csrfResponse) => {
+        const csrfToken = csrfResponse.csrfToken;
+        return this.http.post(`${this.apiUrl}/auth/guest`, {}, {
+          headers: { "X-CSRF-Token": csrfToken },
+          // Add CSRF token to request headers
+          withCredentials: true
+          // Ensure cookies are sent
+        }).pipe(tap((response) => {
+          console.log("Guest session created successfully", response);
+          this.tokenSubject.next(response.token);
+        }));
+      }),
+      catchError((error) => {
+        console.error("Error creating guest session:", error);
+        return throwError(() => new Error("Failed to create guest session"));
+      })
+    );
+  }
+  // Refresh the guest token
+  refreshToken() {
+    return this.http.post(`${this.apiUrl}/auth/refresh`, {}, { withCredentials: true });
+  }
+  // Get the current token from HttpOnly cookies (using the backend to fetch the token)
+  getToken() {
+    return this.token$.pipe(
+      switchMap((token) => {
+        if (token) {
+          return of(token);
+        } else {
+          return this.refreshToken().pipe(
+            tap((response) => {
+              this.tokenSubject.next(response.token);
+            }),
+            switchMap(() => of(this.tokenSubject.value))
+            // Return the updated token
+          );
+        }
+      }),
+      catchError(() => of(null))
+      // Handle any errors (e.g., if refresh fails)
+    );
+  }
+  // Decode and check if the token is expired
+  isTokenExpired(token) {
+    try {
+      const decoded = jwtDecode(token);
+      const expirationTime = decoded.exp * 1e3;
+      return Date.now() > expirationTime;
+    } catch (error) {
+      return true;
+    }
+  }
+  // Method to update the token from outside the service
+  updateToken(token) {
+    this.tokenSubject.next(token);
+  }
+  // Session expiration handling: Check token and refresh if expired
+  handleSessionExpiration() {
+    return this.getToken().pipe(
+      tap((token) => {
+        if (token && this.isTokenExpired(token)) {
+          this.refreshToken().subscribe({
+            next: (response) => {
+              this.tokenSubject.next(response.token);
+            },
+            error: (err) => {
+              console.error("Token refresh failed:", err);
+            }
+          });
+        }
+      }),
+      switchMap(() => of(void 0))
+      // Return `Observable<void>` after side effects
+    );
+  }
+  static \u0275fac = function AuthService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _AuthService)(\u0275\u0275inject(HttpClient));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _AuthService, factory: _AuthService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{ type: HttpClient }], null);
+})();
+
+// src/app/payment/payment/payment.ts
+var PaymentComponent = class _PaymentComponent {
+  paymentService;
+  authService;
+  router;
+  paymentData = {
+    amount: 0,
+    description: "",
+    reference: "",
+    email: "",
+    phone: "",
+    redirectUrl: "",
+    paymentMethod: "Pesapal"
+    // Default to Pesapal, can be changed by the user
+  };
+  csrfToken = "";
+  guestToken = "";
+  paymentUrl = "";
+  isPaymentInProgress = false;
+  // Add flag to prevent double submission
+  constructor(paymentService, authService, router) {
+    this.paymentService = paymentService;
+    this.authService = authService;
+    this.router = router;
+  }
+  ngOnInit() {
+    this.createGuestSession();
+  }
+  // Create a guest session to generate the guest token
+  createGuestSession() {
+    this.authService.createGuestSession().subscribe((response) => {
+      this.guestToken = response.token;
+      this.getCsrfToken();
+    }, (error) => {
+      console.error("Error creating guest session:", error);
+    });
+  }
+  // Get the CSRF token from the backend
+  getCsrfToken() {
+    this.paymentService.getCsrfToken().subscribe((response) => {
+      this.csrfToken = response.csrfToken;
+    }, (error) => {
+      console.error("Error retrieving CSRF token:", error);
+    });
+  }
+  // Submit the payment request
+  onSubmitPayment() {
+    if (this.isPaymentInProgress) {
+      return;
+    }
+    this.isPaymentInProgress = true;
+    this.authService.getToken().subscribe((token) => {
+      if (!token) {
+        console.error("No guest token available");
+        this.isPaymentInProgress = false;
+        return;
+      }
+      if (this.authService.isTokenExpired(token)) {
+        console.log("Token expired. Refreshing token...");
+        this.authService.refreshToken().subscribe((response) => {
+          token = response.token;
+          this.authService.updateToken(token);
+          this.retryPaymentRequest(token);
+        }, (error) => {
+          console.error("Error refreshing token:", error);
+          this.isPaymentInProgress = false;
+        });
+      } else {
+        this.retryPaymentRequest(token);
+      }
+    });
+  }
+  // Method to retry the payment request with the valid token
+  retryPaymentRequest(token) {
+    this.paymentService.requestPayment(this.paymentData, this.csrfToken, token).subscribe((response) => {
+      this.paymentUrl = response.paymentUrl;
+      window.location.href = this.paymentUrl;
+      this.isPaymentInProgress = false;
+    }, (error) => {
+      console.error("Error processing payment:", error);
+      this.isPaymentInProgress = false;
+    });
+  }
+  static \u0275fac = function PaymentComponent_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _PaymentComponent)(\u0275\u0275directiveInject(PaymentService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(Router));
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PaymentComponent, selectors: [["app-payment"]], decls: 24, vars: 7, consts: [[1, "payment-container"], [3, "ngSubmit"], ["for", "amount"], ["id", "amount", "type", "number", "name", "amount", "required", "", 3, "ngModelChange", "ngModel"], ["for", "description"], ["id", "description", "type", "text", "name", "description", "required", "", 3, "ngModelChange", "ngModel"], ["for", "reference"], ["id", "reference", "type", "text", "name", "reference", "required", "", 3, "ngModelChange", "ngModel"], ["for", "email"], ["id", "email", "type", "email", "name", "email", "required", "", 3, "ngModelChange", "ngModel"], ["for", "phone"], ["id", "phone", "type", "text", "name", "phone", "required", "", 3, "ngModelChange", "ngModel"], ["for", "redirectUrl"], ["id", "redirectUrl", "type", "url", "name", "redirectUrl", "required", "", 3, "ngModelChange", "ngModel"], ["type", "submit", 3, "disabled"]], template: function PaymentComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      \u0275\u0275elementStart(0, "div", 0)(1, "h2");
+      \u0275\u0275text(2, "Payment Information");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(3, "form", 1);
+      \u0275\u0275listener("ngSubmit", function PaymentComponent_Template_form_ngSubmit_3_listener() {
+        return ctx.onSubmitPayment();
+      });
+      \u0275\u0275elementStart(4, "label", 2);
+      \u0275\u0275text(5, "Amount");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(6, "input", 3);
+      \u0275\u0275twoWayListener("ngModelChange", function PaymentComponent_Template_input_ngModelChange_6_listener($event) {
+        \u0275\u0275twoWayBindingSet(ctx.paymentData.amount, $event) || (ctx.paymentData.amount = $event);
+        return $event;
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(7, "label", 4);
+      \u0275\u0275text(8, "Description");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(9, "input", 5);
+      \u0275\u0275twoWayListener("ngModelChange", function PaymentComponent_Template_input_ngModelChange_9_listener($event) {
+        \u0275\u0275twoWayBindingSet(ctx.paymentData.description, $event) || (ctx.paymentData.description = $event);
+        return $event;
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(10, "label", 6);
+      \u0275\u0275text(11, "Reference");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(12, "input", 7);
+      \u0275\u0275twoWayListener("ngModelChange", function PaymentComponent_Template_input_ngModelChange_12_listener($event) {
+        \u0275\u0275twoWayBindingSet(ctx.paymentData.reference, $event) || (ctx.paymentData.reference = $event);
+        return $event;
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(13, "label", 8);
+      \u0275\u0275text(14, "Email");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(15, "input", 9);
+      \u0275\u0275twoWayListener("ngModelChange", function PaymentComponent_Template_input_ngModelChange_15_listener($event) {
+        \u0275\u0275twoWayBindingSet(ctx.paymentData.email, $event) || (ctx.paymentData.email = $event);
+        return $event;
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(16, "label", 10);
+      \u0275\u0275text(17, "Phone");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(18, "input", 11);
+      \u0275\u0275twoWayListener("ngModelChange", function PaymentComponent_Template_input_ngModelChange_18_listener($event) {
+        \u0275\u0275twoWayBindingSet(ctx.paymentData.phone, $event) || (ctx.paymentData.phone = $event);
+        return $event;
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(19, "label", 12);
+      \u0275\u0275text(20, "Redirect URL");
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(21, "input", 13);
+      \u0275\u0275twoWayListener("ngModelChange", function PaymentComponent_Template_input_ngModelChange_21_listener($event) {
+        \u0275\u0275twoWayBindingSet(ctx.paymentData.redirectUrl, $event) || (ctx.paymentData.redirectUrl = $event);
+        return $event;
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(22, "button", 14);
+      \u0275\u0275text(23, "Proceed to Payment");
+      \u0275\u0275elementEnd()()();
+    }
+    if (rf & 2) {
+      \u0275\u0275advance(6);
+      \u0275\u0275twoWayProperty("ngModel", ctx.paymentData.amount);
+      \u0275\u0275advance(3);
+      \u0275\u0275twoWayProperty("ngModel", ctx.paymentData.description);
+      \u0275\u0275advance(3);
+      \u0275\u0275twoWayProperty("ngModel", ctx.paymentData.reference);
+      \u0275\u0275advance(3);
+      \u0275\u0275twoWayProperty("ngModel", ctx.paymentData.email);
+      \u0275\u0275advance(3);
+      \u0275\u0275twoWayProperty("ngModel", ctx.paymentData.phone);
+      \u0275\u0275advance(3);
+      \u0275\u0275twoWayProperty("ngModel", ctx.paymentData.redirectUrl);
+      \u0275\u0275advance();
+      \u0275\u0275property("disabled", ctx.isPaymentInProgress);
+    }
+  }, dependencies: [CommonModule, FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NumberValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, NgModel, NgForm, HttpClientModule], styles: ["\n\n.payment-container[_ngcontent-%COMP%] {\n  max-width: 600px;\n  margin: 0 auto;\n  padding: 20px;\n  border: 1px solid #ddd;\n  border-radius: 8px;\n  background-color: #f9f9f9;\n}\nh2[_ngcontent-%COMP%] {\n  text-align: center;\n}\nform[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\nlabel[_ngcontent-%COMP%] {\n  margin-bottom: 5px;\n  font-weight: bold;\n}\ninput[_ngcontent-%COMP%] {\n  margin-bottom: 10px;\n  padding: 8px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\nbutton[_ngcontent-%COMP%] {\n  background-color: #28a745;\n  color: white;\n  border: none;\n  padding: 10px;\n  border-radius: 5px;\n  cursor: pointer;\n}\nbutton[_ngcontent-%COMP%]:hover {\n  background-color: #218838;\n}\n/*# sourceMappingURL=payment.css.map */"] });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PaymentComponent, [{
+    type: Component,
+    args: [{ selector: "app-payment", standalone: true, imports: [CommonModule, FormsModule, HttpClientModule], template: '<div class="payment-container">\r\n  <h2>Payment Information</h2>\r\n  <form (ngSubmit)="onSubmitPayment()">\r\n    <label for="amount">Amount</label>\r\n    <input\r\n      id="amount"\r\n      type="number"\r\n      [(ngModel)]="paymentData.amount"\r\n      name="amount"\r\n      required\r\n    />\r\n\r\n    <label for="description">Description</label>\r\n    <input\r\n      id="description"\r\n      type="text"\r\n      [(ngModel)]="paymentData.description"\r\n      name="description"\r\n      required\r\n    />\r\n\r\n    <label for="reference">Reference</label>\r\n    <input\r\n      id="reference"\r\n      type="text"\r\n      [(ngModel)]="paymentData.reference"\r\n      name="reference"\r\n      required\r\n    />\r\n\r\n    <label for="email">Email</label>\r\n    <input\r\n      id="email"\r\n      type="email"\r\n      [(ngModel)]="paymentData.email"\r\n      name="email"\r\n      required\r\n    />\r\n\r\n    <label for="phone">Phone</label>\r\n    <input\r\n      id="phone"\r\n      type="text"\r\n      [(ngModel)]="paymentData.phone"\r\n      name="phone"\r\n      required\r\n    />\r\n\r\n    <label for="redirectUrl">Redirect URL</label>\r\n    <input\r\n      id="redirectUrl"\r\n      type="url"\r\n      [(ngModel)]="paymentData.redirectUrl"\r\n      name="redirectUrl"\r\n      required\r\n    />\r\n\r\n    <button type="submit" [disabled]="isPaymentInProgress">Proceed to Payment</button>\r\n  </form>\r\n</div>\r\n', styles: ["/* src/app/payment/payment/payment.css */\n.payment-container {\n  max-width: 600px;\n  margin: 0 auto;\n  padding: 20px;\n  border: 1px solid #ddd;\n  border-radius: 8px;\n  background-color: #f9f9f9;\n}\nh2 {\n  text-align: center;\n}\nform {\n  display: flex;\n  flex-direction: column;\n}\nlabel {\n  margin-bottom: 5px;\n  font-weight: bold;\n}\ninput {\n  margin-bottom: 10px;\n  padding: 8px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\nbutton {\n  background-color: #28a745;\n  color: white;\n  border: none;\n  padding: 10px;\n  border-radius: 5px;\n  cursor: pointer;\n}\nbutton:hover {\n  background-color: #218838;\n}\n/*# sourceMappingURL=payment.css.map */\n"] }]
+  }], () => [{ type: PaymentService }, { type: AuthService }, { type: Router }], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(PaymentComponent, { className: "PaymentComponent", filePath: "src/app/payment/payment/payment.ts", lineNumber: 16 });
 })();
 
 // src/app/app.routes.ts
 var routes = [
-  { path: "", component: Home }
+  { path: "", component: Home },
+  { path: "payment", component: PaymentComponent },
+  { path: "**", redirectTo: "" }
 ];
 
 // src/app/app.config.ts
@@ -55042,37 +58287,40 @@ var appConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes)
+    provideRouter(routes),
+    provideHttpClient()
+    // Add provideHttpClient here
   ]
 };
 
 // src/app/components/navbar/navbar.ts
+var _c05 = () => ["/"];
 function NavbarComponent_div_4__svg_svg_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 22);
-    \u0275\u0275element(1, "path", 23)(2, "path", 24)(3, "path", 25)(4, "path", 26);
+    \u0275\u0275elementStart(0, "svg", 19);
+    \u0275\u0275element(1, "path", 20)(2, "path", 21)(3, "path", 22)(4, "path", 23);
     \u0275\u0275elementEnd();
   }
 }
 function NavbarComponent_div_4__svg_svg_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 27);
-    \u0275\u0275element(1, "path", 23)(2, "path", 28)(3, "path", 29);
+    \u0275\u0275elementStart(0, "svg", 24);
+    \u0275\u0275element(1, "path", 20)(2, "path", 25)(3, "path", 26);
     \u0275\u0275elementEnd();
   }
 }
 function NavbarComponent_div_4_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 19);
+    \u0275\u0275elementStart(0, "div", 16);
     \u0275\u0275listener("click", function NavbarComponent_div_4_Template_div_click_0_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.toggleMenu());
     });
-    \u0275\u0275template(1, NavbarComponent_div_4__svg_svg_1_Template, 5, 0, "svg", 20)(2, NavbarComponent_div_4__svg_svg_2_Template, 4, 0, "svg", 21);
+    \u0275\u0275template(1, NavbarComponent_div_4__svg_svg_1_Template, 5, 0, "svg", 17)(2, NavbarComponent_div_4__svg_svg_2_Template, 4, 0, "svg", 18);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -55111,10 +58359,13 @@ var NavbarComponent = class _NavbarComponent {
       this.toggleMenu();
     }
   }
+  navigateToSafaris() {
+    this.router.navigate(["/"], { fragment: "safaris" });
+  }
   static \u0275fac = function NavbarComponent_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _NavbarComponent)(\u0275\u0275directiveInject(Router));
   };
-  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NavbarComponent, selectors: [["app-navbar"]], decls: 33, vars: 5, consts: [[1, "navbar"], [1, "navbar-left"], [1, "logo-text"], ["class", "navbar-hamburger", 3, "click", 4, "ngIf"], [1, "navbar-right"], ["href", "/", 1, "nav-link", 3, "click"], ["href", "#about", 1, "nav-link", 3, "click"], ["href", "#destinations", 1, "nav-link", 3, "click"], ["href", "#safaris", 1, "nav-link", 3, "click"], ["href", "#contact", 1, "nav-link", 3, "click"], ["type", "button", "href", "#safaris", 1, "book-now-btn"], [1, "modal", 3, "click"], [1, "modal-content", 3, "click"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", ""], ["for", "date"], ["type", "date", "id", "date", "name", "date", "required", ""], ["type", "submit"], [1, "close-modal", 3, "click"], [1, "navbar-hamburger", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-menu", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-x", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-menu"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M4 6l16 0"], ["d", "M4 12l16 0"], ["d", "M4 18l16 0"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-x"], ["d", "M18 6L6 18"], ["d", "M6 6l12 12"]], template: function NavbarComponent_Template(rf, ctx) {
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _NavbarComponent, selectors: [["app-navbar"]], decls: 33, vars: 22, consts: [[1, "navbar"], [1, "navbar-left"], [1, "logo-text"], ["class", "navbar-hamburger", 3, "click", 4, "ngIf"], [1, "navbar-right"], [1, "nav-link", 3, "click", "routerLink"], [1, "nav-link", 3, "click", "routerLink", "fragment"], ["type", "button", 1, "book-now-btn", 3, "routerLink", "fragment"], [1, "modal", 3, "click"], [1, "modal-content", 3, "click"], ["for", "name"], ["type", "text", "id", "name", "name", "name", "required", ""], ["for", "date"], ["type", "date", "id", "date", "name", "date", "required", ""], ["type", "submit"], [1, "close-modal", 3, "click"], [1, "navbar-hamburger", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-menu", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "icon icon-tabler icon-tabler-x", 4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-menu"], ["stroke", "none", "d", "M0 0h24v24H0z", "fill", "none"], ["d", "M4 6l16 0"], ["d", "M4 12l16 0"], ["d", "M4 18l16 0"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "icon", "icon-tabler", "icon-tabler-x"], ["d", "M18 6L6 18"], ["d", "M6 6l12 12"]], template: function NavbarComponent_Template(rf, ctx) {
     if (rf & 1) {
       \u0275\u0275elementStart(0, "nav", 0)(1, "div", 1)(2, "span", 2);
       \u0275\u0275text(3, "\u{1F981} JAMBO SAFARI");
@@ -55132,50 +58383,50 @@ var NavbarComponent = class _NavbarComponent {
       });
       \u0275\u0275text(9, "About");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(10, "a", 7);
+      \u0275\u0275elementStart(10, "a", 6);
       \u0275\u0275listener("click", function NavbarComponent_Template_a_click_10_listener() {
         return ctx.navigateAndCloseMenu();
       });
       \u0275\u0275text(11, "Destinations");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(12, "a", 8);
+      \u0275\u0275elementStart(12, "a", 6);
       \u0275\u0275listener("click", function NavbarComponent_Template_a_click_12_listener() {
         return ctx.navigateAndCloseMenu();
       });
       \u0275\u0275text(13, "Safaris");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(14, "a", 9);
+      \u0275\u0275elementStart(14, "a", 6);
       \u0275\u0275listener("click", function NavbarComponent_Template_a_click_14_listener() {
         return ctx.navigateAndCloseMenu();
       });
       \u0275\u0275text(15, "Contact");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(16, "a", 10);
+      \u0275\u0275elementStart(16, "a", 7);
       \u0275\u0275text(17, "Book Now");
       \u0275\u0275elementEnd()()();
-      \u0275\u0275elementStart(18, "div", 11);
+      \u0275\u0275elementStart(18, "div", 8);
       \u0275\u0275listener("click", function NavbarComponent_Template_div_click_18_listener() {
         return ctx.closeModal();
       });
-      \u0275\u0275elementStart(19, "div", 12);
+      \u0275\u0275elementStart(19, "div", 9);
       \u0275\u0275listener("click", function NavbarComponent_Template_div_click_19_listener($event) {
         return $event.stopPropagation();
       });
       \u0275\u0275elementStart(20, "h2");
       \u0275\u0275text(21, "Book Now");
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(22, "form")(23, "label", 13);
+      \u0275\u0275elementStart(22, "form")(23, "label", 10);
       \u0275\u0275text(24, "Name:");
       \u0275\u0275elementEnd();
-      \u0275\u0275element(25, "input", 14);
-      \u0275\u0275elementStart(26, "label", 15);
+      \u0275\u0275element(25, "input", 11);
+      \u0275\u0275elementStart(26, "label", 12);
       \u0275\u0275text(27, "Preferred Date:");
       \u0275\u0275elementEnd();
-      \u0275\u0275element(28, "input", 16);
-      \u0275\u0275elementStart(29, "button", 17);
+      \u0275\u0275element(28, "input", 13);
+      \u0275\u0275elementStart(29, "button", 14);
       \u0275\u0275text(30, "Submit");
       \u0275\u0275elementEnd()();
-      \u0275\u0275elementStart(31, "button", 18);
+      \u0275\u0275elementStart(31, "button", 15);
       \u0275\u0275listener("click", function NavbarComponent_Template_button_click_31_listener() {
         return ctx.closeModal();
       });
@@ -55187,15 +58438,139 @@ var NavbarComponent = class _NavbarComponent {
       \u0275\u0275property("ngIf", ctx.menuOpen !== null);
       \u0275\u0275advance();
       \u0275\u0275classProp("show", ctx.menuOpen);
-      \u0275\u0275advance(13);
+      \u0275\u0275advance();
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(16, _c05));
+      \u0275\u0275advance(2);
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(17, _c05))("fragment", "about");
+      \u0275\u0275advance(2);
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(18, _c05))("fragment", "destinations");
+      \u0275\u0275advance(2);
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(19, _c05))("fragment", "safaris");
+      \u0275\u0275advance(2);
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(20, _c05))("fragment", "contact");
+      \u0275\u0275advance(2);
+      \u0275\u0275property("routerLink", \u0275\u0275pureFunction0(21, _c05))("fragment", "safaris");
+      \u0275\u0275advance(2);
       \u0275\u0275classProp("show", ctx.isModalOpen);
     }
-  }, dependencies: [CommonModule, NgIf], styles: ["\n\n.navbar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.nav-link[_ngcontent-%COMP%] {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link[_ngcontent-%COMP%]:hover {\n  color: #FFD76D;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  text-decoration: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler.icon-tabler-menu.open[_ngcontent-%COMP%] {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar[_ngcontent-%COMP%] {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left[_ngcontent-%COMP%] {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show[_ngcontent-%COMP%] {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link[_ngcontent-%COMP%] {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: flex;\n  }\n}\n.modal[_ngcontent-%COMP%] {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show[_ngcontent-%COMP%] {\n  display: block;\n  opacity: 1;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: _ngcontent-%COMP%_fadeIn 0.5s ease-out;\n}\n.modal-content[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */"] });
+  }, dependencies: [CommonModule, NgIf, RouterLink], styles: ["\n\n.navbar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text[_ngcontent-%COMP%] {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.nav-link[_ngcontent-%COMP%] {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link[_ngcontent-%COMP%]:hover {\n  color: #FFD76D;\n}\n.book-now-btn[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  text-decoration: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler[_ngcontent-%COMP%] {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger[_ngcontent-%COMP%]   svg.icon-tabler.icon-tabler-menu.open[_ngcontent-%COMP%] {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar[_ngcontent-%COMP%] {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left[_ngcontent-%COMP%] {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show[_ngcontent-%COMP%] {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link[_ngcontent-%COMP%] {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn[_ngcontent-%COMP%] {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .navbar-right[_ngcontent-%COMP%] {\n    display: flex;\n  }\n}\n.modal[_ngcontent-%COMP%] {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show[_ngcontent-%COMP%] {\n  display: block;\n  opacity: 1;\n}\n.modal-content[_ngcontent-%COMP%] {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: _ngcontent-%COMP%_fadeIn 0.5s ease-out;\n}\n.modal-content[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal[_ngcontent-%COMP%] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal[_ngcontent-%COMP%]:hover {\n  background-color: #FFD76D;\n}\n@keyframes _ngcontent-%COMP%_fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */"] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NavbarComponent, [{
     type: Component,
-    args: [{ selector: "app-navbar", standalone: true, imports: [CommonModule], template: '<nav class="navbar">\r\n  <!-- Logo and Text on the Left -->\r\n  <div class="navbar-left">\r\n    <span class="logo-text">\u{1F981} JAMBO SAFARI</span>\r\n  </div>\r\n\r\n  <!-- Hamburger Icon for Mobile (Only visible on mobile) -->\r\n  <div class="navbar-hamburger" *ngIf="menuOpen !== null" (click)="toggleMenu()">\r\n    <svg *ngIf="!menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-menu">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M4 6l16 0"/>\r\n      <path d="M4 12l16 0"/>\r\n      <path d="M4 18l16 0"/>\r\n    </svg>\r\n    <svg *ngIf="menuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-x">\r\n      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>\r\n      <path d="M18 6L6 18"/>\r\n      <path d="M6 6l12 12"/>\r\n    </svg>\r\n  </div>\r\n\r\n  <!-- Menu Links on the Right (Initially Hidden on Mobile) -->\r\n  <div class="navbar-right" [class.show]="menuOpen">\r\n    <a href="/" class="nav-link" (click)="navigateAndCloseMenu()">Home</a>\r\n    <a href="#about" class="nav-link" (click)="navigateAndCloseMenu()">About</a>\r\n    <a href="#destinations" class="nav-link" (click)="navigateAndCloseMenu()">Destinations</a>\r\n    <a href="#safaris" class="nav-link" (click)="navigateAndCloseMenu()">Safaris</a>\r\n    <a href="#contact" class="nav-link" (click)="navigateAndCloseMenu()">Contact</a>\r\n    \r\n    <!-- Book Now Button -->\r\n    <a class="book-now-btn" type="button" href="#safaris" >Book Now</a>\r\n  </div>\r\n</nav>\r\n\r\n<!-- Modal for Booking -->\r\n<div class="modal" [class.show]="isModalOpen" (click)="closeModal()">\r\n  <div class="modal-content" (click)="$event.stopPropagation()">\r\n    <h2>Book Now</h2>\r\n    <form>\r\n      <label for="name">Name:</label>\r\n      <input type="text" id="name" name="name" required />\r\n      <label for="date">Preferred Date:</label>\r\n      <input type="date" id="date" name="date" required />\r\n      <button type="submit">Submit</button>\r\n    </form>\r\n    <button class="close-modal" (click)="closeModal()">Close</button>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/components/navbar/navbar.css */\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right {\n  display: flex;\n  align-items: center;\n}\n.nav-link {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link:hover {\n  color: #FFD76D;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  text-decoration: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger svg.icon-tabler {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger svg.icon-tabler.icon-tabler-menu.open {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger {\n    display: none;\n  }\n  .navbar-right {\n    display: flex;\n  }\n}\n.modal {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show {\n  display: block;\n  opacity: 1;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: fadeIn 0.5s ease-out;\n}\n.modal-content h2 {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content input {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content button[type=submit] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content button[type=submit]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal:hover {\n  background-color: #FFD76D;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */\n"] }]
+    args: [{ selector: "app-navbar", standalone: true, imports: [CommonModule, RouterLink], template: `<nav class="navbar">\r
+  <!-- Logo and Text on the Left -->\r
+  <div class="navbar-left">\r
+    <span class="logo-text">\u{1F981} JAMBO SAFARI</span>\r
+  </div>\r
+\r
+  <!-- Hamburger Icon for Mobile (Only visible on mobile) -->\r
+  <div\r
+    class="navbar-hamburger"\r
+    *ngIf="menuOpen !== null"\r
+    (click)="toggleMenu()"\r
+  >\r
+    <svg\r
+      *ngIf="!menuOpen"\r
+      xmlns="http://www.w3.org/2000/svg"\r
+      width="24"\r
+      height="24"\r
+      viewBox="0 0 24 24"\r
+      fill="none"\r
+      stroke="currentColor"\r
+      stroke-width="2"\r
+      stroke-linecap="round"\r
+      stroke-linejoin="round"\r
+      class="icon icon-tabler icon-tabler-menu"\r
+    >\r
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+      <path d="M4 6l16 0" />\r
+      <path d="M4 12l16 0" />\r
+      <path d="M4 18l16 0" />\r
+    </svg>\r
+    <svg\r
+      *ngIf="menuOpen"\r
+      xmlns="http://www.w3.org/2000/svg"\r
+      width="24"\r
+      height="24"\r
+      viewBox="0 0 24 24"\r
+      fill="none"\r
+      stroke="currentColor"\r
+      stroke-width="2"\r
+      stroke-linecap="round"\r
+      stroke-linejoin="round"\r
+      class="icon icon-tabler icon-tabler-x"\r
+    >\r
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />\r
+      <path d="M18 6L6 18" />\r
+      <path d="M6 6l12 12" />\r
+    </svg>\r
+  </div>\r
+\r
+  <!-- Menu Links on the Right (Initially Hidden on Mobile) -->\r
+  <div class="navbar-right" [class.show]="menuOpen">\r
+    <a\r
+      [routerLink]="['/']"\r
+      \r
+      class="nav-link"\r
+      (click)="navigateAndCloseMenu()"\r
+      >Home</a\r
+    >\r
+    <a\r
+      [routerLink]="['/']"\r
+      [fragment]="'about'"\r
+      class="nav-link"\r
+      (click)="navigateAndCloseMenu()"\r
+      >About</a\r
+    >\r
+    <a\r
+      [routerLink]="['/']"\r
+      [fragment]="'destinations'"\r
+      class="nav-link"\r
+      (click)="navigateAndCloseMenu()"\r
+      >Destinations</a\r
+    >\r
+    <a\r
+      [routerLink]="['/']"\r
+      [fragment]="'safaris'"\r
+      class="nav-link"\r
+      (click)="navigateAndCloseMenu()"\r
+      >Safaris</a\r
+    >\r
+    <a\r
+      [routerLink]="['/']"\r
+      [fragment]="'contact'"\r
+      class="nav-link"\r
+      (click)="navigateAndCloseMenu()"\r
+      >Contact</a\r
+    >\r
+\r
+    <!-- Book Now Button -->\r
+    <a\r
+      class="book-now-btn"\r
+      type="button"\r
+      [routerLink]="['/']"\r
+      [fragment]="'safaris'"\r
+      >Book Now</a\r
+    >\r
+  </div>\r
+</nav>\r
+\r
+<!-- Modal for Booking -->\r
+<div class="modal" [class.show]="isModalOpen" (click)="closeModal()">\r
+  <div class="modal-content" (click)="$event.stopPropagation()">\r
+    <h2>Book Now</h2>\r
+    <form>\r
+      <label for="name">Name:</label>\r
+      <input type="text" id="name" name="name" required />\r
+      <label for="date">Preferred Date:</label>\r
+      <input type="date" id="date" name="date" required />\r
+      <button type="submit">Submit</button>\r
+    </form>\r
+    <button class="close-modal" (click)="closeModal()">Close</button>\r
+  </div>\r
+</div>\r
+`, styles: ["/* src/app/components/navbar/navbar.css */\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 20px;\n  background:\n    linear-gradient(\n      to right,\n      #FFB940,\n      #2C6E49);\n  color: #fff;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 1000;\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n  transition: background-color 0.3s ease;\n}\n.navbar-left {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  justify-content: flex-start;\n}\n.logo-text {\n  font-size: 20px;\n  font-weight: bold;\n}\n.navbar-right {\n  display: flex;\n  align-items: center;\n}\n.nav-link {\n  color: #fff;\n  margin: 0 15px;\n  text-decoration: none;\n  font-size: 16px;\n  transition: color 0.3s ease;\n}\n.nav-link:hover {\n  color: #FFD76D;\n}\n.book-now-btn {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  text-decoration: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n}\n.book-now-btn:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.navbar-hamburger svg.icon-tabler {\n  cursor: pointer;\n  transition: transform 0.3s ease;\n}\n.navbar-hamburger svg.icon-tabler.icon-tabler-menu.open {\n  transform: rotate(45deg);\n}\n@media (max-width: 768px) {\n  .navbar {\n    flex-direction: row;\n    padding: 10px 20px;\n  }\n  .navbar-left {\n    display: flex;\n    align-items: center;\n    flex: 1;\n    justify-content: flex-start;\n    margin-right: 10px;\n  }\n  .navbar-hamburger {\n    display: flex;\n    flex-direction: column;\n    cursor: pointer;\n    justify-content: center;\n    align-items: center;\n    margin-left: auto;\n  }\n  .navbar-right {\n    display: none;\n    flex-direction: column;\n    align-items: center;\n    position: absolute;\n    top: 100%;\n    left: 0;\n    right: 0;\n    background-color: #2C6E49;\n    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);\n    padding-top: 20px;\n    padding-bottom: 20px;\n    transition: transform 0.3s ease-in-out;\n    transform: translateY(-100%);\n  }\n  .navbar-right.show {\n    display: flex;\n    transform: translateY(0);\n  }\n  .nav-link {\n    margin: 10px 0;\n    font-size: 18px;\n  }\n  .book-now-btn {\n    margin-top: 10px;\n  }\n}\n@media (min-width: 769px) {\n  .navbar-hamburger {\n    display: none;\n  }\n  .navbar-right {\n    display: flex;\n  }\n}\n.modal {\n  display: none;\n  opacity: 0;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 9999;\n  transition: opacity 0.3s ease;\n  overflow: auto;\n}\n.modal.show {\n  display: block;\n  opacity: 1;\n}\n.modal-content {\n  background-color: white;\n  padding: 30px;\n  border-radius: 10px;\n  width: 90%;\n  max-width: 400px;\n  margin: 50px auto;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  animation: fadeIn 0.5s ease-out;\n}\n.modal-content h2 {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 15px;\n  color: #2C6E49;\n  text-align: center;\n}\n.modal-content input {\n  width: 100%;\n  padding: 10px;\n  margin: 10px 0;\n  border: 1px solid #ddd;\n  border-radius: 5px;\n  font-size: 16px;\n}\n.modal-content button[type=submit] {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  font-size: 16px;\n  cursor: pointer;\n  border-radius: 5px;\n  transition: background-color 0.3s ease, transform 0.3s ease;\n  width: 100%;\n}\n.modal-content button[type=submit]:hover {\n  background-color: #FFD76D;\n  transform: scale(1.05);\n}\n.close-modal {\n  background-color: #FFB940;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-top: 15px;\n  width: 100%;\n  font-size: 16px;\n  transition: background-color 0.3s ease;\n}\n.close-modal:hover {\n  background-color: #FFD76D;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-50px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n/*# sourceMappingURL=navbar.css.map */\n"] }]
   }], () => [{ type: Router }], null);
 })();
 (() => {
@@ -55243,6 +58618,8 @@ bootstrapApplication(App, appConfig).catch((err) => console.error(err));
 @angular/common/fesm2022/common.mjs:
 @angular/platform-browser/fesm2022/dom_renderer.mjs:
 @angular/platform-browser/fesm2022/browser.mjs:
+@angular/common/fesm2022/module.mjs:
+@angular/common/fesm2022/http.mjs:
 @angular/platform-browser/fesm2022/platform-browser.mjs:
 @angular/router/fesm2022/router2.mjs:
 @angular/router/fesm2022/router_module.mjs:

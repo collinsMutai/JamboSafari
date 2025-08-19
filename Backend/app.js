@@ -8,6 +8,8 @@ const csrf = require("csurf"); // Import CSRF protection
 const fs = require("fs");
 const https = require("https");
 const paymentRoutes = require("./routes/paymentRoutes"); // Import the payment routes
+const mpesaRoutes = require("./routes/mpesaRoutes"); // Import the payment routes
+const stripeRoutes = require("./routes/stripeRoutes");
 
 const app = express();
 
@@ -113,7 +115,11 @@ app.use((req, res, next) => {
 });
 
 // Only apply CSRF protection to routes that require it
-app.use("/api", csrfProtection, paymentRoutes); // Apply CSRF protection to payment routes
+// app.use("/api", csrfProtection, paymentRoutes); 
+
+// app.use("/api", csrfProtection, mpesaRoutes); 
+
+app.use("/api", stripeRoutes);
 
 // Default route (doesn't need CSRF protection)
 app.get("/", (req, res) => {

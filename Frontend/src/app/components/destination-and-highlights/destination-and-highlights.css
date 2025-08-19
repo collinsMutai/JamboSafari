@@ -226,7 +226,7 @@ button svg {
 
   .destination-card {
     width: 100%;
-    height: 200px;
+    /* height: 220px; */
   }
 
   .slider-container {
@@ -268,9 +268,9 @@ button svg {
     padding: 30px 15px; /* More minimal padding */
   }
 
-  .destination-card {
-    height: 180px; /* Reduce card height for very small screens */
-  }
+  /* .destination-card {
+    height: 180px; 
+  } */
 
   .image-title h3 {
     font-size: 19px; /* Even smaller font for extra small screens */

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/payment/payment/payment.css"],
+  "sourcesContent": [".payment-container {\r\n  max-width: 600px;\r\n  margin: 0 auto;\r\n  padding: 20px;\r\n  border: 1px solid #ddd;\r\n  border-radius: 8px;\r\n  background-color: #f9f9f9;\r\n}\r\n\r\nh2 {\r\n  text-align: center;\r\n}\r\n\r\nform {\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\nlabel {\r\n  margin-bottom: 5px;\r\n  font-weight: bold;\r\n}\r\n\r\ninput {\r\n  margin-bottom: 10px;\r\n  padding: 8px;\r\n  border: 1px solid #ccc;\r\n  border-radius: 4px;\r\n}\r\n\r\nbutton {\r\n  background-color: #28a745;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n}\r\n\r\nbutton:hover {\r\n  background-color: #218838;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,aAAW;AACX,UAAQ,EAAE;AACV,WAAS;AACT,UAAQ,IAAI,MAAM;AAClB,iBAAe;AACf,oBAAkB;AACpB;AAEA;AACE,cAAY;AACd;AAEA;AACE,WAAS;AACT,kBAAgB;AAClB;AAEA;AACE,iBAAe;AACf,eAAa;AACf;AAEA;AACE,iBAAe;AACf,WAAS;AACT,UAAQ,IAAI,MAAM;AAClB,iBAAe;AACjB;AAEA;AACE,oBAAkB;AAClB,SAAO;AACP,UAAQ;AACR,WAAS;AACT,iBAAe;AACf,UAAQ;AACV;AAEA,MAAM;AACJ,oBAAkB;AACpB;",
+  "names": []
+}
