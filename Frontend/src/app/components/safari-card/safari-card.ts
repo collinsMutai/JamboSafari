@@ -91,8 +91,9 @@ export class SafariCard implements OnInit {
           formData,
           environment.emailJS.userID
         ).then(() => {
-          this.showSnackbar('Your booking is confirmed! Do you want to pay now?', 'success');
-          this.showPaymentModal = true; // <-- Show second modal
+          this.showSnackbar('Your booking is confirmed!', 'success');
+          this.clearForm()
+          // this.showPaymentModal = true; 
         }).catch((error) => {
           console.error('Email send error:', error);
           this.showSnackbar('There was an error. Try again.', 'error');

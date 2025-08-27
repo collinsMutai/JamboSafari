@@ -57143,8 +57143,8 @@ var SafariCard = class _SafariCard {
         recaptchaToken: token
       };
       es_default.send(environment.emailJS.serviceID, environment.emailJS.templateID, formData, environment.emailJS.userID).then(() => {
-        this.showSnackbar("Your booking is confirmed! Do you want to pay now?", "success");
-        this.showPaymentModal = true;
+        this.showSnackbar("Your booking is confirmed!", "success");
+        this.clearForm();
       }).catch((error) => {
         console.error("Email send error:", error);
         this.showSnackbar("There was an error. Try again.", "error");
