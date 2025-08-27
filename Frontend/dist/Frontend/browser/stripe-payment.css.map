@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/stripe-payment/stripe-payment.css"],
+  "sourcesContent": [".payment-container {\r\n  text-align: center;\r\n  padding: 20px;\r\n}\r\n\r\nbutton {\r\n  background-color: #6772e5;\r\n  color: white;\r\n  padding: 12px 24px;\r\n  font-size: 16px;\r\n  border: none;\r\n  border-radius: 4px;\r\n  cursor: pointer;\r\n}\r\n\r\nbutton:hover {\r\n  background-color: #5469d4;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,cAAY;AACZ,WAAS;AACX;AAEA;AACE,oBAAkB;AAClB,SAAO;AACP,WAAS,KAAK;AACd,aAAW;AACX,UAAQ;AACR,iBAAe;AACf,UAAQ;AACV;AAEA,MAAM;AACJ,oBAAkB;AACpB;",
+  "names": []
+}

@@ -1,0 +1,260 @@
+/* Search Safari Container */
+.search-safari-container {
+  padding: 20px 40px; /* Reduced padding to give it just enough space */
+  margin-top: -90px;
+  margin-left: 100px;
+  margin-right: 100px;
+  background-color: #f9f9f9;
+  border-radius: 15px; /* Rounded corners for the entire container */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 2147483647; /* Highest possible z-index value */
+  position: relative; /* Ensure it's positioned relative to the page for z-index to work */
+}
+
+/* Search Bar Styling */
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px; /* Slight margin for spacing */
+  border-radius: 50px; /* Makes the search bar rounded */
+  overflow: hidden;
+}
+
+.search-bar input::placeholder {
+  font-size: 16px;
+  text-align: center;
+  color: #fff; /* Optional: Add a color to the placeholder */
+}
+
+.search-bar input {
+  padding: 20px 10px; 
+  width: 75%;
+  outline: none;
+  border: none; /* Removed border to make the input look more rounded */
+  font-size: 16px;
+  border-radius: 50px; /* Rounded left side */
+  background-color: #2c6e49;
+  color: #fff;
+}
+
+.search-bar button {
+  padding: 8px 12px; /* Reduced padding for consistency */
+  background-color: #ffb940;
+  color: white;
+  border: none;
+  border-radius: 0 50px 50px 0; /* Rounded right side */
+  cursor: pointer;
+}
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Card Styling */
+.card {
+  background-color: white;
+  padding: 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2c6e49;
+  padding: 15px;
+}
+
+.card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-body p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.card-body ul {
+  padding-left: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.card-body ul li {
+  list-style: none !important;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center; /* Align text and icon vertically */
+}
+
+.card-body ul li svg {
+  margin-right: 10px;
+  fill: #4caf50;
+  height: 16px;
+  width: 16px;
+  vertical-align: middle; /* Align the icon vertically */
+}
+
+/* Button Wrapper */
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* View Details Button Styling */
+.view-details-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+}
+
+/* Book Now Button Styling */
+.book-now-btn {
+  background-color: #ffb940;
+  color: white;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  padding: 30px;
+  position: relative;
+  overflow: hidden; /* Hide any overflow in modal */
+}
+
+/* Modal Header Styling */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Modal Body Styling (Make it scrollable) */
+.modal-body {
+  margin-top: 20px;
+  max-height: 400px; /* Limit the height of the modal body */
+  overflow-y: auto; /* Allow scrolling */
+  padding-right: 10px; /* To avoid content sticking to the right */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: transparent transparent; /* Hide scrollbar thumb in Firefox */
+}
+
+/* Hide the scrollbar in Webkit-based browsers (Chrome, Safari, etc.) */
+.modal-body::-webkit-scrollbar {
+  width: 0; /* Hide the scrollbar */
+  height: 0; /* For horizontal scroll if required */
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: transparent; /* Make the scrollbar thumb invisible */
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: transparent; /* Make the track invisible */
+}
+
+/* Modal Form Styling */
+.modal-body form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body label {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.modal-body input {
+  padding: 10px;
+  margin-top: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Close Button Styling */
+.close-btn {
+  background-color: #ffb940;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Responsive Styling for Mobile */
+@media (max-width: 768px) {
+  .search-safari-container {
+    padding: 20px 30px; /* Adjusted for smaller screens */
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .search-safari-container {
+    padding: 20px; /* Minimal padding for mobile */
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .search-bar input::placeholder {
+    font-size: 15px;
+    word-wrap: break-word; /* Wrap long placeholder text */
+    white-space: normal;
+    text-align: center;
+    color: #fff; /* Optional: Add a color to the placeholder */
+  }
+}

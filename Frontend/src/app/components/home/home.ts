@@ -8,6 +8,7 @@ import { TestimonialsComponent } from '../testimonials/testimonials';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { StripePayment } from "../../stripe-payment/stripe-payment";
+import {  SearchSafariComponent } from "../safari-search/safari-search";
 
 @Component({
   selector: 'app-home',
@@ -20,7 +21,9 @@ import { StripePayment } from "../../stripe-payment/stripe-payment";
     SafariCard,
     Footer,
     TestimonialsComponent,
-    StripePayment
+    StripePayment,
+    SearchSafariComponent,
+    SearchSafariComponent
 ],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
