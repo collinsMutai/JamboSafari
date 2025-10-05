@@ -1,19 +1,32 @@
-<!-- footer.component.html -->
 <footer class="footer" id="contact">
   <h2 class="footer-title">📞 Contact & Booking</h2>
 
-  <!-- Contact Section -->
   <div class="contact-container">
     <div class="container">
       <div class="row">
-        <!-- Left Column: Contact Info -->
+        <!-- Left Column -->
         <div class="col-md-6 contact-info">
           <h3>Contact Info</h3>
           <ul>
-            <li>Website: <a href="http://www.jambosafariafrica.com" target="_blank">www.jambosafariafrica.com</a></li>
-            <li>Email: <a href="mailto:info@jambosafariafrica.com">info@jambosafariafrica.com</a></li>
-            <li>Phone/WhatsApp: +254 700 214 101 (Kenya) | +1 (404) 565-9657 (USA)</li>
-            <li>Offices: Nairobi, Kenya | Miami, Florida</li>
+            <li>
+              Website:
+              <a href="http://www.jambosafariafrica.com" target="_blank">
+                www.jambosafariafrica.com
+              </a>
+            </li>
+            <li>
+              Email:
+              <a href="mailto:info@jambosafariafrica.com">
+                info@jambosafariafrica.com
+              </a>
+            </li>
+            <li>
+              Phone/WhatsApp: +254 700 214 101 (Kenya) |
+              +1 (404) 565-9657 (USA)
+            </li>
+            <li>
+              Offices: Nairobi, Kenya | Miami, Florida
+            </li>
           </ul>
         </div>
 
@@ -23,28 +36,59 @@
           <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
               <label for="name">Name</label>
-              <input type="text" id="name" class="form-control" formControlName="name" required />
+              <input
+                type="text"
+                id="name"
+                class="form-control"
+                formControlName="name"
+                required
+              />
             </div>
+
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" id="email" class="form-control" formControlName="email" required />
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                formControlName="email"
+                required
+              />
             </div>
+
             <div class="form-group">
               <label for="message">Message</label>
-              <textarea id="message" class="form-control" formControlName="message" rows="4" required></textarea>
+              <textarea
+                id="message"
+                class="form-control"
+                formControlName="message"
+                rows="4"
+                required
+              ></textarea>
             </div>
 
-            <!-- Hidden reCAPTCHA Token Field -->
-            <input type="hidden" formControlName="recaptchaToken" />
+            <!-- reCAPTCHA v2 -->
+            <div class="form-group recaptcha">
+              <re-captcha
+                [siteKey]="siteKey"
+                (resolved)="onCaptchaResolved($event)"
+              ></re-captcha>
+            </div>
 
-            <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid">Submit</button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="contactForm.invalid || !recaptchaToken"
+            >
+              Submit
+            </button>
           </form>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Copyright Section -->
+  <!-- Footer bottom -->
   <div class="credits-container">
     <div class="container">
       <div class="row">

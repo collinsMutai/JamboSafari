@@ -9,5 +9,5 @@ import { NavbarComponent } from "./components/navbar/navbar";
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('Frontend');
+  protected readonly title = signal('Jambo Safari');
 }
